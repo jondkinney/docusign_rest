@@ -31,16 +31,20 @@ module DocusignRest
       @acct_id = DocusignRest.account_id
     end
 
-    # Public: sets the default request headers allowing for user overrides.
-    # Additionally injects the X-DocuSign-Authentication header to authorize
-    # the request.
+    # Internal: sets the default request headers allowing for user overrides
+    # via options[:params]. Additionally injects the X-DocuSign-Authentication
+    # header to authorize the request.
+    #
+    # Client can pass in header options to any given request:
+    # headers: {"Some-Key" => "some/value", "Another-Key" => "another/value"}
     #
     # Example:
     #
-    #   headers("Some-Key" => "some/value", "Another-Key" => "another/value")
+    #   headers(options[:headers])
     #
     # Returns a merged hash of headers overriding the default Accept header if
-    # the user passes in a new "Accept" header key.
+    # the user passes in a new "Accept" header key and adds any other
+    # user-defined headers along with the X-DocuSign-Authentication headers
     def headers(user_defined_headers={})
       default = {
         "Accept" => "application/json" #this seems to get added automatically, so I can probably remove this
@@ -150,7 +154,11 @@ module DocusignRest
 
     # Public: creates an envelope from a document directly without a template
     #
-    # file_path     - the local relative path of the file you wish to upload
+    # file_io       - optional: an opened file stream of data (if you don't
+    #                 want to save the file to the filesystem as an incremental
+    #                 step)
+    # file_path     - required if you don't provide a file_io stream, this is
+    #                 the local relative path of the file you wish to upload
     # file_name     - the name you want to give to the file you are uploading
     # content_type  - application/json or application/csv, etc.
     # email_subject - short subject line for the email
@@ -161,6 +169,7 @@ module DocusignRest
     # status        - options include: 'sent', 'draft' and determine if the
     #                 envelope is sent out immediately or stored for sending
     #                 at a later time
+    # headers       - allows a client to pass in some
     #
     # Returns a response object containing:
     #   envelopeId     - The envelope's ID
@@ -168,18 +177,39 @@ module DocusignRest
     #   statusDateTime - The date/time the envelope was created
     #   uri            - The relative envelope uri
     def create_envelope_from_document(options={})
-      # the last argument is the opts={} which allows us to send in not only
-      # the Content-Disposition of 'file' as required by DocuSign, but also
-      # the documentId parameter which is required as well
-
+      # UploadIO is from the multipart-post gem's lib/composite_io.rb:57
+      # where it has this documentation:
+      #
+      # ********************************************************************
+      # Create an upload IO suitable for including in the params hash of a
+      # Net::HTTP::Post::Multipart.
+      #
+      # Can take two forms. The first accepts a filename and content type, and
+      # opens the file for reading (to be closed by finalizer).
+      #
+      # The second accepts an already-open IO, but also requires a third argument,
+      # the filename from which it was opened (particularly useful/recommended if
+      # uploading directly from a form in a framework, which often save the file to
+      # an arbitrarily named RackMultipart file in /tmp).
+      #
+      # Usage:
+      #
+      #     UploadIO.new("file.txt", "text/plain")
+      #     UploadIO.new(file_io, "text/plain", "file.txt")
+      # ********************************************************************
+      #
+      # There is also a 4th undocumented argument, opts={}, which allows us
+      # to send in not only the Content-Disposition of 'file' as required by
+      # DocuSign, but also the documentId parameter which is required as well
+      #
       ios = []
       options[:files].each_with_index do |file, index|
         ios << UploadIO.new(
-          file[:path],
-          file[:content_type] || "application/pdf",
-          file[:name],
-          "Content-Disposition" => "file; documentid=#{index+1}"
-        )
+                 file[:io] || file[:path],
+                 file[:content_type] || "application/pdf",
+                 file[:name],
+                 "Content-Disposition" => "file; documentid=#{index+1}"
+               )
       end
 
       post_body = "{
@@ -201,15 +231,29 @@ module DocusignRest
         file_params.merge!("file#{index+1}" => io)
       end
 
+      # Net::HTTP::Post::Multipart is from the multipart-post gem's lib/multipartable.rb
+      #
+      # path       - the fully qualified URI for the request
+      # params     - a hash of params (including files for uploading and a
+      #              customized request body)
+      # headers={} - the fully merged, final request headers
+      # boundary   - optional: you can give the request a custom boundary
+      #
       request = Net::HTTP::Post::Multipart.new(
         uri.request_uri,
         {post_body: post_body}.merge(file_params),
         headers(options[:headers])
       )
 
+      # DocuSign requires that we embed the document data in the body of the
+      # JSON request directly so we need to call ".read" on the multipart-post
+      # provided body_stream in order to serialize all the files into a
+      # compatible JSON string.
       request.body = request.body_stream.read
 
       http = initialize_net_http(uri)
+
+      # Finally do the Net::HTTP request!
       http.request(request)
     end
 
