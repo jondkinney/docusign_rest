@@ -18,7 +18,10 @@ response = client.create_envelope_from_document(
                {email: 'test_guy@gmail.com', name: 'Test Guy'},
                {email: 'test_girl@gmail.com', name: 'Test Girl'},
              ],
-             files: [{path: 'test.pdf', name: 'test.pdf'}],
+             files: [
+               {path: 'test.pdf', name: 'test.pdf'},
+               {path: 'test2.pdf', name: 'test2.pdf'}
+             ],
              status:        'sent'
            )
 

@@ -195,13 +195,18 @@ module DocusignRest
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes")
 
-      # TODO see if there is a way to upload multiple documents in Net::HTTP
-      # becuase currently we're calling .first on the ios array of docs
+      # multi-doc uploading capabilities, each doc needs to be it's own param
+      file_params = {}
+      ios.each_with_index do |io,index|
+        file_params.merge!("file#{index+1}" => io)
+      end
+
       request = Net::HTTP::Post::Multipart.new(
         uri.request_uri,
-        {post_body: post_body, file: ios.first},
+        {post_body: post_body}.merge(file_params),
         headers(options[:headers])
       )
+
       request.body = request.body_stream.read
 
       http = initialize_net_http(uri)
