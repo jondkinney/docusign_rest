@@ -52,7 +52,7 @@ end\n\n}
     docusign_initializer_content = File.open(docusign_initializer_path) { |io| io.read }
 
     # if they match tell the user we wrote the file, otherwise tell them to do it themselves
-    if docusign_initializer_content != config
+    if docusign_initializer_content == config
       puts "The following block of code was added to config/initializers/docusign_rest.rb\n\n"
       puts config
     else
