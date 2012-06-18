@@ -41,7 +41,7 @@ outputs:
     4) Request a new 'Integrator Key' via the web interface
         * You will use this key in one of the next steps to retrieve your 'accountId'
 
-    Please enter your DocuSign username:jon.kinney@bolstr.com
+    Please enter your DocuSign username:someone@gmail.com
     Please enter your DocuSign password:p@ssw0rd1
     Please enter your DocuSign integrator_key:KEYS-19ddd1cc-cb56-4ca6-87ec-38db47d14b32
 
@@ -50,7 +50,7 @@ outputs:
     require 'docusign_rest'
 
     DocusignRest.configure do |config|
-      config.username       = 'jon.kinney@bolstr.com'
+      config.username       = 'someone@gmail.com'
       config.password       = 'p@ssw0rd1'
       config.integrator_key = 'KEYS-19ddd1cc-cb56-4ca6-87ec-38db47d14b32'
       config.account_id     = '123456'
@@ -90,12 +90,12 @@ response = client.create_envelope_from_document(
     {
       #embedded: true,
       name: 'Test Guy',
-      email: 'jonkinney+doc@gmail.com'
+      email: 'someone@gmail.com'
     },
     {
       #embedded: true,
       name: 'Test Girl',
-      email: 'jonkinney+doc2@gmail.com'
+      email: 'someone@gmail.com'
     }
   ],
   files: [
@@ -120,7 +120,7 @@ response = client.create_template(
     {
       embedded: true,
       name: 'jon',
-      email: 'jonkinney@gmail.com',
+      email: 'someone@gmail.com',
       role_name: 'Issuer',
       anchor_string: 'sign here'
     }
@@ -148,7 +148,7 @@ response = client.create_envelope_from_template(
     {
       embedded: true,
       name: 'jon',
-      email: 'jonkinney@gmail.com',
+      email: 'someone@gmail.com',
       role_name: 'Issuer'
     }
   ]
@@ -164,7 +164,7 @@ client = DocusignRest::Client.new
 response = client.get_recipient_view(
   envelope_id: @envelope_response["envelopeId"],
   name: 'jon',
-  email: 'jonkinney@gmail.com',
+  email: 'someone@gmail.com',
   return_url: 'http://google.com'
 )
 @view_recipient_response = JSON.parse(response.body)

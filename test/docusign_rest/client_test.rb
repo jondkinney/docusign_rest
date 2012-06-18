@@ -65,10 +65,10 @@ describe DocusignRest::Client do
   describe 'client' do
     before do
       DocusignRest.configure do |config|
-        config.username       = 'jon.kinney@bolstr.com'
-        config.password       = 'b0lst3r'
-        config.integrator_key = 'BOLS-19dbd1bc-cb56-4da6-87ec-59db47d34b32'
-        config.account_id     = '168644'
+        config.username       = 'your_username/email'
+        config.password       = 'your_password'
+        config.integrator_key = 'your_integrator_key'
+        config.account_id     = 'your_account_id_provided_by_the_rake_task'
       end
       @client = DocusignRest::Client.new
     end
@@ -95,12 +95,12 @@ describe DocusignRest::Client do
             {
               #embedded: true,
               name: 'Test Guy',
-              email: 'jonkinney+doc@gmail.com'
+              email: 'someone@gmail.com'
             },
             {
               #embedded: true,
               name: 'Test Girl',
-              email: 'jonkinney+doc2@gmail.com'
+              email: 'someone+else@gmail.com'
             }
           ],
           files: [
@@ -125,7 +125,7 @@ describe DocusignRest::Client do
               {
                 embedded: true,
                 name: 'jon',
-                email: 'jonkinney@gmail.com',
+                email: 'someone@gmail.com',
                 role_name: 'Issuer',
                 anchor_string: 'sign here',
                 sign_here_tab_text: 'Issuer, Please Sign Here',
@@ -154,7 +154,7 @@ describe DocusignRest::Client do
               {
                 embedded: true,
                 name: 'jon',
-                email: 'jonkinney@gmail.com',
+                email: 'someone@gmail.com',
                 role_name: 'Issuer'
               }
             ]
@@ -176,7 +176,7 @@ describe DocusignRest::Client do
           response = @client.get_recipient_view(
             envelope_id: @envelope_response["envelopeId"],
             name: 'jon',
-            email: 'jonkinney@gmail.com',
+            email: 'someone@gmail.com',
             return_url: 'http://google.com'
           )
           @view_recipient_response = JSON.parse(response.body)

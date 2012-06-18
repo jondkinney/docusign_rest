@@ -10,19 +10,31 @@ end
 client = DocusignRest::Client.new
 
 response = client.create_envelope_from_document(
-             email: {
-               subject: "test email subject",
-               body: "this is the email body and it's large!"
-             },
-             signers: [
-               {email: 'test_guy@gmail.com', name: 'Test Guy'},
-               {email: 'test_girl@gmail.com', name: 'Test Girl'},
-             ],
-             files: [
-               {path: 'test.pdf', name: 'test.pdf'},
-               {path: 'test2.pdf', name: 'test2.pdf'}
-             ],
-             status: 'sent'
-           )
+  email: {
+    subject: "test email subject",
+    body: "this is the email body and it's large!"
+  },
+  # If embedded is set to true  in the signers array below, emails
+  # don't go out and you can embed the signature page in an iFrame
+  # by using the get_recipient_view method
+  signers: [
+    {
+      #embedded: true,
+      name: 'Test Guy',
+      email: 'someone@gmail.com'
+    },
+    {
+      #embedded: true,
+      name: 'Test Girl',
+      email: 'someone+else@gmail.com'
+    }
+  ],
+  files: [
+    {path: 'test.pdf', name: 'test.pdf'},
+    {path: 'test2.pdf', name: 'test2.pdf'}
+  ],
+  status: 'sent'
+)
 
+response = JSON.parse(response.body)
 puts response.body
