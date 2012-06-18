@@ -68,108 +68,108 @@ This gem also monkeypatches one small part of multipart-post to inject some head
 
 **Getting login information:**
 
-    ```ruby
-    client = DocusignRest::Client.new
-    puts client.get_account_id
-    ```
+```ruby
+client = DocusignRest::Client.new
+puts client.get_account_id
+```
 
 
 **Creating an envelope from a document:**
 
-    ```ruby
-    client = DocusignRest::Client.new
-    response = client.create_envelope_from_document(
-      email: {
-        subject: "test email subject",
-        body: "this is the email body and it's large!"
-      },
-      # If embedded is set to true  in the signers array below, emails
-      # don't go out and you can embed the signature page in an iFrame
-      # by using the get_recipient_view method
-      signers: [
-        {
-          #embedded: true,
-          name: 'Test Guy',
-          email: 'jonkinney+doc@gmail.com'
-        },
-        {
-          #embedded: true,
-          name: 'Test Girl',
-          email: 'jonkinney+doc2@gmail.com'
-        }
-      ],
-      files: [
-        {path: 'test.pdf', name: 'test.pdf'},
-        {path: 'test2.pdf', name: 'test2.pdf'}
-      ],
-      status: 'sent'
-    )
-    response = JSON.parse(response.body)
-    response["status"].must_equal "sent"
-    ```
+```ruby
+client = DocusignRest::Client.new
+response = client.create_envelope_from_document(
+  email: {
+    subject: "test email subject",
+    body: "this is the email body and it's large!"
+  },
+  # If embedded is set to true  in the signers array below, emails
+  # don't go out and you can embed the signature page in an iFrame
+  # by using the get_recipient_view method
+  signers: [
+    {
+      #embedded: true,
+      name: 'Test Guy',
+      email: 'jonkinney+doc@gmail.com'
+    },
+    {
+      #embedded: true,
+      name: 'Test Girl',
+      email: 'jonkinney+doc2@gmail.com'
+    }
+  ],
+  files: [
+    {path: 'test.pdf', name: 'test.pdf'},
+    {path: 'test2.pdf', name: 'test2.pdf'}
+  ],
+  status: 'sent'
+)
+response = JSON.parse(response.body)
+response["status"].must_equal "sent"
+```
 
 
 **Creating a template:**
 
-    ```ruby
-    client = DocusignRest::Client.new
-    response = client.create_template(
-      description: 'Cool Description',
-      name: "Cool Template Name",
-      signers: [
-        {
-          embedded: true,
-          name: 'jon',
-          email: 'jonkinney@gmail.com',
-          role_name: 'Issuer',
-          anchor_string: 'sign here'
-        }
-      ],
-      files: [
-        {path: 'test.pdf', name: 'test.pdf'}
-      ]
-    )
-    @template_response = JSON.parse(response.body)
-    ```
+```ruby
+client = DocusignRest::Client.new
+response = client.create_template(
+  description: 'Cool Description',
+  name: "Cool Template Name",
+  signers: [
+    {
+      embedded: true,
+      name: 'jon',
+      email: 'jonkinney@gmail.com',
+      role_name: 'Issuer',
+      anchor_string: 'sign here'
+    }
+  ],
+  files: [
+    {path: 'test.pdf', name: 'test.pdf'}
+  ]
+)
+@template_response = JSON.parse(response.body)
+```
 
 
 **Creating an envelope from a template:**
 
-    ```ruby
-    client = DocusignRest::Client.new
-    response = client.create_envelope_from_template(
-      status: 'sent',
-      email: {
-        subject: "The test email subject envelope",
-        body: "Envelope body content here"
-      },
-      template_id: @template_response["templateId"],
-      signers: [
-        {
-          embedded: true,
-          name: 'jon',
-          email: 'jonkinney@gmail.com',
-          role_name: 'Issuer'
-        }
-      ]
-    )
-    @envelope_response = JSON.parse(response.body)
-    ```
+```ruby
+client = DocusignRest::Client.new
+response = client.create_envelope_from_template(
+  status: 'sent',
+  email: {
+    subject: "The test email subject envelope",
+    body: "Envelope body content here"
+  },
+  template_id: @template_response["templateId"],
+  signers: [
+    {
+      embedded: true,
+      name: 'jon',
+      email: 'jonkinney@gmail.com',
+      role_name: 'Issuer'
+    }
+  ]
+)
+@envelope_response = JSON.parse(response.body)
+```
 
 
 **Retrieving the url for embedded signing**
 
-    ```ruby
-    client = DocusignRest::Client.new
-    response = client.get_recipient_view(
-      envelope_id: @envelope_response["envelopeId"],
-      name: 'jon',
-      email: 'jonkinney@gmail.com',
-      return_url: 'http://google.com'
-    )
-    @view_recipient_response = JSON.parse(response.body)
-    puts @view_recipient_response["url"]
-    ```
+```ruby
+client = DocusignRest::Client.new
+response = client.get_recipient_view(
+  envelope_id: @envelope_response["envelopeId"],
+  name: 'jon',
+  email: 'jonkinney@gmail.com',
+  return_url: 'http://google.com'
+)
+@view_recipient_response = JSON.parse(response.body)
+puts @view_recipient_response["url"]
+```
 
 
 ## Contributing
