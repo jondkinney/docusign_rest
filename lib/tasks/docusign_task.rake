@@ -15,12 +15,12 @@ Please do the following:
      ...or their production url if applicable
 2) Click 'Preferences' in the upper right corner of the page
 3) Click 'API' in far lower left corner of the menu
-4) Request a new 'Integrator Key' via the web intervace
+4) Request a new 'Integrator Key' via the web interface
      * You will use this key in one of the next steps to retrieve your 'accountId'\n\n}
 
-    username = ask('Please enter your DocuSign username:')
-    password = ask('Please enter your Docusign password:')
-    integrator_key = ask('Please enter your Docusign integrator_key:')
+    username = ask('Please enter your DocuSign username: ')
+    password = ask('Please enter your DocuSign password: ')
+    integrator_key = ask('Please enter your DocuSign integrator key: ')
 
     DocusignRest.configure do |config|
       config.username       = username

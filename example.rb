@@ -22,7 +22,7 @@ response = client.create_envelope_from_document(
                {path: 'test.pdf', name: 'test.pdf'},
                {path: 'test2.pdf', name: 'test2.pdf'}
              ],
-             status:        'sent'
+             status: 'sent'
            )
 
 puts response.body
