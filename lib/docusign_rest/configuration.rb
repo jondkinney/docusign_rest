@@ -4,7 +4,7 @@ module DocusignRest
     VALID_OPTIONS_KEYS     = [:username, :password, :integrator_key, :account_id, :format].freeze
     VALID_CONFIG_KEYS      = VALID_CONNECTION_KEYS + VALID_OPTIONS_KEYS
 
-    DEFAULT_ENDPOINT       = 'https://demo.docusign.net/restapi/'
+    DEFAULT_ENDPOINT       = 'https://demo.docusign.net/restapi'
     DEFAULT_API_VERSION    = 'v1'
     DEFAULT_USER_AGENT     = "DocusignRest API Ruby Gem #{DocusignRest::VERSION}".freeze
     DEFAULT_METHOD         = :get

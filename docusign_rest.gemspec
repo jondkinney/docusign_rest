@@ -19,6 +19,13 @@ Gem::Specification.new do |gem|
   gem.add_dependency('json')
   gem.add_development_dependency('rake')
   gem.add_development_dependency('minitest')
+  #gem.add_development_dependency('m')
   gem.add_development_dependency('turn')
+  # need this older version of pry below to accomodate the fact that the 'm' gem
+  # relies explicitally on a version of the method_source gem and the latest
+  # pry uses a much higher version.
+  #gem.add_development_dependency('pry', '0.9.7.4')
   gem.add_development_dependency('pry')
+  gem.add_development_dependency('vcr')
+  gem.add_development_dependency('fakeweb')
 end

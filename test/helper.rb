@@ -3,3 +3,9 @@ require 'minitest/spec'
 require 'minitest/autorun'
 require 'turn'
 require 'json'
+require 'vcr'
+
+VCR.configure do |c|
+  c.cassette_library_dir = "test/fixtures/vcr"
+  c.hook_into :fakeweb
+end
