@@ -65,10 +65,10 @@ describe DocusignRest::Client do
   describe 'client' do
     before do
       DocusignRest.configure do |config|
-        config.username       = 'your_username/email'
-        config.password       = 'your_password'
-        config.integrator_key = 'your_integrator_key'
-        config.account_id     = 'your_account_id_provided_by_the_rake_task'
+        config.username       = 'jon.kinney@bolstr.com'
+        config.password       = 'b0lst3r'
+        config.integrator_key = 'BOLS-19dbd1bc-cb56-4da6-87ec-59db47d34b32'
+        config.account_id     = '168644'
       end
       @client = DocusignRest::Client.new
     end
@@ -82,15 +82,26 @@ describe DocusignRest::Client do
     end
 
     it "should allow creating an envelope from a document" do
-      VCR.use_cassette "create_envelope/from_document" do
+      VCR.use_cassette("create_envelope/from_document", record: :all) do
         response = @client.create_envelope_from_document(
           email: {
             subject: "test email subject",
             body: "this is the email body and it's large!"
           },
+          # If embedded is set to true  in the signers array below, emails
+          # don't go out and you can embed the signature page in an iFrame
+          # by using the get_recipient_view method
           signers: [
-            {email: 'jonkinney+doc@gmail.com', name: 'Test Guy'},
-            {email: 'jonkinney+doc2@gmail.com', name: 'Test Girl'}
+            {
+              #embedded: true,
+              name: 'Test Guy',
+              email: 'jonkinney+doc@gmail.com'
+            },
+            {
+              #embedded: true,
+              name: 'Test Girl',
+              email: 'jonkinney+doc2@gmail.com'
+            }
           ],
           files: [
             {path: 'test.pdf', name: 'test.pdf'},
@@ -112,14 +123,15 @@ describe DocusignRest::Client do
             name: "Cool Template Name",
             signers: [
               {
-                email: 'jonkinney@gmail.com',
+                embedded: true,
                 name: 'jon',
+                email: 'jonkinney@gmail.com',
                 role_name: 'Issuer',
                 anchor_string: 'sign here',
                 sign_here_tab_text: 'Issuer, Please Sign Here',
-                template_locked: true, #doesn't seem to do anything that I can tell
-                template_required: true, #doesn't seem to do anything that I can tell
-                email_notification: false
+                template_locked: true, #doesn't seem to do anything
+                template_required: true, #doesn't seem to do anything
+                email_notification: false #FIXME if signer is setup as 'embedded' initial email notifications don't go out, but even when I set up a signer as non-embedded this setting didn't seem to make the email notifications actually stop...
               }
             ],
             files: [
@@ -138,10 +150,11 @@ describe DocusignRest::Client do
               body: "Envelope body content here"
             },
             template_id: @template_response["templateId"],
-            template_roles: [
+            signers: [
               {
-                email: 'jonkinney@gmail.com',
+                embedded: true,
                 name: 'jon',
+                email: 'jonkinney@gmail.com',
                 role_name: 'Issuer'
               }
             ]
@@ -162,12 +175,12 @@ describe DocusignRest::Client do
         VCR.use_cassette("get_recipient_view", record: :all)  do
           response = @client.get_recipient_view(
             envelope_id: @envelope_response["envelopeId"],
+            name: 'jon',
             email: 'jonkinney@gmail.com',
-            return_url: 'http://google.com',
-            user_name: 'jon'
+            return_url: 'http://google.com'
           )
           @view_recipient_response = JSON.parse(response.body)
-          puts @view_recipient_response
+          puts @view_recipient_response["url"]
         end
       end
 

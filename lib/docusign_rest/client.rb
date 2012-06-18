@@ -136,21 +136,31 @@ module DocusignRest
       @acct_id
     end
 
+    def check_embedded_signer(embedded, email)
+      if embedded && embedded == true
+        "\"clientUserId\" : \"#{email}\","
+      end
+    end
 
     # Internal: takes in an array of hashes of signers and calculates the
     # recipientId then concatenates all the hashes with commas
     #
-    # email     - the email of the signer
-    # name      - the name of the signer
+    # embedded - tells DocuSign if this is an embedded signer which determines
+    #            weather or not to deliver emails. Also lets us authenticate
+    #            them when they go to do embedded signing. Behind the scenes
+    #            this is setting the clientUserId value to the signer's email.
+    # name     - the name of the signer
+    # email    - the email of the signer
     #
     # Returns a hash of users that need to sign the document
     def get_signers(signers)
       doc_signers = []
       signers.each_with_index do |signer, index|
         doc_signers << "{
-          \"email\"       : \"#{signer[:email]}\",
-          \"name\"        : \"#{signer[:name]}\",
-          \"recipientId\" : \"#{index+1}\"
+          #{check_embedded_signer(signer[:embedded], signer[:email])}
+          \"name\"         : \"#{signer[:name]}\",
+          \"email\"        : \"#{signer[:email]}\",
+          \"recipientId\"  : \"#{index+1}\"
         }"
       end
       doc_signers.join(",")
@@ -160,31 +170,41 @@ module DocusignRest
     # Internal: takes in an array of hashes of signers and concatenates all the
     # hashes with commas
     #
-    # email     - the email of the signer
+    # embedded -  tells DocuSign if this is an embedded signer which determines
+    #             weather or not to deliver emails. Also lets us authenticate
+    #             them when they go to do embedded signing. Behind the scenes
+    #             this is setting the clientUserId value to the signer's email.
     # name      - the name of the signer
+    # email     - the email of the signer
     # role_name - the role name of the signer ('Attorney', 'Client', etc.).
     #
     # Returns a hash of users that need to be embedded in the template to
     # create an envelope
-    def get_template_roles(template_roles)
-      the_template_roles = []
-      template_roles.each_with_index do |role, index|
-        the_template_roles << "{
-          \"email\"    : \"#{role[:email]}\",
-          \"name\"     : \"#{role[:name]}\",
-          \"roleName\" : \"#{role[:role_name]}\"
+    def get_template_roles(signers)
+      template_roles = []
+      signers.each_with_index do |signer, index|
+        template_roles << "{
+          #{check_embedded_signer(signer[:embedded], signer[:email])}
+          \"name\"         : \"#{signer[:name]}\",
+          \"email\"        : \"#{signer[:email]}\",
+          \"roleName\"     : \"#{signer[:role_name]}\"
         }"
       end
-      the_template_roles.join(",")
+      template_roles.join(",")
     end
 
 
     # Internal: takes an array of hashes of signers required to complete a
     # document and allows for setting several options. Not all options are
-    # currently configurable but that's easy to chnage/add which I (and I'm
+    # currently dynamic but that's easy to chnage/add which I (and I'm
     # sure others) will be doing in the future.
     #
-    # email_notification - doesn't seem to stop the emails though
+    # embedded           -  tells DocuSign if this is an embedded signer which
+    #                       determines weather or not to deliver emails. Also
+    #                       lets us authenticate them when they go to do
+    #                       embedded signing. Behind the scenes this is setting
+    #                       the clientUserId value to the signer's email.
+    # email_notification - send an email or not
     # role_name          - the signer's role, like 'Attorney' or 'Client', etc.
     # template_locked    - doesn't seem to work/do anything
     # template_required  - doesn't seem to work/do anything
@@ -193,6 +213,7 @@ module DocusignRest
     # anchor_string      - the string of text to anchor the 'sign here' tab to
     # document_id        - if the doc you want signed isn't the first doc in
     #                      the files options hash
+    # page_number        - page number of the sign here tab
     # x_position         - distance horizontally from the anchor string for the
     #                      'sign here' tab to appear. Note: doesn't seem to
     #                      currently work.
@@ -207,7 +228,7 @@ module DocusignRest
         doc_signers << "{
           \"accessCode\":\"\",
           \"addAccessCodeToEmail\":false,
-          \"clientUserId\":\"\",
+          #{check_embedded_signer(signer[:embedded], signer[:email])}
           \"customFields\":null,
           \"emailNotification\":#{signer[:email_notification] || 'null'},
           \"idCheckConfigurationName\":null,
@@ -219,7 +240,7 @@ module DocusignRest
           \"recipientId\":\"#{index+1}\",
           \"requireIdLookup\":false,
           \"roleName\":\"#{signer[:role_name]}\",
-          \"routingOrder\":1,
+          \"routingOrder\":#{index+1},
           \"socialAuthentications\":null,
           \"templateAccessCodeRequired\":false,
           \"templateLocked\":#{signer[:template_locked] || 'false'},
@@ -250,7 +271,7 @@ module DocusignRest
                 \"conditionalParentLabel\":null,
                 \"conditionalParentValue\":null,
                 \"documentId\":\"#{signer[:document_id] || '1'}\",
-                \"pageNumber\":\"1\",
+                \"pageNumber\":\"#{signer[:page_number] || '1'}\",
                 \"recipientId\":\"#{index+1}\",
                 \"templateLocked\":#{signer[:template_locked] || 'false'},
                 \"templateRequired\":#{signer[:template_required] || 'false'},
@@ -355,7 +376,7 @@ module DocusignRest
     # uri         - the fully qualified final URI
     # post_body   - the custom post body including the signers, etc
     # file_params - formatted hash of ios to merge into the post body
-    # options     - allows for passing in custom headers
+    # headers     - allows for passing in custom headers
     #
     # Returns a request opbject suitable for embedding in a request
     def initialize_net_http_multipart_post_request(uri, post_body, file_params, headers)
@@ -384,27 +405,29 @@ module DocusignRest
 
     # Public: creates an envelope from a document directly without a template
     #
-    # file_io       - optional: an opened file stream of data (if you don't
+    # file_io       - Optional: an opened file stream of data (if you don't
     #                 want to save the file to the filesystem as an incremental
     #                 step)
-    # file_path     - required if you don't provide a file_io stream, this is
-    #                 the local relative path of the file you wish to upload
-    # file_name     - the name you want to give to the file you are uploading
+    # file_path     - Required if you don't provide a file_io stream, this is
+    #                 the local path of the file you wish to upload. Absolute
+    #                 paths recommended.
+    # file_name     - The name you want to give to the file you are uploading
     # content_type  - (for the request body) application/json is what DocuSign
     #                 is expecting
     # email_subject - (optional) short subject line for the email
     # email_body    - (optional) custom text that will be injected into the
     #                 DocuSign generated email
-    # signers       - a hash of users who should receive the document and need
-    #                 to sign it
-    # status        - options include: 'sent', 'created', 'voided' and determine
+    # signers       - A hash of users who should receive the document and need
+    #                 to sign it. More info about the options available for
+    #                 this method are documented above it's method definition.
+    # status        - Options include: 'sent', 'created', 'voided' and determine
     #                 if the envelope is sent out immediately or stored for
     #                 sending at a later time
-    # headers       - allows a client to pass in some
+    # headers       - Allows a client to pass in some
     #
     # Returns a response object containing:
     #   envelopeId     - The envelope's ID
-    #   status         - Sent, created, voided
+    #   status         - Sent, created, or voided
     #   statusDateTime - The date/time the envelope was created
     #   uri            - The relative envelope uri
     def create_envelope_from_document(options={})
@@ -459,6 +482,7 @@ module DocusignRest
     # headers       - optional hash of headers to merge into the existing
     #                 required headers for a multipart request.
     #
+    # Returns a response body containing the template's: name, templateId, Uri
     def create_template(options={})
       ios = create_file_ios(options[:files])
       file_params = create_file_params(ios)
@@ -505,7 +529,11 @@ module DocusignRest
     # template_id    - the id of the template upon which we want to base this
     #                  envelope
     # template_roles - see the get_template_roles method definition for a list
-    #                  of options to pass
+    #                  of options to pass. Note: for consistency sake we call
+    #                  this 'signers' and not 'templateRoles' when we build up
+    #                  the request in client code.
+    # headers        - optional hash of headers to merge into the existing
+    #                  required headers for a multipart request.
     def create_envelope_from_template(options={})
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
@@ -515,7 +543,7 @@ module DocusignRest
         \"emailBlurb\"    : \"#{options[:email][:body]}\",
         \"emailSubject\"  : \"#{options[:email][:subject]}\",
         \"templateId\"    : \"#{options[:template_id]}\",
-        \"templateRoles\" : [#{get_template_roles(options[:template_roles])}],
+        \"templateRoles\" : [#{get_template_roles(options[:signers])}],
        }"
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes")
@@ -534,10 +562,13 @@ module DocusignRest
 
     # Public returns the URL for embedded signing
     #
-    # email      - the email of the recipient
-    # return_url - the URL you want the user to be directed to after he or she
-    #              completes the document signing
-    # user_name  - the name of the signer
+    # envelope_id - the ID of the envelope you wish to use for embedded signing
+    # name        - the name of the signer
+    # email       - the email of the recipient
+    # return_url  - the URL you want the user to be directed to after he or she
+    #               completes the document signing
+    # headers     - optional hash of headers to merge into the existing
+    #               required headers for a multipart request.
     #
     # Returns the URL for embedded signing which needs to be put in an iFrame
     def get_recipient_view(options={})
@@ -546,9 +577,10 @@ module DocusignRest
 
       post_body = "{
         \"authenticationMethod\" : \"email\",
+        \"clientUserId\"         : \"#{options[:email]}\",
         \"email\"                : \"#{options[:email]}\",
         \"returnUrl\"            : \"#{options[:return_url]}\",
-        \"userName\"             : \"#{options[:user_name]}\",
+        \"userName\"             : \"#{options[:name]}\",
        }"
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/views/recipient")
