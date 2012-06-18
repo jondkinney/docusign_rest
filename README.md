@@ -68,13 +68,17 @@ This gem also monkeypatches one small part of multipart-post to inject some head
 
 **Getting login information:**
 
+    ```ruby
     client = DocusignRest::Client.new
     puts client.get_account_id
+    ```
 
 
 **Creating an envelope from a document:**
 
-    response = @client.create_envelope_from_document(
+    ```ruby
+    client = DocusignRest::Client.new
+    response = client.create_envelope_from_document(
       email: {
         subject: "test email subject",
         body: "this is the email body and it's large!"
@@ -102,11 +106,14 @@ This gem also monkeypatches one small part of multipart-post to inject some head
     )
     response = JSON.parse(response.body)
     response["status"].must_equal "sent"
+    ```
 
 
 **Creating a template:**
 
-    response = @client.create_template(
+    ```ruby
+    client = DocusignRest::Client.new
+    response = client.create_template(
       description: 'Cool Description',
       name: "Cool Template Name",
       signers: [
@@ -123,11 +130,14 @@ This gem also monkeypatches one small part of multipart-post to inject some head
       ]
     )
     @template_response = JSON.parse(response.body)
+    ```
 
 
 **Creating an envelope from a template:**
 
-    response = @client.create_envelope_from_template(
+    ```ruby
+    client = DocusignRest::Client.new
+    response = client.create_envelope_from_template(
       status: 'sent',
       email: {
         subject: "The test email subject envelope",
@@ -144,11 +154,14 @@ This gem also monkeypatches one small part of multipart-post to inject some head
       ]
     )
     @envelope_response = JSON.parse(response.body)
+    ```
 
 
 **Retrieving the url for embedded signing**
 
-    response = @client.get_recipient_view(
+    ```ruby
+    client = DocusignRest::Client.new
+    response = client.get_recipient_view(
       envelope_id: @envelope_response["envelopeId"],
       name: 'jon',
       email: 'jonkinney@gmail.com',
@@ -156,6 +169,7 @@ This gem also monkeypatches one small part of multipart-post to inject some head
     )
     @view_recipient_response = JSON.parse(response.body)
     puts @view_recipient_response["url"]
+    ```
 
 
 ## Contributing
