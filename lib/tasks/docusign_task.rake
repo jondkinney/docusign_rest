@@ -56,7 +56,7 @@ end\n\n}
     end
 
     File.open(docusign_initializer_path, 'w') { |f| f.write(config) }
-    # read the initializer file into a var for compairision to the config block above
+    # read the initializer file into a var for comparison to the config block above
     docusign_initializer_content = File.open(docusign_initializer_path) { |io| io.read }
 
     # if they match tell the user we wrote the file, otherwise tell them to do it themselves

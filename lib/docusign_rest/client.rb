@@ -15,7 +15,7 @@ module DocusignRest
         send("#{key}=", merged_options[key])
       end
 
-      # Set up the Docusign Authentication headers with the values passed from
+      # Set up the DocuSign Authentication headers with the values passed from
       # our config block
       @docusign_authentication_headers = {
         "X-DocuSign-Authentication" => "" \
@@ -88,7 +88,7 @@ module DocusignRest
     end
 
 
-    # Public: gets info necessary to make addtl requests to the DocuSign API
+    # Public: gets info necessary to make additional requests to the DocuSign API
     #
     # options - hash of headers if the client wants to override something
     #
@@ -116,7 +116,7 @@ module DocusignRest
 
     # Internal: uses the get_login_information method to determine the client's
     # accountId and then caches that value into an instance variable so we
-    # don't end up hitting the api for login_information more than once per
+    # don't end up hitting the API for login_information more than once per
     # request.
     #
     # This is used by the rake task in lib/tasks/docusign_task.rake to add
@@ -196,7 +196,7 @@ module DocusignRest
 
     # Internal: takes an array of hashes of signers required to complete a
     # document and allows for setting several options. Not all options are
-    # currently dynamic but that's easy to chnage/add which I (and I'm
+    # currently dynamic but that's easy to change/add which I (and I'm
     # sure others) will be doing in the future.
     #
     # embedded           - Tells DocuSign if this is an embedded signer which
@@ -378,7 +378,7 @@ module DocusignRest
     # file_params - Formatted hash of ios to merge into the post body
     # headers     - Allows for passing in custom headers
     #
-    # Returns a request opbject suitable for embedding in a request
+    # Returns a request object suitable for embedding in a request
     def initialize_net_http_multipart_post_request(uri, post_body, file_params, headers)
       # Net::HTTP::Post::Multipart is from the multipart-post gem's lib/multipartable.rb
       #
@@ -406,7 +406,7 @@ module DocusignRest
     # Public: creates an envelope from a document directly without a template
     #
     # file_io       - Optional: an opened file stream of data (if you don't
-    #                 want to save the file to the filesystem as an incremental
+    #                 want to save the file to the file system as an incremental
     #                 step)
     # file_path     - Required if you don't provide a file_io stream, this is
     #                 the local path of the file you wish to upload. Absolute

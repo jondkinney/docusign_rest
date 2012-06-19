@@ -60,7 +60,7 @@ outputs:
 
 The docusign\_rest gem makes creating multipart POST (aka file upload) requests to the DocuSign REST API dead simple. It's built on top of Net:HTTP and utilizes the [multipart-post](https://github.com/nicksieger/multipart-post) gem to assist with formatting the multipart requests for the DocuSign REST API. The DocuSign REST API requires that all files be embedded as JSON directly in the request body (not the body\_stream like multipart-post does by default) so the docusign\_rest gem takes care of setting that up for you. 
 
-This gem also monkeypatches one small part of multipart-post to inject some header values and formatting that DocuSign requires. If you would like to see the monkeypatched code please take a look at [lib/multipart-post/parts.rb](https://github.com/j2fly/docusign_rest/blob/master/lib/multipart_post/parts.rb). It's only re-opening one method, but feel free to make sure you understand that monkeypatch if it concerns you. 
+This gem also monkey patches one small part of multipart-post to inject some header values and formatting that DocuSign requires. If you would like to see the monkey patched code please take a look at [lib/multipart-post/parts.rb](https://github.com/j2fly/docusign_rest/blob/master/lib/multipart_post/parts.rb). It's only re-opening one method, but feel free to make sure you understand that monkey patch if it concerns you. 
 
 ### Examples
 
@@ -182,7 +182,7 @@ puts @view_recipient_response["url"]
 
 ### Running the tests
 
-In order to run the tests you'll need to register for a (free) docusign developer account. After doing so you'll have a username, password, and integrator key. Armed with that information execute the following ruby file:
+In order to run the tests you'll need to register for a (free) DocuSign developer account. After doing so you'll have a username, password, and integrator key. Armed with that information execute the following ruby file:
 
     $ ruby lib/tasks/docusign_task.rb
 
@@ -190,4 +190,4 @@ This calls a rake task which adds a non-version controlled file in the test fold
 
 **VCR**
 
-The test suite uses VCR and is configured to record only the first request by using the 'once' configuration option surrounding each API request. If you want to expirmenet with the API or are getting several errors with the test suite, you may want to change the VCR config record setting to 'all' temporairily which will write a new yaml file for each request each time you hit the API. However, this significantly slow down tests and essentially negates the benefit of VCR which is to mock out the API entirely and keep the tests speedy.
+The test suite uses VCR and is configured to record only the first request by using the 'once' configuration option surrounding each API request. If you want to experiment with the API or are getting several errors with the test suite, you may want to change the VCR config record setting to 'all' temporarily which will write a new YAML file for each request each time you hit the API. However, this significantly slow down tests and essentially negates the benefit of VCR which is to mock out the API entirely and keep the tests speedy.
