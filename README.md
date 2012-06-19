@@ -176,7 +176,7 @@ puts @view_recipient_response["url"]
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Added some feature'`)
+3. Commit your changes (`git commit -am 'Added some feature'`) making sure to write tests to ensure nothing breaks
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
@@ -186,7 +186,7 @@ In order to run the tests you'll need to register for a (free) docusign develope
 
     $ ruby lib/tasks/docusign_task.rb
 
-This calls a rake task which adds a file in the test folder called 'docusign_login_config.rb' which is required in order to hit the test API through the test code.
+This calls a rake task which adds a non-version controlled file in the test folder called 'docusign_login_config.rb' which holds your account specific credentials and is required in order to hit the test API through the test suite.
 
 **VCR**
 
