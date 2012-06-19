@@ -186,7 +186,7 @@ In order to run the tests you'll need to register for a (free) DocuSign develope
 
     $ ruby lib/tasks/docusign_task.rb
 
-This calls a rake task which adds a non-version controlled file in the test folder called 'docusign_login_config.rb' which holds your account specific credentials and is required in order to hit the test API through the test suite.
+This calls a rake task which adds a non-version controlled file in the test folder called `docusign_login_config.rb` which holds your account specific credentials and is required in order to hit the test API through the test suite.
 
 **VCR**
 
