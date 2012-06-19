@@ -179,3 +179,14 @@ puts @view_recipient_response["url"]
 3. Commit your changes (`git commit -am 'Added some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+### Running the tests
+
+In order to run the tests you'll need to register for a (free) docusign developer account. After doing so you'll have a username, password, and integrator key. Armed with that information execute the following ruby file:
+
+    $ ruby lib/tasks/docusign_task.rb
+
+This calls a rake task (typically available when this gem is embedded in a Rails app) which adds a file in the test folder called 'docusign_login_config.rb' which is required in order to hit the test API. When a client runs the rake task this ruby file calls at the root of the Rails app it adds an initializer with the configuration settings properly setup.
+
+**VCR**
+The test suite uses VCR and is configured to record the first request only by using the 'once' configuration option. If you want to expirmenet or are getting several errors with the test suite you may want to change the VCR config record setting to 'all' temporairily which will write a new yaml file for each request each time you hit the API. However, this significantly slow down tests and sort of negates the benefit of VCR which is to mock out the API entirely!

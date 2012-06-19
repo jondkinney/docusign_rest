@@ -64,12 +64,11 @@ describe DocusignRest::Client do
 
   describe 'client' do
     before do
-      DocusignRest.configure do |config|
-        config.username       = 'your_username/email'
-        config.password       = 'your_password'
-        config.integrator_key = 'your_integrator_key'
-        config.account_id     = 'your_account_id_provided_by_the_rake_task'
-      end
+      # Note: to configure the client please run the docusign_task.rb file:
+      #
+      #     $ ruby lib/tasks/docusign_task.rb
+      #
+      # which will populate the test/docusign_login_config.rb file
       @client = DocusignRest::Client.new
     end
 
@@ -82,7 +81,7 @@ describe DocusignRest::Client do
     end
 
     it "should allow creating an envelope from a document" do
-      VCR.use_cassette("create_envelope/from_document", record: :all) do
+      VCR.use_cassette("create_envelope/from_document", record: :once) do
         response = @client.create_envelope_from_document(
           email: {
             subject: "test email subject",
@@ -90,10 +89,11 @@ describe DocusignRest::Client do
           },
           # If embedded is set to true  in the signers array below, emails
           # don't go out and you can embed the signature page in an iFrame
-          # by using the get_recipient_view method
+          # by using the get_recipient_view method. You can choose 'false' or
+          # simply omit the option as I show in the second signer hash.
           signers: [
             {
-              #embedded: true,
+              embedded: true,
               name: 'Test Guy',
               email: 'someone@gmail.com'
             },
@@ -117,7 +117,7 @@ describe DocusignRest::Client do
     describe "embedded signing" do
       before do
         # create the template dynamically
-        VCR.use_cassette("create_template", record: :all)  do
+        VCR.use_cassette("create_template", record: :once)  do
           response = @client.create_template(
             description: 'Cool Description',
             name: "Cool Template Name",
@@ -142,7 +142,7 @@ describe DocusignRest::Client do
         end
 
         # use the templateId to get the envelopeId
-        VCR.use_cassette("create_envelope/from_template", record: :all)  do
+        VCR.use_cassette("create_envelope/from_template", record: :once)  do
           response = @client.create_envelope_from_template(
             status: 'sent',
             email: {
@@ -172,7 +172,7 @@ describe DocusignRest::Client do
         @envelope_response["errorCode"].must_be_nil
 
         #return the URL for embedded signing
-        VCR.use_cassette("get_recipient_view", record: :all)  do
+        VCR.use_cassette("get_recipient_view", record: :once)  do
           response = @client.get_recipient_view(
             envelope_id: @envelope_response["envelopeId"],
             name: 'jon',
