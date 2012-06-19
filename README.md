@@ -24,7 +24,7 @@ There is a bundled rake task that will prompt you for your DocuSign credentials 
   * Password
   * Integrator Key
 
-and create the `config/initializers/docusign\_rest.rb` file in your Rails app for you. If the file was unable to be created, the rake task will output the config block for you to manually add to an initializer.
+and create the `config/initializers/docusign_rest.rb` file in your Rails app for you. If the file was unable to be created, the rake task will output the config block for you to manually add to an initializer.
 
 **Note** please run the below task and ensure your initializer is in place before attempting to use any of the methods in this gem. Without the initializer this gem will not be able to properly authenticate you to the DocuSign REST API.
 
