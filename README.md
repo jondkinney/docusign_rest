@@ -54,7 +54,22 @@ outputs:
       config.password       = 'p@ssw0rd1'
       config.integrator_key = 'KEYS-19ddd1cc-cb56-4ca6-87ec-38db47d14b32'
       config.account_id     = '123456'
+      #config.endpoint       = 'https://docusign.net'
+      #config.api_version    = 'v1'
     end
+
+
+### Config Options
+
+There are several other configuration options available but the two most likely to be needed are:
+
+```ruby
+config.endpoint       = 'https://docusign.net'
+config.api_version    = 'v1'
+```
+
+The above options allow you to change the endpoint (to be able to hit the production DocuSign API, for instance) and to modify the API version you wish to use. If there is a big change in the API it's likely that this gem will need to be updated to leverage changes on the DocuSign side. However, it doesn't hurt to provide the option in case there are several minor updates that do not break functionality but would otherwise require a new gem release. These config options have existed since the gem was created, but in v0.0.3 and above, the options are auto-generated in the config file as comments to make them easier to discover.
+
 
 ## Usage
 
