@@ -105,7 +105,6 @@ response = client.create_envelope_from_document(
   status: 'sent'
 )
 response = JSON.parse(response.body)
-response["status"].must_equal "sent"
 ```
 
 
