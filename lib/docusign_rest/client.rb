@@ -15,7 +15,7 @@ module DocusignRest
         send("#{key}=", merged_options[key])
       end
 
-      # Set up the Docusign Authentication headers with the values passed from
+      # Set up the DocuSign Authentication headers with the values passed from
       # our config block
       @docusign_authentication_headers = {
         "X-DocuSign-Authentication" => "" \
@@ -88,7 +88,7 @@ module DocusignRest
     end
 
 
-    # Public: gets info necessary to make addtl requests to the DocuSign API
+    # Public: gets info necessary to make additional requests to the DocuSign API
     #
     # options - hash of headers if the client wants to override something
     #
@@ -116,7 +116,7 @@ module DocusignRest
 
     # Internal: uses the get_login_information method to determine the client's
     # accountId and then caches that value into an instance variable so we
-    # don't end up hitting the api for login_information more than once per
+    # don't end up hitting the API for login_information more than once per
     # request.
     #
     # This is used by the rake task in lib/tasks/docusign_task.rake to add
@@ -145,12 +145,12 @@ module DocusignRest
     # Internal: takes in an array of hashes of signers and calculates the
     # recipientId then concatenates all the hashes with commas
     #
-    # embedded - tells DocuSign if this is an embedded signer which determines
+    # embedded - Tells DocuSign if this is an embedded signer which determines
     #            weather or not to deliver emails. Also lets us authenticate
     #            them when they go to do embedded signing. Behind the scenes
     #            this is setting the clientUserId value to the signer's email.
-    # name     - the name of the signer
-    # email    - the email of the signer
+    # name     - The name of the signer
+    # email    - The email of the signer
     #
     # Returns a hash of users that need to sign the document
     def get_signers(signers)
@@ -170,13 +170,13 @@ module DocusignRest
     # Internal: takes in an array of hashes of signers and concatenates all the
     # hashes with commas
     #
-    # embedded -  tells DocuSign if this is an embedded signer which determines
+    # embedded -  Tells DocuSign if this is an embedded signer which determines
     #             weather or not to deliver emails. Also lets us authenticate
     #             them when they go to do embedded signing. Behind the scenes
     #             this is setting the clientUserId value to the signer's email.
-    # name      - the name of the signer
-    # email     - the email of the signer
-    # role_name - the role name of the signer ('Attorney', 'Client', etc.).
+    # name      - The name of the signer
+    # email     - The email of the signer
+    # role_name - The role name of the signer ('Attorney', 'Client', etc.).
     #
     # Returns a hash of users that need to be embedded in the template to
     # create an envelope
@@ -196,31 +196,31 @@ module DocusignRest
 
     # Internal: takes an array of hashes of signers required to complete a
     # document and allows for setting several options. Not all options are
-    # currently dynamic but that's easy to chnage/add which I (and I'm
+    # currently dynamic but that's easy to change/add which I (and I'm
     # sure others) will be doing in the future.
     #
-    # embedded           -  tells DocuSign if this is an embedded signer which
-    #                       determines weather or not to deliver emails. Also
-    #                       lets us authenticate them when they go to do
-    #                       embedded signing. Behind the scenes this is setting
-    #                       the clientUserId value to the signer's email.
-    # email_notification - send an email or not
-    # role_name          - the signer's role, like 'Attorney' or 'Client', etc.
-    # template_locked    - doesn't seem to work/do anything
-    # template_required  - doesn't seem to work/do anything
-    # email              - the signer's email
-    # name               - the signer's name
-    # anchor_string      - the string of text to anchor the 'sign here' tab to
-    # document_id        - if the doc you want signed isn't the first doc in
+    # embedded           - Tells DocuSign if this is an embedded signer which
+    #                      determines weather or not to deliver emails. Also
+    #                      lets us authenticate them when they go to do
+    #                      embedded signing. Behind the scenes this is setting
+    #                      the clientUserId value to the signer's email.
+    # email_notification - Send an email or not
+    # role_name          - The signer's role, like 'Attorney' or 'Client', etc.
+    # template_locked    - Doesn't seem to work/do anything
+    # template_required  - Doesn't seem to work/do anything
+    # email              - The signer's email
+    # name               - The signer's name
+    # anchor_string      - The string of text to anchor the 'sign here' tab to
+    # document_id        - If the doc you want signed isn't the first doc in
     #                      the files options hash
-    # page_number        - page number of the sign here tab
-    # x_position         - distance horizontally from the anchor string for the
+    # page_number        - Page number of the sign here tab
+    # x_position         - Distance horizontally from the anchor string for the
     #                      'sign here' tab to appear. Note: doesn't seem to
     #                      currently work.
-    # y_position         - distance vertically from the anchor string for the
+    # y_position         - Distance vertically from the anchor string for the
     #                      'sign here' tab to appear. Note: doesn't seem to
     #                      currently work.
-    # sign_here_tab_text - instead of 'sign here'. Note: doesn't work
+    # sign_here_tab_text - Instead of 'sign here'. Note: doesn't work
     # tab_label          - TODO: figure out what this is
     def get_template_signers(signers)
       doc_signers = []
@@ -341,7 +341,7 @@ module DocusignRest
 
     # Internal: sets up the file_params for inclusion in a multipart post request
     #
-    # ios - an array of UploadIO formatted file objects
+    # ios - An array of UploadIO formatted file objects
     #
     # Returns a hash of files params suitable for inclusion in a multipart
     # post request
@@ -373,20 +373,20 @@ module DocusignRest
 
     # Internal sets up the Net::HTTP request
     #
-    # uri         - the fully qualified final URI
-    # post_body   - the custom post body including the signers, etc
-    # file_params - formatted hash of ios to merge into the post body
-    # headers     - allows for passing in custom headers
+    # uri         - The fully qualified final URI
+    # post_body   - The custom post body including the signers, etc
+    # file_params - Formatted hash of ios to merge into the post body
+    # headers     - Allows for passing in custom headers
     #
-    # Returns a request opbject suitable for embedding in a request
+    # Returns a request object suitable for embedding in a request
     def initialize_net_http_multipart_post_request(uri, post_body, file_params, headers)
       # Net::HTTP::Post::Multipart is from the multipart-post gem's lib/multipartable.rb
       #
-      # path       - the fully qualified URI for the request
-      # params     - a hash of params (including files for uploading and a
+      # path       - The fully qualified URI for the request
+      # params     - A hash of params (including files for uploading and a
       #              customized request body)
-      # headers={} - the fully merged, final request headers
-      # boundary   - optional: you can give the request a custom boundary
+      # headers={} - The fully merged, final request headers
+      # boundary   - Optional: you can give the request a custom boundary
       #
       request = Net::HTTP::Post::Multipart.new(
         uri.request_uri,
@@ -406,7 +406,7 @@ module DocusignRest
     # Public: creates an envelope from a document directly without a template
     #
     # file_io       - Optional: an opened file stream of data (if you don't
-    #                 want to save the file to the filesystem as an incremental
+    #                 want to save the file to the file system as an incremental
     #                 step)
     # file_path     - Required if you don't provide a file_io stream, this is
     #                 the local path of the file you wish to upload. Absolute
@@ -414,8 +414,8 @@ module DocusignRest
     # file_name     - The name you want to give to the file you are uploading
     # content_type  - (for the request body) application/json is what DocuSign
     #                 is expecting
-    # email_subject - (optional) short subject line for the email
-    # email_body    - (optional) custom text that will be injected into the
+    # email_subject - (Optional) short subject line for the email
+    # email_body    - (Optional) custom text that will be injected into the
     #                 DocuSign generated email
     # signers       - A hash of users who should receive the document and need
     #                 to sign it. More info about the options available for
@@ -460,7 +460,7 @@ module DocusignRest
 
     # Public: allows a template to be dynamically created with several options.
     #
-    # files         - an array of hashes of file parameters which will be used
+    # files         - An array of hashes of file parameters which will be used
     #                 to create actual files suitable for upload in a multipart
     #                 request.
     #
@@ -469,20 +469,23 @@ module DocusignRest
     #                 argument of any given file hash. See the create_file_ios
     #                 method definition above for more details.
     #
-    # email/body    - (optional) sets the text in the email. Note: the envelope
+    # email/body    - (Optional) sets the text in the email. Note: the envelope
     #                 seems to override this, not sure why it needs to be
     #                 configured here as well. I usually leave it blank.
-    # email/subject - (optional) sets the text in the email. Note: the envelope
+    # email/subject - (Optional) sets the text in the email. Note: the envelope
     #                 seems to override this, not sure why it needs to be
     #                 configured here as well. I usually leave it blank.
-    # signers       - an array of hashes of signers. See the
+    # signers       - An array of hashes of signers. See the
     #                 get_template_signers method definition for options.
-    # description   - the template description
-    # name          - the template name
-    # headers       - optional hash of headers to merge into the existing
+    # description   - The template description
+    # name          - The template name
+    # headers       - Optional hash of headers to merge into the existing
     #                 required headers for a multipart request.
     #
-    # Returns a response body containing the template's: name, templateId, Uri
+    # Returns a response body containing the template's:
+    #   name - Name given above
+    #   templateId - The auto-generated ID provided by DocuSign
+    #   Uri - the URI where the template is located on the DocuSign servers
     def create_template(options={})
       ios = create_file_ios(options[:files])
       file_params = create_file_params(ios)
@@ -519,21 +522,26 @@ module DocusignRest
 
     # Public: create an envelope for delivery from a template
     #
-    # headers        - optional hash of headers to merge into the existing
+    # headers        - Optional hash of headers to merge into the existing
     #                  required headers for a POST request.
-    # status         - options include: 'sent', 'created', 'voided' and
+    # status         - Options include: 'sent', 'created', 'voided' and
     #                  determine if the envelope is sent out immediately or
     #                  stored for sending at a later time
-    # email/body     - sets the text in the email body
-    # email/subject  - sets the text in the email subject line
-    # template_id    - the id of the template upon which we want to base this
+    # email/body     - Sets the text in the email body
+    # email/subject  - Sets the text in the email subject line
+    # template_id    - The id of the template upon which we want to base this
     #                  envelope
-    # template_roles - see the get_template_roles method definition for a list
+    # template_roles - See the get_template_roles method definition for a list
     #                  of options to pass. Note: for consistency sake we call
     #                  this 'signers' and not 'templateRoles' when we build up
     #                  the request in client code.
-    # headers        - optional hash of headers to merge into the existing
+    # headers        - Optional hash of headers to merge into the existing
     #                  required headers for a multipart request.
+    #
+    # Returns a response body containing the envelope's:
+    #   name - Name given above
+    #   templateId - The auto-generated ID provided by DocuSign
+    #   Uri - the URI where the template is located on the DocuSign servers
     def create_envelope_from_template(options={})
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]

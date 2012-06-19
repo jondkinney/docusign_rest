@@ -18,3 +18,4 @@ tmp
 .rvmrc
 test.rb
 test/fixtures/vcr/*
+test/docusign_login_config.rb

@@ -4,6 +4,7 @@ require 'minitest/autorun'
 require 'turn'
 require 'json'
 require 'vcr'
+require 'docusign_login_config'
 
 VCR.configure do |c|
   c.cassette_library_dir = "test/fixtures/vcr"
