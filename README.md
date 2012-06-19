@@ -24,7 +24,7 @@ There is a bundled rake task that will prompt you for your DocuSign credentials 
   * Password
   * Integrator Key
 
-and create the config/initializers/docusign\_rest.rb file in your Rails app for you. If the file was unable to be created, the rake task will output the config block for you to manually add to an initializer.
+and create the `config/initializers/docusign\_rest.rb` file in your Rails app for you. If the file was unable to be created, the rake task will output the config block for you to manually add to an initializer.
 
 **Note** please run the below task and ensure your initializer is in place before attempting to use any of the methods in this gem. Without the initializer this gem will not be able to properly authenticate you to the DocuSign REST API.
 
@@ -41,9 +41,9 @@ outputs:
     4) Request a new 'Integrator Key' via the web interface
         * You will use this key in one of the next steps to retrieve your 'accountId'
 
-    Please enter your DocuSign username:someone@gmail.com
-    Please enter your DocuSign password:p@ssw0rd1
-    Please enter your DocuSign integrator_key:KEYS-19ddd1cc-cb56-4ca6-87ec-38db47d14b32
+    Please enter your DocuSign username: someone@gmail.com
+    Please enter your DocuSign password: p@ssw0rd1
+    Please enter your DocuSign integrator_key: KEYS-19ddd1cc-cb56-4ca6-87ec-38db47d14b32
 
     The following block of code was added to config/initializers/docusign_rest.rb
 
@@ -186,7 +186,8 @@ In order to run the tests you'll need to register for a (free) docusign develope
 
     $ ruby lib/tasks/docusign_task.rb
 
-This calls a rake task (typically available when this gem is embedded in a Rails app) which adds a file in the test folder called 'docusign_login_config.rb' which is required in order to hit the test API. When a client runs the rake task this ruby file calls at the root of the Rails app it adds an initializer with the configuration settings properly setup.
+This calls a rake task which adds a file in the test folder called 'docusign_login_config.rb' which is required in order to hit the test API through the test code.
 
 **VCR**
-The test suite uses VCR and is configured to record the first request only by using the 'once' configuration option. If you want to expirmenet or are getting several errors with the test suite you may want to change the VCR config record setting to 'all' temporairily which will write a new yaml file for each request each time you hit the API. However, this significantly slow down tests and sort of negates the benefit of VCR which is to mock out the API entirely!
+
+The test suite uses VCR and is configured to record only the first request by using the 'once' configuration option surrounding each API request. If you want to expirmenet with the API or are getting several errors with the test suite, you may want to change the VCR config record setting to 'all' temporairily which will write a new yaml file for each request each time you hit the API. However, this significantly slow down tests and essentially negates the benefit of VCR which is to mock out the API entirely and keep the tests speedy.
