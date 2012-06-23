@@ -109,7 +109,6 @@ describe DocusignRest::Client do
           ],
           status: 'sent'
         )
-        response = JSON.parse(response.body)
         response["status"].must_equal "sent"
       end
     end
@@ -118,7 +117,7 @@ describe DocusignRest::Client do
       before do
         # create the template dynamically
         VCR.use_cassette("create_template", record: :once)  do
-          response = @client.create_template(
+          @template_response = @client.create_template(
             description: 'Cool Description',
             name: "Cool Template Name",
             signers: [
@@ -138,12 +137,11 @@ describe DocusignRest::Client do
               {path: 'test.pdf', name: 'test.pdf'}
             ]
           )
-          @template_response = JSON.parse(response.body)
         end
 
         # use the templateId to get the envelopeId
         VCR.use_cassette("create_envelope/from_template", record: :once)  do
-          response = @client.create_envelope_from_template(
+          @envelope_response = @client.create_envelope_from_template(
             status: 'sent',
             email: {
               subject: "The test email subject envelope",
@@ -159,7 +157,6 @@ describe DocusignRest::Client do
               }
             ]
           )
-          @envelope_response = JSON.parse(response.body)
         end
       end
 
@@ -179,11 +176,22 @@ describe DocusignRest::Client do
             email: 'someone@gmail.com',
             return_url: 'http://google.com'
           )
-          @view_recipient_response = JSON.parse(response.body)
-          puts @view_recipient_response["url"]
+          response.must_match(/http/)
         end
       end
 
+      #status return values = "sent", "delivered", "completed"
+      it "should retrieve the envelope recipients status" do
+        VCR.use_cassette("get_envelope_recipients", record: :once)  do
+          response = @client.get_envelope_recipients(
+            envelope_id: @envelope_response["envelopeId"],
+            include_tabs: true,
+            include_extended: true
+          )
+          response["signers"].wont_be_nil
+          #puts response["signers"]
+        end
+      end
     end
 
   end

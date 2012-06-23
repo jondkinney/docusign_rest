@@ -243,8 +243,8 @@ module DocusignRest
           \"routingOrder\":#{index+1},
           \"socialAuthentications\":null,
           \"templateAccessCodeRequired\":false,
-          \"templateLocked\":#{signer[:template_locked] || 'false'},
-          \"templateRequired\":#{signer[:template_required] || 'false'},
+          \"templateLocked\":#{signer[:template_locked] || true},
+          \"templateRequired\":#{signer[:template_required] || true},
           \"email\":\"#{signer[:email]}\",
           \"name\":\"#{signer[:name]}\",
           \"autoNavigation\":false,
@@ -268,20 +268,24 @@ module DocusignRest
             \"signHereTabs\":[
               {
                 \"anchorString\":\"#{signer[:anchor_string]}\",
-                \"conditionalParentLabel\":null,
-                \"conditionalParentValue\":null,
+                \"anchorXOffset\": \"0\",
+                \"anchorYOffset\": \"0\",
+                \"anchorIgnoreIfNotPresent\": false,
+                \"anchorUnits\": \"pixels\",
+                \"conditionalParentLabel\": null,
+                \"conditionalParentValue\": null,
                 \"documentId\":\"#{signer[:document_id] || '1'}\",
                 \"pageNumber\":\"#{signer[:page_number] || '1'}\",
                 \"recipientId\":\"#{index+1}\",
-                \"templateLocked\":#{signer[:template_locked] || 'false'},
-                \"templateRequired\":#{signer[:template_required] || 'false'},
+                \"templateLocked\":#{signer[:template_locked] || true},
+                \"templateRequired\":#{signer[:template_required] || true},
                 \"xPosition\":\"#{signer[:x_position] || '0'}\",
                 \"yPosition\":\"#{signer[:y_position] || '0'}\",
                 \"name\":\"#{signer[:sign_here_tab_text] || 'Sign Here'}\",
                 \"optional\":false,
                 \"scaleValue\":1,
                 \"tabLabel\":\"#{signer[:tab_label] || 'Signature 1'}\"
-              }
+              },
             ],
             \"signerAttachmentTabs\":null,
             \"ssnTabs\":null,
@@ -425,7 +429,7 @@ module DocusignRest
     #                 sending at a later time
     # headers       - Allows a client to pass in some
     #
-    # Returns a response object containing:
+    # Returns a JSON parsed response object containing:
     #   envelopeId     - The envelope's ID
     #   status         - Sent, created, or voided
     #   statusDateTime - The date/time the envelope was created
@@ -454,7 +458,8 @@ module DocusignRest
                 )
 
       # Finally do the Net::HTTP request!
-      http.request(request)
+      response = http.request(request)
+      parsed_response = JSON.parse(response.body)
     end
 
 
@@ -482,7 +487,7 @@ module DocusignRest
     # headers       - Optional hash of headers to merge into the existing
     #                 required headers for a multipart request.
     #
-    # Returns a response body containing the template's:
+    # Returns a JSON parsed response body containing the template's:
     #   name - Name given above
     #   templateId - The auto-generated ID provided by DocuSign
     #   Uri - the URI where the template is located on the DocuSign servers
@@ -516,7 +521,8 @@ module DocusignRest
                 )
 
       # Finally do the Net::HTTP request!
-      http.request(request)
+      response = http.request(request)
+      parsed_response = JSON.parse(response.body)
     end
 
 
@@ -538,7 +544,7 @@ module DocusignRest
     # headers        - Optional hash of headers to merge into the existing
     #                  required headers for a multipart request.
     #
-    # Returns a response body containing the envelope's:
+    # Returns a JSON parsed response body containing the envelope's:
     #   name - Name given above
     #   templateId - The auto-generated ID provided by DocuSign
     #   Uri - the URI where the template is located on the DocuSign servers
@@ -558,13 +564,11 @@ module DocusignRest
 
       http = initialize_net_http_ssl(uri)
 
-      request = Net::HTTP::Post.new(
-                  uri.request_uri,
-                  headers(content_type)
-                )
+      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
       request.body = post_body
 
-      http.request(request)
+      response = http.request(request)
+      parsed_response = JSON.parse(response.body)
     end
 
 
@@ -578,7 +582,7 @@ module DocusignRest
     # headers     - optional hash of headers to merge into the existing
     #               required headers for a multipart request.
     #
-    # Returns the URL for embedded signing which needs to be put in an iFrame
+    # Returns the URL string for embedded signing (can be put in an iFrame)
     def get_recipient_view(options={})
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
@@ -595,15 +599,38 @@ module DocusignRest
 
       http = initialize_net_http_ssl(uri)
 
-      request = Net::HTTP::Post.new(
-                  uri.request_uri,
-                  headers(content_type)
-                )
+      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
       request.body = post_body
 
-      http.request(request)
+      response = http.request(request)
+      parsed_response = JSON.parse(response.body)
+      parsed_response["url"]
     end
 
+    # Public returns the envelope recipients for a given envelope
+    #
+    # include_tabs - boolean, determines if the tabs for each signer will be
+    #                returned in the response, defaults to false.
+    # envelope_id  - ID of the envelope for which you want to retrive the
+    #                signer info
+    # headers      - optional hash of headers to merge into the existing
+    #                required headers for a multipart request.
+    #
+    # Returns a hash of detailed info about the envelope including the signer
+    # hash and status of each signer
+    def get_envelope_recipients(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      include_tabs = options[:include_tabs] || false
+      include_extended = options[:include_extended] || false
+      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients?include_tabs=#{include_tabs}&include_extended=#{include_extended}")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+      parsed_response = JSON.parse(response.body)
+    end
   end
 
 end
