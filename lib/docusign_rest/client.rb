@@ -268,8 +268,8 @@ module DocusignRest
             \"signHereTabs\":[
               {
                 \"anchorString\":\"#{signer[:anchor_string]}\",
-                \"anchorXOffset\": \"0\",
-                \"anchorYOffset\": \"0\",
+                \"anchorXOffset\": \"#{signer[:anchor_x_offset]}\",
+                \"anchorYOffset\": \"#{signer[:anchor_y_offset]}\",
                 \"anchorIgnoreIfNotPresent\": false,
                 \"anchorUnits\": \"pixels\",
                 \"conditionalParentLabel\": null,
