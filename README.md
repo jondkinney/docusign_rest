@@ -206,6 +206,16 @@ response = client.get_envelope_recipients(
 )
 ```
 
+**Retrieve a document from an envelope and store it at a local file path**
+
+```ruby
+client = DocusignRest::Client.new
+client.get_document_from_envelope(
+  envelope_id: @envelope_response["envelopeId"],
+  document_id: 1,
+  local_save_path: "#{Rails.root.join('docusign_docs/file_name.pdf')}"
+)
+```
 
 ## Breaking out of the iFrame after signing
 
@@ -262,4 +272,4 @@ This calls a rake task which adds a non-version controlled file in the test fold
 
 **VCR**
 
-The test suite uses VCR and is configured to record only the first request by using the 'once' configuration option surrounding each API request. If you want to experiment with the API or are getting several errors with the test suite, you may want to change the VCR config record setting to 'all' temporarily which will write a new YAML file for each request each time you hit the API. However, this significantly slow down tests and essentially negates the benefit of VCR which is to mock out the API entirely and keep the tests speedy.
+The test suite uses VCR and is configured to record all requests by using the 'all' configuration option surrounding each API request. If you want to speed up the test suite locally for new feature development, you may want to change the VCR config record setting to 'once' temporarily which will not write a new YAML file for each request each time you hit the API and significantly speed up the tests. However, this can lead to false passing tests as the gem changes so it's recommended that you ensure all tests pass by actually hitting the API before submitting a pull request.

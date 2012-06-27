@@ -81,7 +81,7 @@ describe DocusignRest::Client do
     end
 
     it "should allow creating an envelope from a document" do
-      VCR.use_cassette("create_envelope/from_document", record: :once) do
+      VCR.use_cassette("create_envelope/from_document", record: :all) do
         response = @client.create_envelope_from_document(
           email: {
             subject: "test email subject",
@@ -116,7 +116,7 @@ describe DocusignRest::Client do
     describe "embedded signing" do
       before do
         # create the template dynamically
-        VCR.use_cassette("create_template", record: :once)  do
+        VCR.use_cassette("create_template", record: :all)  do
           @template_response = @client.create_template(
             description: 'Cool Description',
             name: "Cool Template Name",
@@ -127,7 +127,6 @@ describe DocusignRest::Client do
                 email: 'someone@gmail.com',
                 role_name: 'Issuer',
                 anchor_string: 'sign here',
-                sign_here_tab_text: 'Issuer, Please Sign Here',
                 template_locked: true, #doesn't seem to do anything
                 template_required: true, #doesn't seem to do anything
                 email_notification: false #FIXME if signer is setup as 'embedded' initial email notifications don't go out, but even when I set up a signer as non-embedded this setting didn't seem to make the email notifications actually stop...
@@ -140,7 +139,7 @@ describe DocusignRest::Client do
         end
 
         # use the templateId to get the envelopeId
-        VCR.use_cassette("create_envelope/from_template", record: :once)  do
+        VCR.use_cassette("create_envelope/from_template", record: :all)  do
           @envelope_response = @client.create_envelope_from_template(
             status: 'sent',
             email: {
@@ -169,7 +168,7 @@ describe DocusignRest::Client do
         @envelope_response["errorCode"].must_be_nil
 
         #return the URL for embedded signing
-        VCR.use_cassette("get_recipient_view", record: :once)  do
+        VCR.use_cassette("get_recipient_view", record: :all)  do
           response = @client.get_recipient_view(
             envelope_id: @envelope_response["envelopeId"],
             name: 'jon',
@@ -182,7 +181,7 @@ describe DocusignRest::Client do
 
       #status return values = "sent", "delivered", "completed"
       it "should retrieve the envelope recipients status" do
-        VCR.use_cassette("get_envelope_recipients", record: :once)  do
+        VCR.use_cassette("get_envelope_recipients", record: :all)  do
           response = @client.get_envelope_recipients(
             envelope_id: @envelope_response["envelopeId"],
             include_tabs: true,
@@ -192,6 +191,19 @@ describe DocusignRest::Client do
           #puts response["signers"]
         end
       end
+
+      #status return values = "sent", "delivered", "completed"
+      it "should retrieve the byte stream of the envelope doc from DocuSign" do
+        VCR.use_cassette("get_document_from_envelope", record: :all)  do
+          @client.get_document_from_envelope(
+            envelope_id: @envelope_response["envelopeId"],
+            document_id: 1,
+            local_save_path: 'docusign_docs/file_name.pdf'
+          )
+          # NOTE manually check that this file has the content you'd expect
+        end
+      end
+
     end
 
   end

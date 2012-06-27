@@ -268,8 +268,8 @@ module DocusignRest
             \"signHereTabs\":[
               {
                 \"anchorString\":\"#{signer[:anchor_string]}\",
-                \"anchorXOffset\": \"#{signer[:anchor_x_offset]}\",
-                \"anchorYOffset\": \"#{signer[:anchor_y_offset]}\",
+                \"anchorXOffset\": \"#{signer[:anchor_x_offset] || 0}\",
+                \"anchorYOffset\": \"#{signer[:anchor_y_offset] || 0}\",
                 \"anchorIgnoreIfNotPresent\": false,
                 \"anchorUnits\": \"pixels\",
                 \"conditionalParentLabel\": null,
@@ -630,6 +630,44 @@ module DocusignRest
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
       response = http.request(request)
       parsed_response = JSON.parse(response.body)
+    end
+
+    # Public retrieves the attached file from a given envelope
+    #
+    # envelope_id      - ID of the envelope from which the doc will be retrieved
+    # document_id      - ID of the document to retrieve
+    # local_save_path  - Local absolute path to save the doc to including the
+    #                    filename itself
+    # headers          - Optional hash of headers to merge into the existing
+    #                    required headers for a multipart request.
+    #
+    # Example
+    #
+    #   client.get_document_from_envelope(
+    #     envelope_id: @envelope_response["envelopeId"],
+    #     document_id: 1,
+    #     local_save_path: 'docusign_docs/file_name.pdf'
+    #   )
+    #
+    # Returns the PDF document as a byte stream.
+    def get_document_from_envelope(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/documents/#{options[:document_id]}")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+
+      split_path = options[:local_save_path].split('/')
+      split_path.pop
+      path = split_path.join("/")
+
+      FileUtils.mkdir_p(path)
+      File.open(options[:local_save_path], 'wb') do |output|
+        output << response.body
+      end
     end
   end
 
