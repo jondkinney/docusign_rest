@@ -83,7 +83,7 @@ module DocusignRest
     def initialize_net_http_ssl(uri)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
       http
     end
 
