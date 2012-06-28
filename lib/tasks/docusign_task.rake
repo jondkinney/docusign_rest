@@ -46,7 +46,7 @@ DocusignRest.configure do |config|
   config.password       = '#{password}'
   config.integrator_key = '#{integrator_key}'
   config.account_id     = '#{acct_id}'
-  #config.endpoint       = 'https://docusign.net'
+  #config.endpoint       = 'https://www.docusign.net'
   #config.api_version    = 'v1'
 end\n\n}
 
