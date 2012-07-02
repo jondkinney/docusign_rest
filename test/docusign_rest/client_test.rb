@@ -95,16 +95,20 @@ describe DocusignRest::Client do
             {
               embedded: true,
               name: 'Test Guy',
-              email: 'someone@gmail.com',
+              email: 'testguy@gmail.com',
               role_name: 'Issuer',
-              anchor_string: 'sign here'
+              anchor_string: 'sign here',
+              anchor_x_offset: '125',
+              anchor_y_offset: '-12'
             },
             {
-              #embedded: true,
+              embedded: true,
               name: 'Test Girl',
-              email: 'someone+else@gmail.com',
-              role_name: 'Issuer',
-              anchor_string: 'sign here'
+              email: 'testgirl@gmail.com',
+              role_name: 'Attorney',
+              anchor_string: 'sign here',
+              anchor_x_offset: '140',
+              anchor_y_offset: '-12'
             }
           ],
           files: [

@@ -262,8 +262,8 @@ module DocusignRest
             \"signHereTabs\":[
               {
                 \"anchorString\":\"#{signer[:anchor_string]}\",
-                \"anchorXOffset\": \"#{signer[:anchor_x_offset] || 0}\",
-                \"anchorYOffset\": \"#{signer[:anchor_y_offset] || 0}\",
+                \"anchorXOffset\": \"#{signer[:anchor_x_offset] || '0'}\",
+                \"anchorYOffset\": \"#{signer[:anchor_y_offset] || '0'}\",
                 \"anchorIgnoreIfNotPresent\": false,
                 \"anchorUnits\": \"pixels\",
                 \"conditionalParentLabel\": null,
