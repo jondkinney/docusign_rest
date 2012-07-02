@@ -83,7 +83,11 @@ module DocusignRest
     def initialize_net_http_ssl(uri)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
+
+      # Explicitly verifies that the certificate matches the domain. Requires
+      # that we use www when calling the production DocuSign API
       http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+
       http
     end
 
@@ -136,34 +140,11 @@ module DocusignRest
       @acct_id
     end
 
+
     def check_embedded_signer(embedded, email)
       if embedded && embedded == true
         "\"clientUserId\" : \"#{email}\","
       end
-    end
-
-    # Internal: takes in an array of hashes of signers and calculates the
-    # recipientId then concatenates all the hashes with commas
-    #
-    # embedded - Tells DocuSign if this is an embedded signer which determines
-    #            weather or not to deliver emails. Also lets us authenticate
-    #            them when they go to do embedded signing. Behind the scenes
-    #            this is setting the clientUserId value to the signer's email.
-    # name     - The name of the signer
-    # email    - The email of the signer
-    #
-    # Returns a hash of users that need to sign the document
-    def get_signers(signers)
-      doc_signers = []
-      signers.each_with_index do |signer, index|
-        doc_signers << "{
-          #{check_embedded_signer(signer[:embedded], signer[:email])}
-          \"name\"         : \"#{signer[:name]}\",
-          \"email\"        : \"#{signer[:email]}\",
-          \"recipientId\"  : \"#{index+1}\"
-        }"
-      end
-      doc_signers.join(",")
     end
 
 
@@ -199,6 +180,10 @@ module DocusignRest
     # currently dynamic but that's easy to change/add which I (and I'm
     # sure others) will be doing in the future.
     #
+    # template           - Includes other optional fields only used when
+    #                      being called from a template
+    # email              - The signer's email
+    # name               - The signer's name
     # embedded           - Tells DocuSign if this is an embedded signer which
     #                      determines weather or not to deliver emails. Also
     #                      lets us authenticate them when they go to do
@@ -208,8 +193,6 @@ module DocusignRest
     # role_name          - The signer's role, like 'Attorney' or 'Client', etc.
     # template_locked    - Doesn't seem to work/do anything
     # template_required  - Doesn't seem to work/do anything
-    # email              - The signer's email
-    # name               - The signer's name
     # anchor_string      - The string of text to anchor the 'sign here' tab to
     # document_id        - If the doc you want signed isn't the first doc in
     #                      the files options hash
@@ -222,31 +205,42 @@ module DocusignRest
     #                      currently work.
     # sign_here_tab_text - Instead of 'sign here'. Note: doesn't work
     # tab_label          - TODO: figure out what this is
-    def get_template_signers(signers)
+    def get_signers(signers, options={})
       doc_signers = []
       signers.each_with_index do |signer, index|
-        doc_signers << "{
+        # Build up a string with concatenation so that we can append the full
+        # string to the doc_signers array as the last step in this block
+        doc_signer = ""
+        doc_signer << "{
+          \"email\":\"#{signer[:email]}\",
+          \"name\":\"#{signer[:name]}\",
           \"accessCode\":\"\",
           \"addAccessCodeToEmail\":false,
           #{check_embedded_signer(signer[:embedded], signer[:email])}
           \"customFields\":null,
           \"emailNotification\":#{signer[:email_notification] || 'null'},
-          \"idCheckConfigurationName\":null,
-          \"idCheckInformationInput\":null,
+          \"iDCheckConfigurationName\":null,
+          \"iDCheckInformationInput\":null,
           \"inheritEmailNotificationConfiguration\":false,
           \"note\":\"\",
           \"phoneAuthentication\":null,
-          \"recipientAttachments\":null,
+          \"recipientAttachment\":null,
           \"recipientId\":\"#{index+1}\",
           \"requireIdLookup\":false,
           \"roleName\":\"#{signer[:role_name]}\",
           \"routingOrder\":#{index+1},
           \"socialAuthentications\":null,
-          \"templateAccessCodeRequired\":false,
-          \"templateLocked\":#{signer[:template_locked] || true},
-          \"templateRequired\":#{signer[:template_required] || true},
-          \"email\":\"#{signer[:email]}\",
-          \"name\":\"#{signer[:name]}\",
+        "
+
+        if options[:template] == true
+          doc_signer << "
+            \"templateAccessCodeRequired\":false,
+            \"templateLocked\":#{signer[:template_locked] || true},
+            \"templateRequired\":#{signer[:template_required] || true},
+          "
+        end
+
+        doc_signer << "
           \"autoNavigation\":false,
           \"defaultRecipient\":false,
           \"signatureInfo\":null,
@@ -277,8 +271,14 @@ module DocusignRest
                 \"documentId\":\"#{signer[:document_id] || '1'}\",
                 \"pageNumber\":\"#{signer[:page_number] || '1'}\",
                 \"recipientId\":\"#{index+1}\",
-                \"templateLocked\":#{signer[:template_locked] || true},
-                \"templateRequired\":#{signer[:template_required] || true},
+              "
+              if options[:template] == true
+                doc_signer << "
+                  \"templateLocked\":#{signer[:template_locked] || true},
+                  \"templateRequired\":#{signer[:template_required] || true},
+                "
+              end
+              doc_signer << "
                 \"xPosition\":\"#{signer[:x_position] || '0'}\",
                 \"yPosition\":\"#{signer[:y_position] || '0'}\",
                 \"name\":\"#{signer[:sign_here_tab_text] || 'Sign Here'}\",
@@ -294,10 +294,11 @@ module DocusignRest
             \"zipTabs\":null
           }
         }"
+        # append the fully build string to the array
+        doc_signers << doc_signer
       end
       doc_signers.join(",")
     end
-
 
     # Internal: sets up the file ios array
     #
@@ -481,7 +482,7 @@ module DocusignRest
     #                 seems to override this, not sure why it needs to be
     #                 configured here as well. I usually leave it blank.
     # signers       - An array of hashes of signers. See the
-    #                 get_template_signers method definition for options.
+    #                 get_signers method definition for options.
     # description   - The template description
     # name          - The template name
     # headers       - Optional hash of headers to merge into the existing
@@ -500,7 +501,7 @@ module DocusignRest
         \"emailSubject\" : \"#{options[:email][:subject] if options[:email]}\",
         \"documents\"    : [#{get_documents(ios)}],
         \"recipients\"   : {
-          \"signers\"    : [#{get_template_signers(options[:signers])}]
+          \"signers\"    : [#{get_signers(options[:signers], template: true)}]
         },
         \"envelopeTemplateDefinition\" : {
           \"description\" : \"#{options[:description]}\",
@@ -661,8 +662,8 @@ module DocusignRest
       response = http.request(request)
 
       split_path = options[:local_save_path].split('/')
-      split_path.pop
-      path = split_path.join("/")
+      split_path.pop #removes the document name and extension from the array
+      path = split_path.join("/") #rejoins the array to form path to the folder that will contain the file
 
       FileUtils.mkdir_p(path)
       File.open(options[:local_save_path], 'wb') do |output|

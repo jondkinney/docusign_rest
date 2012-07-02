@@ -95,12 +95,16 @@ describe DocusignRest::Client do
             {
               embedded: true,
               name: 'Test Guy',
-              email: 'someone@gmail.com'
+              email: 'someone@gmail.com',
+              role_name: 'Issuer',
+              anchor_string: 'sign here'
             },
             {
               #embedded: true,
               name: 'Test Girl',
-              email: 'someone+else@gmail.com'
+              email: 'someone+else@gmail.com',
+              role_name: 'Issuer',
+              anchor_string: 'sign here'
             }
           ],
           files: [
