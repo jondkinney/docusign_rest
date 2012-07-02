@@ -54,7 +54,7 @@ outputs:
       config.password       = 'p@ssw0rd1'
       config.integrator_key = 'KEYS-19ddd1cc-cb56-4ca6-87ec-38db47d14b32'
       config.account_id     = '123456'
-      #config.endpoint       = 'https://www.docusign.net'
+      #config.endpoint       = 'https://www.docusign.net/restapi'
       #config.api_version    = 'v1'
     end
 
@@ -64,7 +64,7 @@ outputs:
 There are several other configuration options available but the two most likely to be needed are:
 
 ```ruby
-config.endpoint       = 'https://docusign.net'
+config.endpoint       = 'https://docusign.net/restapi'
 config.api_version    = 'v1'
 ```
 
