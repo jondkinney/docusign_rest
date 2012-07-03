@@ -264,7 +264,7 @@ module DocusignRest
                 \"anchorString\":\"#{signer[:anchor_string]}\",
                 \"anchorXOffset\": \"#{signer[:anchor_x_offset] || '0'}\",
                 \"anchorYOffset\": \"#{signer[:anchor_y_offset] || '0'}\",
-                \"anchorIgnoreIfNotPresent\": false,
+                \"anchorIgnoreIfNotPresent\": #{signer[:ignore_anchor_if_not_present] || false},
                 \"anchorUnits\": \"pixels\",
                 \"conditionalParentLabel\": null,
                 \"conditionalParentValue\": null,
