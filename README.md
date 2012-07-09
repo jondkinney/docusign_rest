@@ -92,6 +92,8 @@ puts client.get_account_id
 
 **Creating an envelope from a document:**
 
+Note: In the example below there are two sign here tabs for the user with a role of 'Attorney'. There are also two documents attached to the envelope, however, this exact configuration would only allow for signature on the first document. If you need signature for a second document, you'll need to add further options, namely: `document_id: 2` in one of the sign_here_tabs so that DocuSign knows where to embed that signature tab.
+
 ```ruby
 client = DocusignRest::Client.new
 document_envelope_response = client.create_envelope_from_document(
@@ -104,14 +106,35 @@ document_envelope_response = client.create_envelope_from_document(
   # iFrame by using the client.get_recipient_view method
   signers: [
     {
-      #embedded: true,
+      embedded: true,
       name: 'Test Guy',
-      email: 'someone@gmail.com'
+      email: 'someone@gmail.com',
+      role_name: 'Issuer',
+      sign_here_tabs: [
+        {
+          anchor_string: 'sign_here_1',
+          anchor_x_offset: '140',
+          anchor_y_offset: '8'
+        }
+      ]
     },
     {
-      #embedded: true,
+      embedded: true,
       name: 'Test Girl',
-      email: 'someone+else@gmail.com'
+      email: 'someone+else@gmail.com',
+      role_name: 'Attorney',
+      sign_here_tabs: [
+        {
+          anchor_string: 'sign_here_2',
+          anchor_x_offset: '140',
+          anchor_y_offset: '8'
+        },
+        {
+          anchor_string: 'sign_here_3',
+          anchor_x_offset: '140',
+          anchor_y_offset: '8'
+        }
+      ]
     }
   ],
   files: [
@@ -136,14 +159,26 @@ client = DocusignRest::Client.new
       name: 'jon',
       email: 'someone@gmail.com',
       role_name: 'Issuer',
-      anchor_string: 'issuer_sig'
+      sign_here_tabs: [
+        {
+          anchor_string: 'issuer_sig',
+          anchor_x_offset: '140',
+          anchor_y_offset: '8'
+        }
+      ]
     },
     {
       embedded: true,
       name: 'tim',
       email: 'someone+else@gmail.com',
       role_name: 'Attorney',
-      anchor_string: 'attorney_sig'
+      sign_here_tabs: [
+        {
+          anchor_string: 'attorney_sig',
+          anchor_x_offset: '140',
+          anchor_y_offset: '8'
+        }
+      ]
     }
   ],
   files: [
