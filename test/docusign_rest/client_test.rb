@@ -97,18 +97,26 @@ describe DocusignRest::Client do
               name: 'Test Guy',
               email: 'testguy@gmail.com',
               role_name: 'Issuer',
-              anchor_string: 'sign here',
-              anchor_x_offset: '125',
-              anchor_y_offset: '-12'
+              sign_here_tabs: [
+                {
+                  anchor_string: 'sign here',
+                  anchor_x_offset: '125',
+                  anchor_y_offset: '-12'
+                }
+              ]
             },
             {
               embedded: true,
               name: 'Test Girl',
               email: 'testgirl@gmail.com',
               role_name: 'Attorney',
-              anchor_string: 'sign here',
-              anchor_x_offset: '140',
-              anchor_y_offset: '-12'
+              sign_here_tabs: [
+                {
+                  anchor_string: 'sign here',
+                  anchor_x_offset: '140',
+                  anchor_y_offset: '-12'
+                }
+              ]
             }
           ],
           files: [
@@ -134,10 +142,14 @@ describe DocusignRest::Client do
                 name: 'jon',
                 email: 'someone@gmail.com',
                 role_name: 'Issuer',
-                anchor_string: 'sign here',
-                template_locked: true, #doesn't seem to do anything
-                template_required: true, #doesn't seem to do anything
-                email_notification: false #FIXME if signer is setup as 'embedded' initial email notifications don't go out, but even when I set up a signer as non-embedded this setting didn't seem to make the email notifications actually stop...
+                sign_here_tabs: [
+                  {
+                    anchor_string: 'sign here',
+                    template_locked: true, #doesn't seem to do anything
+                    template_required: true, #doesn't seem to do anything
+                    email_notification: false #FIXME if signer is setup as 'embedded' initial email notifications don't go out, but even when I set up a signer as non-embedded this setting didn't seem to make the email notifications actually stop...
+                  }
+                ]
               }
             ],
             files: [

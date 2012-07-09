@@ -260,33 +260,36 @@ module DocusignRest
             \"numberTabs\":null,
             \"radioGroupTabs\":null,
             \"signHereTabs\":[
-              {
-                \"anchorString\":\"#{signer[:anchor_string]}\",
-                \"anchorXOffset\": \"#{signer[:anchor_x_offset] || '0'}\",
-                \"anchorYOffset\": \"#{signer[:anchor_y_offset] || '0'}\",
-                \"anchorIgnoreIfNotPresent\": #{signer[:ignore_anchor_if_not_present] || false},
-                \"anchorUnits\": \"pixels\",
-                \"conditionalParentLabel\": null,
-                \"conditionalParentValue\": null,
-                \"documentId\":\"#{signer[:document_id] || '1'}\",
-                \"pageNumber\":\"#{signer[:page_number] || '1'}\",
-                \"recipientId\":\"#{index+1}\",
-              "
-              if options[:template] == true
-                doc_signer << "
-                  \"templateLocked\":#{signer[:template_locked] || true},
-                  \"templateRequired\":#{signer[:template_required] || true},
-                "
-              end
+          "
+          signer[:sign_here_tabs].each do |sign_here_tab|
+            doc_signer << "{
+              \"anchorString\":\"#{sign_here_tab[:anchor_string]}\",
+              \"anchorXOffset\": \"#{sign_here_tab[:anchor_x_offset] || '0'}\",
+              \"anchorYOffset\": \"#{sign_here_tab[:anchor_y_offset] || '0'}\",
+              \"anchorIgnoreIfNotPresent\": #{sign_here_tab[:ignore_anchor_if_not_present] || false},
+              \"anchorUnits\": \"pixels\",
+              \"conditionalParentLabel\": null,
+              \"conditionalParentValue\": null,
+              \"documentId\":\"#{sign_here_tab[:document_id] || '1'}\",
+              \"pageNumber\":\"#{sign_here_tab[:page_number] || '1'}\",
+              \"recipientId\":\"#{index+1}\",
+            "
+            if options[:template] == true
               doc_signer << "
-                \"xPosition\":\"#{signer[:x_position] || '0'}\",
-                \"yPosition\":\"#{signer[:y_position] || '0'}\",
-                \"name\":\"#{signer[:sign_here_tab_text] || 'Sign Here'}\",
-                \"optional\":false,
-                \"scaleValue\":1,
-                \"tabLabel\":\"#{signer[:tab_label] || 'Signature 1'}\"
-              },
-            ],
+                \"templateLocked\":#{sign_here_tab[:template_locked] || true},
+                \"templateRequired\":#{sign_here_tab[:template_required] || true},
+              "
+            end
+            doc_signer << "
+              \"xPosition\":\"#{sign_here_tab[:x_position] || '0'}\",
+              \"yPosition\":\"#{sign_here_tab[:y_position] || '0'}\",
+              \"name\":\"#{sign_here_tab[:sign_here_tab_text] || 'Sign Here'}\",
+              \"optional\":false,
+              \"scaleValue\":1,
+              \"tabLabel\":\"#{sign_here_tab[:tab_label] || 'Signature 1'}\"
+            },"
+          end
+          doc_signer << "],
             \"signerAttachmentTabs\":null,
             \"ssnTabs\":null,
             \"textTabs\":null,
