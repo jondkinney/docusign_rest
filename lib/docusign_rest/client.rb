@@ -398,7 +398,7 @@ module DocusignRest
       #
       request = Net::HTTP::Post::Multipart.new(
         uri.request_uri,
-        {post_body: post_body}.merge(file_params),
+        {:post_body => post_body}.merge(file_params),
         headers
       )
 
@@ -504,7 +504,7 @@ module DocusignRest
         \"emailSubject\" : \"#{options[:email][:subject] if options[:email]}\",
         \"documents\"    : [#{get_documents(ios)}],
         \"recipients\"   : {
-          \"signers\"    : [#{get_signers(options[:signers], template: true)}]
+          \"signers\"    : [#{get_signers(options[:signers], :template => true)}]
         },
         \"envelopeTemplateDefinition\" : {
           \"description\" : \"#{options[:description]}\",

@@ -16,7 +16,7 @@ describe 'configuration' do
 
       describe '.key' do
         it "should return default value for #{key}" do
-          DocusignRest.send(key).must_equal DocusignRest::Configuration.const_get("DEFAULT_#{key.upcase}")
+          DocusignRest.send(key).must_equal DocusignRest::Configuration.const_get("DEFAULT_#{key.to_s.upcase}")
         end
       end
     end
