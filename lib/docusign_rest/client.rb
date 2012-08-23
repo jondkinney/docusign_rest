@@ -673,6 +673,21 @@ module DocusignRest
         output << response.body
       end
     end
+
+    # Public: Retrieves a list of available templates
+    #
+    # Example
+    #
+    #    client.get_templates()
+    #
+    # Returns a list of the available templates.
+    def get_templates
+      uri = build_uri("/accounts/#{@acct_id}/templates")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Get.new(uri.request_uri, headers({"Content-Type" => "application/json"}))
+      JSON.parse(http.request(request).body)
+    end
   end
 
 end
