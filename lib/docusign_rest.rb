@@ -1,4 +1,3 @@
-require 'docusign_rest/version'
 require 'docusign_rest/configuration'
 require 'docusign_rest/client'
 require 'docusign_rest/utility'
