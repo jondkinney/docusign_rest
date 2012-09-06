@@ -271,6 +271,21 @@ module DocusignRest
           })
         end
 
+        doc_signer[:tabs][:dateSignedTabs] = signer[:date_signed_tabs].map do |date_signed_tab|
+           {
+              anchorString:"#{date_signed_tab[:anchor_string]}",
+              anchorXOffset: "#{date_signed_tab[:anchor_x_offset] || '0'}",
+              anchorYOffset: "#{date_signed_tab[:anchor_y_offset] || '0'}",
+              anchorIgnoreIfNotPresent: "#{date_signed_tab[:ignore_anchor_if_not_present] || false}",
+              anchorUnits: pixels,
+              conditionalParentLabel: nil,
+              conditionalParentValue: nil,
+              documentId:"#{date_signed_tab[:document_id] || '1'}",
+              pageNumber:"#{date_signed_tab[:page_number] || '1'}",
+              recipientId:"#{index+1}" 
+            }
+        end
+
         doc_signer[:tabs][:signHereTabs] = signer[:sign_here_tabs].map do |sign_here_tab|
           tab = {
             anchorString: sign_here_tab[:anchor_string],
