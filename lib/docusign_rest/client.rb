@@ -170,19 +170,22 @@ module DocusignRest
     # email     - The email of the signer
     # role_name - The role name of the signer ('Attorney', 'Client', etc.).
     #
-    # Returns a hash of users that need to be embedded in the template to
-    # create an envelope
+    # Returns an array of hashes of users that need to be embedded in the
+    # template to create an envelope
     def get_template_roles(signers)
       template_roles = []
       signers.each_with_index do |signer, index|
-        template_roles << "{
-          #{check_embedded_signer(signer[:embedded], signer[:email])}
-          \"name\"         : \"#{signer[:name]}\",
-          \"email\"        : \"#{signer[:email]}\",
-          \"roleName\"     : \"#{signer[:role_name]}\"
-        }"
+        template_role = {
+          name: signer[:name],
+          email: signer[:email],
+          roleName: signer[:role_name]
+        }
+
+        template_role[:clientUserId] = signer[:email] if signer[:embedded] == true
+
+        template_roles << template_role
       end
-      template_roles.join(",")
+      template_roles
     end
 
 
@@ -567,13 +570,13 @@ module DocusignRest
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
 
-      post_body = "{
-        \"status\"        : \"#{options[:status]}\",
-        \"emailBlurb\"    : \"#{options[:email][:body]}\",
-        \"emailSubject\"  : \"#{options[:email][:subject]}\",
-        \"templateId\"    : \"#{options[:template_id]}\",
-        \"templateRoles\" : [#{get_template_roles(options[:signers])}],
-       }"
+      post_body = {
+        status: options[:status],
+        emailBlurb: options[:email][:body],
+        emailSubject: options[:email][:subject],
+        templateId: options[:template_id],
+        templateRoles: get_template_roles(options[:signers])
+      }.to_json
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes")
 
