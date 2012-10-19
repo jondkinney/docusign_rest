@@ -605,13 +605,13 @@ module DocusignRest
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
 
-      post_body = "{
-        \"authenticationMethod\" : \"email\",
-        \"clientUserId\"         : \"#{options[:email]}\",
-        \"email\"                : \"#{options[:email]}\",
-        \"returnUrl\"            : \"#{options[:return_url]}\",
-        \"userName\"             : \"#{options[:name]}\",
-       }"
+      post_body = {
+        authenticationMethod: 'email',
+        clientUserId: options[:email],
+        email: options[:email],
+        returnUrl: options[:return_url],
+        userName: options[:name]
+      }.to_json
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/views/recipient")
 
