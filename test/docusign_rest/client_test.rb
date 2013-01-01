@@ -195,7 +195,7 @@ describe DocusignRest::Client do
             email: 'someone@gmail.com',
             return_url: 'http://google.com'
           )
-          response.must_match(/http/)
+          response['url'].must_match(/http/)
         end
       end
 
