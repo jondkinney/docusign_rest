@@ -607,8 +607,7 @@ module DocusignRest
       request.body = post_body
 
       response = http.request(request)
-      parsed_response = JSON.parse(response.body)
-      parsed_response["url"]
+      JSON.parse(response.body)
     end
 
     # Public returns the envelope recipients for a given envelope
