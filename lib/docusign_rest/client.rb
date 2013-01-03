@@ -254,47 +254,78 @@ module DocusignRest
             \"emailTabs\":null,
             \"envelopeIdTabs\":null,
             \"fullNameTabs\":null,
-            \"initialHereTabs\":null,
             \"listTabs\":null,
             \"noteTabs\":null,
             \"numberTabs\":null,
             \"radioGroupTabs\":null,
+            \"initialHereTabs\":[
+          "
+        (signer[:initial_here_tabs] || []).each do |initial_here_tab|
+          doc_signer << "{
+            \"anchorString\":\"#{initial_here_tab[:anchor_string]}\",
+            \"anchorXOffset\": \"#{initial_here_tab[:anchor_x_offset] || '0'}\",
+            \"anchorYOffset\": \"#{initial_here_tab[:anchor_y_offset] || '0'}\",
+            \"anchorIgnoreIfNotPresent\": #{initial_here_tab[:ignore_anchor_if_not_present] || false},
+            \"anchorUnits\": \"pixels\",
+            \"conditionalParentLabel\": null,
+            \"conditionalParentValue\": null,
+            \"documentId\":\"#{initial_here_tab[:document_id] || '1'}\",
+            \"pageNumber\":\"#{initial_here_tab[:page_number] || '1'}\",
+            \"recipientId\":\"#{index+1}\",
+          "
+          if options[:template] == true
+            doc_signer << "
+              \"templateLocked\":#{initial_here_tab[:template_locked] || true},
+              \"templateRequired\":#{initial_here_tab[:template_required] || true},
+            "
+          end
+          doc_signer << "
+            \"xPosition\":\"#{initial_here_tab[:x_position] || '0'}\",
+            \"yPosition\":\"#{initial_here_tab[:y_position] || '0'}\",
+            \"name\":\"#{initial_here_tab[:sign_here_tab_text] || 'Sign Here'}\",
+            \"optional\":false,
+            \"scaleValue\":1,
+            \"tabLabel\":\"#{initial_here_tab[:tab_label] || 'Signature 1'}\"
+          },"
+        end
+
+        doc_signer << "],
             \"signHereTabs\":[
           "
-          signer[:sign_here_tabs].each do |sign_here_tab|
-            doc_signer << "{
-              \"anchorString\":\"#{sign_here_tab[:anchor_string]}\",
-              \"anchorXOffset\": \"#{sign_here_tab[:anchor_x_offset] || '0'}\",
-              \"anchorYOffset\": \"#{sign_here_tab[:anchor_y_offset] || '0'}\",
-              \"anchorIgnoreIfNotPresent\": #{sign_here_tab[:ignore_anchor_if_not_present] || false},
-              \"anchorUnits\": \"pixels\",
-              \"conditionalParentLabel\": null,
-              \"conditionalParentValue\": null,
-              \"documentId\":\"#{sign_here_tab[:document_id] || '1'}\",
-              \"pageNumber\":\"#{sign_here_tab[:page_number] || '1'}\",
-              \"recipientId\":\"#{index+1}\",
-            "
-            if options[:template] == true
-              doc_signer << "
-                \"templateLocked\":#{sign_here_tab[:template_locked] || true},
-                \"templateRequired\":#{sign_here_tab[:template_required] || true},
-              "
-            end
+        signer[:sign_here_tabs].each do |sign_here_tab|
+          doc_signer << "{
+            \"anchorString\":\"#{sign_here_tab[:anchor_string]}\",
+            \"anchorXOffset\": \"#{sign_here_tab[:anchor_x_offset] || '0'}\",
+            \"anchorYOffset\": \"#{sign_here_tab[:anchor_y_offset] || '0'}\",
+            \"anchorIgnoreIfNotPresent\": #{sign_here_tab[:ignore_anchor_if_not_present] || false},
+            \"anchorUnits\": \"pixels\",
+            \"conditionalParentLabel\": null,
+            \"conditionalParentValue\": null,
+            \"documentId\":\"#{sign_here_tab[:document_id] || '1'}\",
+            \"pageNumber\":\"#{sign_here_tab[:page_number] || '1'}\",
+            \"recipientId\":\"#{index+1}\",
+          "
+          if options[:template] == true
             doc_signer << "
-              \"xPosition\":\"#{sign_here_tab[:x_position] || '0'}\",
-              \"yPosition\":\"#{sign_here_tab[:y_position] || '0'}\",
-              \"name\":\"#{sign_here_tab[:sign_here_tab_text] || 'Sign Here'}\",
-              \"optional\":false,
-              \"scaleValue\":1,
-              \"tabLabel\":\"#{sign_here_tab[:tab_label] || 'Signature 1'}\"
-            },"
+              \"templateLocked\":#{sign_here_tab[:template_locked] || true},
+              \"templateRequired\":#{sign_here_tab[:template_required] || true},
+            "
           end
-          doc_signer << "],
-            \"signerAttachmentTabs\":null,
-            \"ssnTabs\":null,
-            \"textTabs\":null,
-            \"titleTabs\":null,
-            \"zipTabs\":null
+          doc_signer << "
+            \"xPosition\":\"#{sign_here_tab[:x_position] || '0'}\",
+            \"yPosition\":\"#{sign_here_tab[:y_position] || '0'}\",
+            \"name\":\"#{sign_here_tab[:sign_here_tab_text] || 'Sign Here'}\",
+            \"optional\":false,
+            \"scaleValue\":1,
+            \"tabLabel\":\"#{sign_here_tab[:tab_label] || 'Signature 1'}\"
+          },"
+        end
+        doc_signer << "],
+          \"signerAttachmentTabs\":null,
+          \"ssnTabs\":null,
+          \"textTabs\":null,
+          \"titleTabs\":null,
+          \"zipTabs\":null
           }
         }"
         # append the fully build string to the array
