@@ -251,7 +251,7 @@ module DocusignRest
             \"dateSignedTabs\":#{get_tabs(signer[:date_signed_tabs], options, index)},
             \"dateTabs\":null,
             \"declineTabs\":null,
-            \"emailTabs\":#{get_tabs(signer[:full_name_tabs], options, index)},
+            \"emailTabs\":#{get_tabs(signer[:email_tabs], options, index)},
             \"envelopeIdTabs\":null,
             \"fullNameTabs\":#{get_tabs(signer[:full_name_tabs], options, index)},
             \"listTabs\":null,
@@ -297,10 +297,10 @@ module DocusignRest
         tab_buf << "
           \"xPosition\":\"#{tab[:x_position] || '0'}\",
           \"yPosition\":\"#{tab[:y_position] || '0'}\",
-          \"name\":\"#{tab[:sign_here_tab_text] || 'Sign Here'}\",
+          \"name\":\"#{tab[:tab_name] || 'Sign Here'}\",
           \"optional\":false,
           \"scaleValue\":1,
-          \"tabLabel\":\"#{tab[:tab_label] || 'Signature 1'}\"
+          \"tabLabel\":\"#{tab[:label] || 'Signature 1'}\"
         }"
         tab_buf
       end
@@ -526,13 +526,15 @@ module DocusignRest
 
       http = initialize_net_http_ssl(uri)
 
+      puts post_body
+
       request = initialize_net_http_multipart_post_request(
                   uri, post_body, file_params, headers(options[:headers])
                 )
 
       # Finally do the Net::HTTP request!
       response = http.request(request)
-      parsed_response = JSON.parse(response.body)
+      JSON.parse(response.body)
     end
 
 
