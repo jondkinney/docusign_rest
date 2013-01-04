@@ -262,7 +262,7 @@ module DocusignRest
             \"signHereTabs\":#{get_tabs(signer[:sign_here_tabs], options, index)},
             \"signerAttachmentTabs\":null,
             \"ssnTabs\":null,
-            \"textTabs\":null,
+            \"textTabs\":#{get_tabs(signer[:text_tabs], options, index)},
             \"titleTabs\":null,
             \"zipTabs\":null
           }
@@ -290,14 +290,14 @@ module DocusignRest
         "
         if options[:template] == true
           tab_buf << "
-            \"templateLocked\":#{tab[:template_locked] || true},
-            \"templateRequired\":#{tab[:template_required] || true},
+            \"templateLocked\":#{tab[:template_locked].present? ? tab[:template_locked] : true},
+            \"templateRequired\":#{tab[:template_required].present? ? tab[:template_required] : true},
           "
         end
         tab_buf << "
           \"xPosition\":\"#{tab[:x_position] || '0'}\",
           \"yPosition\":\"#{tab[:y_position] || '0'}\",
-          \"name\":\"#{tab[:tab_name] || 'Sign Here'}\",
+          \"name\":\"#{tab[:name] || 'Sign Here'}\",
           \"optional\":false,
           \"scaleValue\":1,
           \"tabLabel\":\"#{tab[:label] || 'Signature 1'}\"
@@ -526,7 +526,7 @@ module DocusignRest
 
       http = initialize_net_http_ssl(uri)
 
-      puts post_body
+      # puts post_body
 
       request = initialize_net_http_multipart_post_request(
                   uri, post_body, file_params, headers(options[:headers])
