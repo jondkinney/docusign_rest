@@ -125,6 +125,7 @@ describe DocusignRest::Client do
           ],
           status: 'sent'
         )
+
         response["status"].must_equal "sent"
       end
     end
