@@ -251,7 +251,7 @@ module DocusignRest
             \"dateSignedTabs\":#{get_tabs(signer[:date_signed_tabs], options, index)},
             \"dateTabs\":null,
             \"declineTabs\":null,
-            \"emailTabs\":null,
+            \"emailTabs\":#{get_tabs(signer[:full_name_tabs], options, index)},
             \"envelopeIdTabs\":null,
             \"fullNameTabs\":#{get_tabs(signer[:full_name_tabs], options, index)},
             \"listTabs\":null,
