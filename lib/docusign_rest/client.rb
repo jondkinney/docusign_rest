@@ -166,12 +166,26 @@ module DocusignRest
       signers.each_with_index do |signer, index|
         template_roles << "{
           #{check_embedded_signer(signer[:embedded], signer[:email])}
+          \"roleName\"     : \"#{signer[:role_name]}\",
           \"name\"         : \"#{signer[:name]}\",
           \"email\"        : \"#{signer[:email]}\",
-          \"roleName\"     : \"#{signer[:role_name]}\"
+          \"tabs\": {
+            \"textTabs\": #{get_signer_tabs(signer[:text_tabs])}
+          }
         }"
       end
       template_roles.join(",")
+    end
+
+    def get_signer_tabs(tabs)
+      Array(tabs).map do |tab|
+        {
+          'tabLabel' => tab[:label],
+          'name' => tab[:name],
+          'value' => tab[:value],
+          'documentId' => tab[:document_id]
+        }
+      end.to_json
     end
 
 
@@ -569,7 +583,7 @@ module DocusignRest
         \"emailBlurb\"    : \"#{options[:email][:body]}\",
         \"emailSubject\"  : \"#{options[:email][:subject]}\",
         \"templateId\"    : \"#{options[:template_id]}\",
-        \"templateRoles\" : [#{get_template_roles(options[:signers])}],
+        \"templateRoles\" : [#{get_template_roles(options[:signers])}]
        }"
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes")
