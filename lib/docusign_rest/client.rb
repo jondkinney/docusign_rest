@@ -18,12 +18,11 @@ module DocusignRest
       # Set up the DocuSign Authentication headers with the values passed from
       # our config block
       @docusign_authentication_headers = {
-        "X-DocuSign-Authentication" => "" \
-          "<DocuSignCredentials>" \
-            "<Username>#{DocusignRest.username}</Username>" \
-            "<Password>#{DocusignRest.password}</Password>" \
-            "<IntegratorKey>#{DocusignRest.integrator_key}</IntegratorKey>" \
-          "</DocuSignCredentials>"
+        "X-DocuSign-Authentication" => {
+          "Username" => DocusignRest.username,
+          "Password" => DocusignRest.password,
+          "IntegratorKey" => DocusignRest.integrator_key
+        }.to_json
       }
 
       # Set the account_id from the configure block if present, but can't call
@@ -52,7 +51,7 @@ module DocusignRest
     # user-defined headers along with the X-DocuSign-Authentication headers
     def headers(user_defined_headers={})
       default = {
-        "Accept" => "application/json" #this seems to get added automatically, so I can probably remove this
+        "Accept" => "json" #this seems to get added automatically, so I can probably remove this
       }
 
       default.merge!(user_defined_headers) if user_defined_headers
@@ -166,9 +165,9 @@ module DocusignRest
       signers.each_with_index do |signer, index|
         template_roles << "{
           #{check_embedded_signer(signer[:embedded], signer[:email])}
-          \"roleName\"     : \"#{signer[:role_name]}\",
           \"name\"         : \"#{signer[:name]}\",
           \"email\"        : \"#{signer[:email]}\",
+          \"roleName\"     : \"#{signer[:role_name]}\",
           \"tabs\": {
             \"textTabs\": #{get_signer_tabs(signer[:text_tabs])}
           }
@@ -304,8 +303,8 @@ module DocusignRest
         "
         if options[:template] == true
           tab_buf << "
-            \"templateLocked\":#{tab[:template_locked].present? ? tab[:template_locked] : true},
-            \"templateRequired\":#{tab[:template_required].present? ? tab[:template_required] : true},
+            \"templateLocked\":#{tab[:template_locked].nil? ? true : tab[:template_locked]},
+            \"templateRequired\":#{tab[:template_required].nil? ? true : tab[:template_required]},
           "
         end
         tab_buf << "
@@ -589,6 +588,8 @@ module DocusignRest
       uri = build_uri("/accounts/#{@acct_id}/envelopes")
 
       http = initialize_net_http_ssl(uri)
+
+      # puts post_body
 
       request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
       request.body = post_body
