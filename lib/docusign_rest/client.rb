@@ -300,6 +300,7 @@ module DocusignRest
           \"documentId\":\"#{tab[:document_id] || '1'}\",
           \"pageNumber\":\"#{tab[:page_number] || '1'}\",
           \"recipientId\":\"#{index+1}\",
+          \"required\":\"#{tab[:required] || false}\",
         "
         if options[:template] == true
           tab_buf << "
