@@ -187,6 +187,20 @@ module DocusignRest
       end.to_json
     end
 
+    def get_event_notification(event_notification)
+      return {} unless event_notification
+      {
+        useSoapInterface: event_notification[:use_soap_interface] || false,
+        includeCertificatWithSoap: event_notification[:include_certificate_with_soap] || false,
+        envelopeEvents: Array(event_notification[:envelope_events]).map do |envelope_event|
+          {
+            includeDocuments: envelope_event[:include_documents],
+            envelopeEventStatusCode: envelope_event[:envelope_event_status_code]
+          }
+        end
+      }
+    end
+
 
     # Internal: takes an array of hashes of signers required to complete a
     # document and allows for setting several options. Not all options are
@@ -540,8 +554,6 @@ module DocusignRest
 
       http = initialize_net_http_ssl(uri)
 
-      # puts post_body
-
       request = initialize_net_http_multipart_post_request(
                   uri, post_body, file_params, headers(options[:headers])
                 )
@@ -583,14 +595,13 @@ module DocusignRest
         \"emailBlurb\"    : \"#{options[:email][:body]}\",
         \"emailSubject\"  : \"#{options[:email][:subject]}\",
         \"templateId\"    : \"#{options[:template_id]}\",
+        \"eventNotification\" : #{get_event_notification(options[:event_notification]).to_json},
         \"templateRoles\" : [#{get_template_roles(options[:signers])}]
        }"
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes")
 
       http = initialize_net_http_ssl(uri)
-
-      # puts post_body
 
       request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
       request.body = post_body
@@ -617,7 +628,7 @@ module DocusignRest
 
       post_body = "{
         \"authenticationMethod\" : \"email\",
-        \"clientUserId\"         : \"#{options[:email]}\",
+        \"clientUserId\"         : \"#{options[:client_id] || options[:email]}\",
         \"email\"                : \"#{options[:email]}\",
         \"returnUrl\"            : \"#{options[:return_url]}\",
         \"userName\"             : \"#{options[:name]}\",
