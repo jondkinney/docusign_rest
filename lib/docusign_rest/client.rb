@@ -140,9 +140,9 @@ module DocusignRest
     end
 
 
-    def check_embedded_signer(embedded, email)
+    def check_embedded_signer(embedded, client_id)
       if embedded && embedded == true
-        "\"clientUserId\" : \"#{email}\","
+        "\"clientUserId\" : \"#{client_id}\","
       end
     end
 
@@ -164,7 +164,7 @@ module DocusignRest
       template_roles = []
       signers.each_with_index do |signer, index|
         template_roles << "{
-          #{check_embedded_signer(signer[:embedded], signer[:email])}
+          #{check_embedded_signer(signer[:embedded], signer[:client_id] || signer[:email])}
           \"name\"         : \"#{signer[:name]}\",
           \"email\"        : \"#{signer[:email]}\",
           \"roleName\"     : \"#{signer[:role_name]}\",
@@ -229,7 +229,7 @@ module DocusignRest
           \"name\":\"#{signer[:name]}\",
           \"accessCode\":\"\",
           \"addAccessCodeToEmail\":false,
-          #{check_embedded_signer(signer[:embedded], signer[:email])}
+          #{check_embedded_signer(signer[:embedded], signer[:client_id] || signer[:email])}
           \"customFields\":null,
           \"emailNotification\":#{signer[:email_notification] || 'null'},
           \"iDCheckConfigurationName\":null,
