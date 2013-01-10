@@ -192,9 +192,11 @@ module DocusignRest
       {
         useSoapInterface: event_notification[:use_soap_interface] || false,
         includeCertificatWithSoap: event_notification[:include_certificate_with_soap] || false,
-        envelopeEvents: Array(event_notification[:envelope_events]).map do |envelope_event|
+        url: event_notification[:url],
+        loggingEnabled: event_notification[:logging],
+        'EnvelopeEvents' => Array(event_notification[:envelope_events]).map do |envelope_event|
           {
-            includeDocuments: envelope_event[:include_documents],
+            includeDocuments: envelope_event[:include_documents] || false,
             envelopeEventStatusCode: envelope_event[:envelope_event_status_code]
           }
         end
