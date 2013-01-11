@@ -565,6 +565,18 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+    def get_template(template_id, options = {})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{@acct_id}/templates/#{template_id}")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+      JSON.parse(response.body)
+    end
+
 
     # Public: create an envelope for delivery from a template
     #

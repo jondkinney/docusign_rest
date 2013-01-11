@@ -180,6 +180,13 @@ describe DocusignRest::Client do
         end
       end
 
+      it "should get a template" do
+        VCR.use_cassette("get_template", record: :all)  do
+          response = @client.get_template(@template_response["templateId"])
+          assert_equal @template_response["templateId"], response['envelopeTemplateDefinition']['templateId']
+        end
+      end
+
       it "should return a URL for embedded signing" do
         #ensure template was created
         @template_response["templateId"].wont_be_nil
