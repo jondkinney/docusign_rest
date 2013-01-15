@@ -1,7 +1,7 @@
 module DocusignRest
   module Configuration
     VALID_CONNECTION_KEYS  = [:endpoint, :api_version, :user_agent, :method].freeze
-    VALID_OPTIONS_KEYS     = [:username, :password, :integrator_key, :account_id, :format].freeze
+    VALID_OPTIONS_KEYS     = [:username, :password, :integrator_key, :account_id, :format, :ca_file].freeze
     VALID_CONFIG_KEYS      = VALID_CONNECTION_KEYS + VALID_OPTIONS_KEYS
 
     DEFAULT_ENDPOINT       = 'https://demo.docusign.net/restapi'
@@ -13,6 +13,7 @@ module DocusignRest
     DEFAULT_PASSWORD       = nil
     DEFAULT_INTEGRATOR_KEY = nil
     DEFAULT_ACCOUNT_ID     = nil
+    DEFAULT_CA_FILE        = nil
     DEFAULT_FORMAT         = :json
 
     # Build accessor methods for every config options so we can do this, for example:
@@ -35,6 +36,7 @@ module DocusignRest
       self.integrator_key = DEFAULT_INTEGRATOR_KEY
       self.account_id     = DEFAULT_ACCOUNT_ID
       self.format         = DEFAULT_FORMAT
+      self.ca_file        = DEFAULT_CA_FILE
     end
 
     # Allow configuration via a block

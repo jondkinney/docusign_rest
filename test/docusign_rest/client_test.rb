@@ -38,6 +38,7 @@ describe DocusignRest::Client do
           :api_version    => 'av',
           :user_agent     => 'ua',
           :method         => 'md',
+          :ca_file        => 'ca'
         }
       end
 

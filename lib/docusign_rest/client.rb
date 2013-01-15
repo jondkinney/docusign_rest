@@ -87,6 +87,8 @@ module DocusignRest
       # that we use www when calling the production DocuSign API
       http.verify_mode = OpenSSL::SSL::VERIFY_PEER
 
+      http.ca_file = ca_file if ca_file
+
       http
     end
 
