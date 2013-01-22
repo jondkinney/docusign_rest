@@ -714,6 +714,32 @@ module DocusignRest
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
       http.request(request)
     end
+
+    def create_account(options)
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts")
+
+      post_body = convert_hash_keys(options).to_json
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+      response = http.request(request)
+      JSON.parse(response.body)
+    end
+
+    def convert_hash_keys(value)
+      case value
+        when Array
+          value.map { |v| convert_hash_keys(v) }
+        when Hash
+          Hash[value.map { |k, v| [k.to_s.camelize(:lower), convert_hash_keys(v)] }]
+        else
+          value
+       end
+    end    
   end
 
 end
