@@ -19,16 +19,16 @@ module DocusignRest
       # our config block
       @docusign_authentication_headers = {
         "X-DocuSign-Authentication" => {
-          "Username" => DocusignRest.username,
-          "Password" => DocusignRest.password,
-          "IntegratorKey" => DocusignRest.integrator_key
+          "Username" => username,
+          "Password" => password,
+          "IntegratorKey" => integrator_key
         }.to_json
       }
 
       # Set the account_id from the configure block if present, but can't call
       # the instance var @account_id because that'll override the attr_accessor
       # that is automatically configured for the configure block
-      @acct_id = DocusignRest.account_id
+      @acct_id = account_id
     end
 
 
