@@ -71,7 +71,7 @@ module DocusignRest
     #
     # Returns a parsed URI object
     def build_uri(url)
-      URI.parse("#{DocusignRest.endpoint}/#{DocusignRest.api_version}#{url}")
+      URI.parse("#{endpoint}/#{api_version}#{url}")
     end
 
 
