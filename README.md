@@ -2,6 +2,8 @@
 
 This 'wrapper gem' hooks a Ruby app (currently only tested with Rails) up to the [DocuSign](http://www.docusign.com/) [REST API](http://www.docusign.com/developer-center) to allow for embedded signing.
 
+This gem is a fork of j2fly's version with a few modifications that make it easier to use API 'v2'.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -59,27 +61,47 @@ outputs:
     end
 
 
+KK- if you wind up with an SSL error here in Ruby 1.9 / Rails, you will need to add and link to an SSL certificate within your project. [Here are some instructions on how to get the certificate](http://martinottenwaelter.fr/2010/12/ruby19-and-the-ssl-error/). Stick this code into an initializer.
+
+```ruby
+require 'open-uri'
+require 'net/https'
+
+module Net
+  class HTTP
+    alias_method :original_use_ssl=, :use_ssl=
+
+    def use_ssl=(flag)
+      self.ca_file = File.join("#{Rails.root}", "lib", "ssl_certificates", "ca-bundle.crt")
+      self.verify_mode = OpenSSL::SSL::VERIFY_PEER
+      self.original_use_ssl = flag
+    end
+  end
+end
+```
+
 ### Config Options
 
 There are several other configuration options available but the two most likely to be needed are:
 
 ```ruby
 config.endpoint       = 'https://docusign.net/restapi'
-config.api_version    = 'v1'
+config.api_version    = 'v2'
 ```
 
 The above options allow you to change the endpoint (to be able to hit the production DocuSign API, for instance) and to modify the API version you wish to use. If there is a big change in the API it's likely that this gem will need to be updated to leverage changes on the DocuSign side. However, it doesn't hurt to provide the option in case there are several minor updates that do not break functionality but would otherwise require a new gem release. These config options have existed since the gem was created, but in v0.0.3 and above, the options are auto-generated in the config file as comments to make them easier to discover.
 
+KK- I've set the default to v2, since it corresponds better to the iodocs API explorer that Docusign has on their site.
 
 ## Usage
 
-The docusign\_rest gem makes creating multipart POST (aka file upload) requests to the DocuSign REST API dead simple. It's built on top of Net:HTTP and utilizes the [multipart-post](https://github.com/nicksieger/multipart-post) gem to assist with formatting the multipart requests. The DocuSign REST API requires that all files be embedded as JSON directly in the request body (not the body\_stream like multipart-post does by default) so the docusign\_rest gem takes care of [setting that up for you](https://github.com/j2fly/docusign_rest/blob/master/lib/docusign_rest/client.rb#L397). 
+The docusign\_rest gem makes creating multipart POST (aka file upload) requests to the DocuSign REST API dead simple. It's built on top of Net:HTTP and utilizes the [multipart-post](https://github.com/nicksieger/multipart-post) gem to assist with formatting the multipart requests. The DocuSign REST API requires that all files be embedded as JSON directly in the request body (not the body\_stream like multipart-post does by default) so the docusign\_rest gem takes care of [setting that up for you](https://github.com/j2fly/docusign_rest/blob/master/lib/docusign_rest/client.rb#L397).
 
-This gem also monkey patches one small part of multipart-post to inject some header values and formatting that DocuSign requires. If you would like to see the monkey patched code please take a look at [lib/multipart-post/parts.rb](https://github.com/j2fly/docusign_rest/blob/master/lib/multipart_post/parts.rb). It's only re-opening one method, but feel free to make sure you understand that code if it concerns you. 
+This gem also monkey patches one small part of multipart-post to inject some header values and formatting that DocuSign requires. If you would like to see the monkey patched code please take a look at [lib/multipart-post/parts.rb](https://github.com/j2fly/docusign_rest/blob/master/lib/multipart_post/parts.rb). It's only re-opening one method, but feel free to make sure you understand that code if it concerns you.
 
 ### Examples
 
-* These examples assume you have already run the `docusign_rest:generate_config` rake task and have the configure block properly setup in an initializer with your username, password, integrator\_key, and account\_id. 
+* These examples assume you have already run the `docusign_rest:generate_config` rake task and have the configure block properly setup in an initializer with your username, password, integrator\_key, and account\_id.
 * Unless noted otherwise, these requests return the JSON parsed body of the response so you can index the returned hash directly. For example: `template_response["templateId"]`.
 
 **Getting account_id:**
@@ -102,7 +124,7 @@ document_envelope_response = client.create_envelope_from_document(
     body: "this is the email body and it's large!"
   },
   # If embedded is set to true  in the signers array below, emails
-  # don't go out to the signers and you can embed the signature page in an 
+  # don't go out to the signers and you can embed the signature page in an
   # iFrame by using the client.get_recipient_view method
   signers: [
     {
@@ -190,27 +212,35 @@ client = DocusignRest::Client.new
 
 **Creating an envelope from a template:**
 
+KK: I've changed the code for this method. Now, submit your parameters in a hash that mirrors the formats shown in the iodocs documentation. You won't be able to underscore_case variables anymore since I've turned the translator off- use camelcase versions instead.
+
+If you'd like the document to be embedded rather than mailed, you'll have to specify a client role as clientUserId.
+
+Now you can fill in data tabs as well.
+
 ```ruby
 client = DocusignRest::Client.new
 @envelope_response = client.create_envelope_from_template(
+  account_id: client.get_account_id,
   status: 'sent',
-  email: {
-    subject: "The test email subject envelope",
-    body: "Envelope body content here"
-  },
-  template_id: @template_response["templateId"],
-  signers: [
+  emailBlurb: "Envelope body content here",
+  emailSubject: "The test email subject envelope",
+  templateId: "XXXX-XXXX-XXXX-XXXXXX",
+  templateRoles: [
     {
-      embedded: true,
+      clientUserId: 'someone@gmail.com',
       name: 'jon',
-      email: 'someone@gmail.com',
-      role_name: 'Issuer'
-    },
-    {
-      embedded: true,
-      name: 'tim',
-      email: 'someone+else@gmail.com',
-      role_name: 'Attorney'
+      email: 'kapil.kale.07@gmail.com',
+      roleName: 'Issuer',
+      tabs: {
+        textTabs: [
+          {
+            tabLabel: "amount",
+            name: "amount",
+            value: "$40,000"
+          }
+        ]
+      }
     }
   ]
 )
@@ -256,7 +286,7 @@ client.get_document_from_envelope(
 
 In order to return to your application after the signing process is complete it's important to have a way to evaluate whether or not the signing was successful and then do something about each case. The way I set this up was to render the embedded signing iframe for a controller action called 'embedded_signing' and specify the return_url of the `client.get_recipient_view` API call to be something like: http://myapp.com/docusign_response. Then in the same controller as the embedded_signing method, define the docusign_response method. This is where the signing process will redirect to after the user is done interacting with the DocuSign iframe. DocuSign passes a query string parameter in the return_url named 'event' and you can check like so: `if params[:event] == "signing_complete"` then you'll want to redirect to another spot in your app, not in the iframe. To do so, we need to use JavaScript to access the iframe's parent and set it's location to the path of our choosing. To do this, instanciate the DocusignRest::Utility class and call the breakout_path method like this:
 
-```ruby    
+```ruby
 class SomeController < ApplicationController
 
   # the view corresponding to this action has the iFrame in it with the
@@ -289,22 +319,12 @@ class SomeController < ApplicationController
 end
 ```
 
+KK- this utility doesn't seem to work with edge Rails. You can just close the iframe using the following:
+
+```ruby
+render :inline => "<script>window.top.location.reload()</script>"
+```
+
 ## Contributing
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Added some feature'`) making sure to write tests to ensure nothing breaks
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
-
-### Running the tests
-
-In order to run the tests you'll need to register for a (free) DocuSign developer account. After doing so you'll have a username, password, and integrator key. Armed with that information execute the following ruby file:
-
-    $ ruby lib/tasks/docusign_task.rb
-
-This calls a rake task which adds a non-version controlled file in the test folder called `docusign_login_config.rb` which holds your account specific credentials and is required in order to hit the test API through the test suite.
-
-**VCR**
-
-The test suite uses VCR and is configured to record all requests by using the 'all' configuration option surrounding each API request. If you want to speed up the test suite locally for new feature development, you may want to change the VCR config record setting to 'once' temporarily which will not write a new YAML file for each request each time you hit the API and significantly speed up the tests. However, this can lead to false passing tests as the gem changes so it's recommended that you ensure all tests pass by actually hitting the API before submitting a pull request.
+I'm not sure how live this is, but I'll be building out the API functionality over the coming months. Drop me a message and I'll grant you access.
