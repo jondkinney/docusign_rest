@@ -552,17 +552,23 @@ module DocusignRest
     #   name - Name given above
     #   templateId - The auto-generated ID provided by DocuSign
     #   Uri - the URI where the template is located on the DocuSign servers
+
+    # Kapil Kale- NOTE: This method didn't really include the ability to
+    # programmatically fill in data tabs. I made a few changes to allow
+    # access to api v2 functionality.
+    #
+    # I've also gotten rid of the ruby underscore notation to camelcase
+    # translation that was happening in this method and in get_template_roles.
+    # When calling this method, structure the options hash as shown in the
+    # iodocs API explorer on Docusign's website.
+    #
+    # This means that in this version of the gem won't actually work with
+    # j2Fly's original documentation.
     def create_envelope_from_template(options={})
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
 
-      post_body = "{
-        \"status\"        : \"#{options[:status]}\",
-        \"emailBlurb\"    : \"#{options[:email][:body]}\",
-        \"emailSubject\"  : \"#{options[:email][:subject]}\",
-        \"templateId\"    : \"#{options[:template_id]}\",
-        \"templateRoles\" : [#{get_template_roles(options[:signers])}],
-       }"
+      post_body = options.to_json
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes")
 
