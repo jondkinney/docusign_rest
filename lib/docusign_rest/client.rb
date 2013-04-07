@@ -288,11 +288,6 @@ module DocusignRest
 
         doc_signer[:tabs][:signHereTabs] = signer[:sign_here_tabs].map do |sign_here_tab|
           tab = {
-            anchorString: sign_here_tab[:anchor_string],
-            anchorXOffset: "#{sign_here_tab[:anchor_x_offset] || '0'}",
-            anchorYOffset: "#{sign_here_tab[:anchor_y_offset] || '0'}",
-            anchorIgnoreIfNotPresent: sign_here_tab[:ignore_anchor_if_not_present] || false,
-            anchorUnits: 'pixels',
             conditionalParentLabel: nil,
             conditionalParentValue: nil,
             documentId: "#{sign_here_tab[:document_id] || '1'}",
@@ -305,6 +300,16 @@ module DocusignRest
             scaleValue: 1,
             tabLabel: "#{sign_here_tab[:tab_label] || 'Signature 1'}"
           }
+
+          if sign_here_tab[:anchor_string].present?
+            tab.merge!({
+              anchorString: sign_here_tab[:anchor_string],
+              anchorXOffset: "#{sign_here_tab[:anchor_x_offset] || '0'}",
+              anchorYOffset: "#{sign_here_tab[:anchor_y_offset] || '0'}",
+              anchorIgnoreIfNotPresent: sign_here_tab[:ignore_anchor_if_not_present] || false,
+              anchorUnits: 'pixels'
+            })
+          end
 
           if options[:template] == true
             tab.merge!({
