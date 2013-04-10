@@ -189,7 +189,8 @@ module DocusignRest
           \"email\"        : \"#{signer[:email]}\",
           \"roleName\"     : \"#{signer[:role_name]}\",
           \"tabs\": {
-            \"textTabs\": #{get_signer_tabs(signer[:text_tabs])}
+            \"textTabs\": #{get_signer_tabs(signer[:text_tabs])},
+            \"checkboxTabs\": #{get_signer_tabs(signer[:checkbox_tabs])}
           }
         }"
       end
@@ -202,7 +203,8 @@ module DocusignRest
           'tabLabel' => tab[:label],
           'name' => tab[:name],
           'value' => tab[:value],
-          'documentId' => tab[:document_id]
+          'documentId' => tab[:document_id],
+          'selected' => tab[:selected]
         }
       end.to_json
     end
