@@ -17,13 +17,19 @@ module DocusignRest
 
       # Set up the DocuSign Authentication headers with the values passed from
       # our config block
-      @docusign_authentication_headers = {
-        "X-DocuSign-Authentication" => {
-          "Username" => username,
-          "Password" => password,
-          "IntegratorKey" => integrator_key
-        }.to_json
-      }
+      if access_token.present?
+        @docusign_authentication_headers = {
+          'Authorization' => "Bearer #{access_token}"
+        }
+      else
+        @docusign_authentication_headers = {
+          "X-DocuSign-Authentication" => {
+            "Username" => username,
+            "Password" => password,
+            "IntegratorKey" => integrator_key
+          }.to_json
+        }
+      end
 
       # Set the account_id from the configure block if present, but can't call
       # the instance var @account_id because that'll override the attr_accessor
@@ -90,6 +96,18 @@ module DocusignRest
       http.ca_file = ca_file if ca_file
 
       http
+    end
+
+    def get_token(account_id, email, password)
+      content_type = {"Content-Type" => "application/x-www-form-urlencoded", "Accept" => "application/json"}
+      uri = build_uri("/oauth2/token")
+
+      request = Net::HTTP::Post.new(uri.request_uri, content_type)
+      request.body = "grant_type=password&client_id=#{integrator_key}&username=#{email}&password=#{password}&scope=api"
+
+      http = initialize_net_http_ssl(uri)
+      response = http.request(request)
+      JSON.parse(response.body)
     end
 
 
