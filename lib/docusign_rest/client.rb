@@ -17,17 +17,17 @@ module DocusignRest
 
       # Set up the DocuSign Authentication headers with the values passed from
       # our config block
-      if access_token.present?
-        @docusign_authentication_headers = {
-          'Authorization' => "Bearer #{access_token}"
-        }
-      else
+      if access_token.nil?
         @docusign_authentication_headers = {
           "X-DocuSign-Authentication" => {
             "Username" => username,
             "Password" => password,
             "IntegratorKey" => integrator_key
           }.to_json
+        }
+      else
+        @docusign_authentication_headers = {
+          'Authorization' => "Bearer #{access_token}"
         }
       end
 

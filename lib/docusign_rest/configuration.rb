@@ -9,6 +9,8 @@ module DocusignRest
     DEFAULT_USER_AGENT     = "DocusignRest API Ruby Gem #{DocusignRest::VERSION}".freeze
     DEFAULT_METHOD         = :get
 
+    DEFAULT_ACCESS_TOKEN   = nil
+
     DEFAULT_USERNAME       = nil
     DEFAULT_PASSWORD       = nil
     DEFAULT_INTEGRATOR_KEY = nil
@@ -31,7 +33,7 @@ module DocusignRest
       self.user_agent     = DEFAULT_USER_AGENT
       self.method         = DEFAULT_METHOD
 
-      self.access_token    = nil
+      self.access_token   = DEFAULT_ACCESS_TOKEN
 
       self.username       = DEFAULT_USERNAME
       self.password       = DEFAULT_PASSWORD
