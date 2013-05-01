@@ -590,7 +590,6 @@ module DocusignRest
       }.to_json
 
       uri = build_uri("/accounts/#{acct_id}/templates")
-
       http = initialize_net_http_ssl(uri)
 
       request = initialize_net_http_multipart_post_request(
