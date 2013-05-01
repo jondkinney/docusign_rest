@@ -151,6 +151,23 @@ module DocusignRest
       @acct_id
     end
 
+    def check_signer_for_tabs(signer)
+      signer_tabs = signer[:tabs]
+      return nil if signer_tabs.nil? or ! signer_tabs.kind_of?(Hash)
+      
+      tabs = {}
+      signer_tabs.map do |tab_type, tabs|
+        tab_map = tabs.map do |tab|
+          { 
+            tabLabel: "#{tab[:tabLabel]}",
+            name: "#{tab[:name]}",
+            value: "#{tab[:value]}" 
+          }
+        end
+        tabs[tab_type.to_s] = tab_map
+      end
+    end
+
     # Internal: takes in an array of hashes of signers and concatenates all the
     # hashes with commas
     #
@@ -161,6 +178,8 @@ module DocusignRest
     # name      - The name of the signer
     # email     - The email of the signer
     # role_name - The role name of the signer ('Attorney', 'Client', etc.).
+    # tabs      - Array of tab pairs grouped by type (Example type: 'textTabs')
+    #             { textTabs: [ { tabLabel: "label", name: "name", value: "value" } ] } 
     #
     # Returns an array of hashes of users that need to be embedded in the
     # template to create an envelope
@@ -175,11 +194,12 @@ module DocusignRest
 
         template_role[:clientUserId] = signer[:email] if signer[:embedded] == true
 
+        template_role[:tabs] = check_signer_for_tabs(signer)
+
         template_roles << template_role
       end
       template_roles
     end
-
 
     # Internal: takes an array of hashes of signers required to complete a
     # document and allows for setting several options. Not all options are
