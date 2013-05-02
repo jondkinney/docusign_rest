@@ -178,8 +178,10 @@ module DocusignRest
     # name      - The name of the signer
     # email     - The email of the signer
     # role_name - The role name of the signer ('Attorney', 'Client', etc.).
-    # tabs      - Array of tab pairs grouped by type (Example type: 'textTabs')
-    #             { textTabs: [ { tabLabel: "label", name: "name", value: "value" } ] } 
+    # tabs      - Hash of tab pairs grouped by type (Example type: 'textTabs')
+    #             { textTabs: [ { tabLabel: "label", name: "name", value: "value" } ] }
+    #
+    #             NOTE: The 'tabs' option is NOT supported in 'v1' of the REST API
     #
     # Returns an array of hashes of users that need to be embedded in the
     # template to create an envelope
