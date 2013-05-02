@@ -216,6 +216,54 @@ client = DocusignRest::Client.new
 )
 ```
 
+**Creating an envelope from a template using custom tabs:**
+
+Note: This feature is not supported in 'v1' of the REST API
+
+```ruby
+client = DocusignRest::Client.new
+@envelope_response = client.create_envelope_from_template(
+  status: 'sent',
+  email: {
+    subject: "The test email subject envelope",
+    body: "Envelope body content here"
+  },
+  template_id: @template_response["templateId"],
+  signers: [
+    {
+      embedded: true,
+      name: 'jon',
+      email: 'someone@gmail.com',
+      role_name: 'Issuer',
+      tabs: {
+        textTabs: [
+          { 
+            tabLabel: 'Seller Full Name', 
+            name: 'Seller Full Name', 
+            value: 'Jon Doe'
+          }
+        ]
+      }
+    },
+    {
+      embedded: true,
+      name: 'tim',
+      email: 'someone+else@gmail.com',
+      role_name: 'Attorney',
+      tabs: {
+        textTabs: [
+          { 
+            tabLabel: 'Attorney Full Name', 
+            name: 'Attorney Full Name', 
+            value: 'Tim Smith'
+          }
+        ]
+      }
+    }
+  ]
+)
+```
+
 
 **Retrieving the url for embedded signing. (Returns a string, not a hash)**
 
