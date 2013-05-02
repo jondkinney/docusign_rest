@@ -19,6 +19,8 @@ Gem::Specification.new do |gem|
   gem.add_dependency('json')
   gem.add_development_dependency('rake')
   gem.add_development_dependency('minitest')
+  gem.add_development_dependency('guard-minitest')
+  gem.add_development_dependency('rb-fsevent', '~> 0.9')
   gem.add_development_dependency('turn')
   gem.add_development_dependency('pry')
   gem.add_development_dependency('vcr')

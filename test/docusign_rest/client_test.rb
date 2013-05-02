@@ -156,7 +156,11 @@ describe DocusignRest::Client do
               {path: 'test.pdf', name: 'test.pdf'}
             ]
           )
+          if ! @template_response["errorCode"].nil?
+            puts "[API ERROR] (create_template) errorCode: '#{@template_response["errorCode"]}', message: '#{@template_response["message"]}'"
+          end
         end
+
 
         # use the templateId to get the envelopeId
         VCR.use_cassette("create_envelope/from_template", record: :all)  do
@@ -176,6 +180,9 @@ describe DocusignRest::Client do
               }
             ]
           )
+          if ! @envelope_response["errorCode"].nil?
+            puts "[API ERROR] (create_envelope/from_template) errorCode: '#{@envelope_response["errorCode"]}', message: '#{@envelope_response["message"]}'"
+          end
         end
       end
 
@@ -207,8 +214,8 @@ describe DocusignRest::Client do
             include_tabs: true,
             include_extended: true
           )
+          puts "signers: #{response["signers"]}"
           response["signers"].wont_be_nil
-          #puts response["signers"]
         end
       end
 
