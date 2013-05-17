@@ -667,7 +667,7 @@ module DocusignRest
         \"clientUserId\"         : \"#{options[:client_id] || options[:email]}\",
         \"email\"                : \"#{options[:email]}\",
         \"returnUrl\"            : \"#{options[:return_url]}\",
-        \"userName\"             : \"#{options[:name]}\",
+        \"userName\"             : \"#{options[:name]}\"
        }"
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/views/recipient")
