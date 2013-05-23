@@ -286,8 +286,8 @@ module DocusignRest
         if options[:template] == true
           doc_signer << "
             \"templateAccessCodeRequired\":false,
-            \"templateLocked\":#{signer[:template_locked] || true},
-            \"templateRequired\":#{signer[:template_required] || true},
+            \"templateLocked\":#{signer[:template_locked].nil? ? true : signer[:template_locked]},
+            \"templateRequired\":#{signer[:template_required].nil? ? true : signer[:template_required]},
           "
         end
 
