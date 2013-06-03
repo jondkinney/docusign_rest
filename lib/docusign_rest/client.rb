@@ -750,6 +750,20 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+    def delete_account(account_id, options = {})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{account_id}")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Delete.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+      json = response.body
+      json = "{}" if json.nil? || json == ""
+      JSON.parse(json)
+    end
+
     def convert_hash_keys(value)
       case value
         when Array
