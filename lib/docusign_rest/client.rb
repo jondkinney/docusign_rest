@@ -770,7 +770,8 @@ module DocusignRest
     #   client.get_document_from_envelope(
     #     envelope_id: @envelope_response['envelopeId'],
     #     document_id: 1,
-    #     local_save_path: 'docusign_docs/file_name.pdf'
+    #     local_save_path: 'docusign_docs/file_name.pdf',
+    #     return_stream: true/false # will return the bytestream instead of saving doc to file system.
     #   )
     #
     # Returns the PDF document as a byte stream.
@@ -783,6 +784,7 @@ module DocusignRest
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
       response = http.request(request)
+      return response.body if options[:return_stream]
 
       split_path = options[:local_save_path].split('/')
       split_path.pop #removes the document name and extension from the array
@@ -792,6 +794,48 @@ module DocusignRest
       File.open(options[:local_save_path], 'wb') do |output|
         output << response.body
       end
+    end
+
+
+    # Public retrieves the envelope(s) from a specific folder based on search params.
+    #
+    # Option Query Terms(none are required):
+    # query_params:
+    #   start_position: Integer The position of the folder items to return. This is used for repeated calls, when the number of envelopes returned is too much for one return (calls return 100 envelopes at a time). The default value is 0.
+    #   from_date:      date/Time Only return items on or after this date. If no value is provided, the default search is the previous 30 days.
+    #   to_date:        date/Time Only return items up to this date. If no value is provided, the default search is to the current date.
+    #   search_text:    String   The search text used to search the items of the envelope. The search looks at recipient names and emails, envelope custom fields, sender name, and subject.
+    #   status:         Status  The current status of the envelope. If no value is provided, the default search is all/any status.
+    #   owner_name:     username  The name of the folder owner.
+    #   owner_email:    email The email of the folder owner.
+    #
+    # Example
+    #
+    #   client.search_folder_for_envelopes(
+    #     folder_id: xxxxx-2222xxxxx,
+    #     query_params: {
+    #       search_text: "John Appleseed",
+    #       from_date: '7-1-2011+11:00:00+AM',
+    #       to_date: '7-1-2011+11:00:00+AM',
+    #       status: "completed"
+    #     }
+    #   )
+    #
+    def search_folder_for_envelopes(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      q ||= []
+      options[:query_params].each do |key, val|
+       q << "#{key}=#{val}"
+      end
+
+      uri = build_uri("/accounts/#{@acct_id}/folders/#{options[:folder_id]}/?#{q.join('&')}")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+      JSON.parse(response.body)
     end
 
 
