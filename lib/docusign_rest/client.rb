@@ -716,11 +716,6 @@ module DocusignRest
       response = http.request(request)
       parsed_response = JSON.parse(response.body)
     end
-
-    # Calls the proper api based on the configuration setup.
-    def api
-      "DocusignRest::Client::#{self.api_version.capitalize}".constantize
-    end
   end
 
 end
