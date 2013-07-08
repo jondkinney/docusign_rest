@@ -183,18 +183,19 @@ module DocusignRest
     def get_template_roles(signers)
       template_roles = []
       signers.each_with_index do |signer, index|
-        template_roles << "{
-          #{check_embedded_signer(signer[:embedded], signer[:client_id] || signer[:email])}
-          \"name\"         : \"#{signer[:name]}\",
-          \"email\"        : \"#{signer[:email]}\",
-          \"roleName\"     : \"#{signer[:role_name]}\",
-          \"tabs\": {
-            \"textTabs\": #{get_signer_tabs(signer[:text_tabs])},
-            \"checkboxTabs\": #{get_signer_tabs(signer[:checkbox_tabs])}
+        template_role = {
+          :name => signer[:name],
+          :email => signer[:email],
+          :roleName => signer[:role_name],
+          :tabs => {
+            :textTabs => get_signer_tabs(signer[:text_tabs]),
+            :checkboxTabs => get_signer_tabs(signer[:checkbox_tabs])
           }
-        }"
+        }
+        template_role['clientUserId'] = (signer[:client_id] || signer[:email]).to_s if signer[:embedded] == true 
+        template_roles << template_role
       end
-      template_roles.join(",")
+      template_roles
     end
 
     def get_signer_tabs(tabs)
@@ -206,7 +207,7 @@ module DocusignRest
           'documentId' => tab[:document_id],
           'selected' => tab[:selected]
         }
-      end.to_json
+      end
     end
 
     def get_event_notification(event_notification)
@@ -626,14 +627,14 @@ module DocusignRest
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
 
-      post_body = "{
-        \"status\"        : \"#{options[:status]}\",
-        \"emailBlurb\"    : \"#{options[:email][:body]}\",
-        \"emailSubject\"  : \"#{options[:email][:subject]}\",
-        \"templateId\"    : \"#{options[:template_id]}\",
-        \"eventNotification\" : #{get_event_notification(options[:event_notification]).to_json},
-        \"templateRoles\" : [#{get_template_roles(options[:signers])}]
-       }"
+      post_body = {
+        :status => options[:status],
+        :emailBlurb => options[:email][:body],
+        :emailSubject => options[:email][:subject],
+        :templateId => options[:template_id],
+        :eventNotification => get_event_notification(options[:event_notification]),
+        :templateRoles => get_template_roles(options[:signers])
+       }.to_json
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes")
 
@@ -662,13 +663,13 @@ module DocusignRest
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
 
-      post_body = "{
-        \"authenticationMethod\" : \"email\",
-        \"clientUserId\"         : \"#{options[:client_id] || options[:email]}\",
-        \"email\"                : \"#{options[:email]}\",
-        \"returnUrl\"            : \"#{options[:return_url]}\",
-        \"userName\"             : \"#{options[:name]}\"
-       }"
+      post_body = {
+        :authenticationMethod => 'email',
+        :clientUserId => options[:client_id] || options[:email],
+        :email => options[:email],
+        :returnUrl => options[:return_url],
+        :userName => options[:name]
+       }.to_json
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/views/recipient")
 
