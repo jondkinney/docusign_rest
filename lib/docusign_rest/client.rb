@@ -187,6 +187,7 @@ module DocusignRest
           :name => signer[:name],
           :email => signer[:email],
           :roleName => signer[:role_name],
+          :emailNotification => signer[:email_notification].nil? ? {} : signer[:email_notification],
           :tabs => {
             :textTabs => get_signer_tabs(signer[:text_tabs]),
             :checkboxTabs => get_signer_tabs(signer[:checkbox_tabs])
@@ -259,107 +260,103 @@ module DocusignRest
     # tab_label          - TODO: figure out what this is
     def get_signers(signers, options={})
       doc_signers = []
-      signers.each_with_index do |signer, index|
-        # Build up a string with concatenation so that we can append the full
-        # string to the doc_signers array as the last step in this block
-        doc_signer = ""
-        doc_signer << "{
-          \"email\":\"#{signer[:email]}\",
-          \"name\":\"#{signer[:name]}\",
-          \"accessCode\":\"\",
-          \"addAccessCodeToEmail\":false,
-          #{check_embedded_signer(signer[:embedded], signer[:client_id] || signer[:email])}
-          \"customFields\":null,
-          \"emailNotification\":#{signer[:email_notification] || 'null'},
-          \"iDCheckConfigurationName\":null,
-          \"iDCheckInformationInput\":null,
-          \"inheritEmailNotificationConfiguration\":false,
-          \"note\":\"\",
-          \"phoneAuthentication\":null,
-          \"recipientAttachment\":null,
-          \"recipientId\":\"#{index+1}\",
-          \"requireIdLookup\":false,
-          \"roleName\":\"#{signer[:role_name]}\",
-          \"routingOrder\":#{index+1},
-          \"socialAuthentications\":null,
-        "
 
-        if options[:template] == true
-          doc_signer << "
-            \"templateAccessCodeRequired\":false,
-            \"templateLocked\":#{signer[:template_locked].nil? ? true : signer[:template_locked]},
-            \"templateRequired\":#{signer[:template_required].nil? ? true : signer[:template_required]},
-          "
+
+      signers.each_with_index do |signer, index|
+        doc_signer = {
+          :email => signer[:email],
+          :name => signer[:name],
+          :accessCode => "",
+          :addAccessCodeToEmail =>  false,
+          :customFields => nil,
+          :emailNotification => signer[:email_notification].nil? ? {} : signer[:email_notification],
+          :iDCheckConfigurationName => nil,
+          :iDCheckInformationInput => nil,
+          :inheritEmailNotificationConfiguration => false,
+          :note => "",
+          :phoneAuthentication => nil,
+          :recipientAttachment => nil,
+          :recipientId => index+1,
+          :requireIdLookup => false,
+          :roleName => signer[:role_name],
+          :routingOrder => index+1,
+          :socialAuthentications => nil
+        }
+
+        if signer[:embedded]
+          doc_signer[:clientUserId] = signer[:client_id] || signer[:email]
         end
 
-        doc_signer << "
-          \"autoNavigation\":false,
-          \"defaultRecipient\":false,
-          \"signatureInfo\":null,
-          \"tabs\":{
-            \"approveTabs\":null,
-            \"checkboxTabs\":null,
-            \"companyTabs\":null,
-            \"dateSignedTabs\":#{get_tabs(signer[:date_signed_tabs], options, index)},
-            \"dateTabs\":null,
-            \"declineTabs\":null,
-            \"emailTabs\":#{get_tabs(signer[:email_tabs], options, index)},
-            \"envelopeIdTabs\":null,
-            \"fullNameTabs\":#{get_tabs(signer[:full_name_tabs], options, index)},
-            \"listTabs\":null,
-            \"noteTabs\":null,
-            \"numberTabs\":null,
-            \"radioGroupTabs\":null,
-            \"initialHereTabs\":#{get_tabs(signer[:initial_here_tabs], options, index)},
-            \"signHereTabs\":#{get_tabs(signer[:sign_here_tabs], options, index)},
-            \"signerAttachmentTabs\":null,
-            \"ssnTabs\":null,
-            \"textTabs\":#{get_tabs(signer[:text_tabs], options, index)},
-            \"titleTabs\":null,
-            \"zipTabs\":null
-          }
-        }"
+        if options[:template] == true
+          doc_signer[:templateAccessCodeRequired] = false
+          doc_signer[:templateLocked] = signer[:template_locked].nil? ? true : signer[:template_locked]
+          doc_signer[:templateRequired] = signer[:template_required].nil? ? true : signer[:template_required]
+        end
+
+        doc_signer[:autoNavigation] = false
+        doc_signer[:defaultRecipient] = false
+        doc_signer[:signatureInfo] = nil
+        doc_signer[:tabs] = {}
+        doc_signer[:tabs][:approveTabs] = nil
+        doc_signer[:tabs][:checkboxTabs] = nil
+        doc_signer[:tabs][:companyTabs] = nil
+        doc_signer[:tabs][:dateSignedTabs] = get_tabs(signer[:date_signed_tabs], options, index)
+        doc_signer[:tabs][:dateTabs] = nil
+        doc_signer[:tabs][:declineTabs] = nil
+        doc_signer[:tabs][:emailTabs] = get_tabs(signer[:email_tabs], options, index)
+        doc_signer[:tabs][:envelopeIdTabs] = nil
+        doc_signer[:tabs][:fullNameTabs] = get_tabs(signer[:full_name_tabs], options, index)
+        doc_signer[:tabs][:listTabs] = nil
+        doc_signer[:tabs][:noteTabs] = nil
+        doc_signer[:tabs][:numberTabs] = nil
+        doc_signer[:tabs][:radioGroupTabs] = nil
+        doc_signer[:tabs][:initialHereTabs] = get_tabs(signer[:initial_here_tabs], options, index)
+        doc_signer[:tabs][:signHereTabs] = get_tabs(signer[:sign_here_tabs], options, index)
+        doc_signer[:tabs][:signerAttachmentTabs] = nil
+        doc_signer[:tabs][:ssnTabs] = nil
+        doc_signer[:tabs][:textTabs] = get_tabs(signer[:text_tabs], options, index)
+        doc_signer[:tabs][:titleTabs] = nil
+        doc_signer[:tabs][:zipTabs] = nil
+
         # append the fully build string to the array
         doc_signers << doc_signer
       end
-      doc_signers.join(",")
+      doc_signers.to_json
     end
 
     def get_tabs(tabs, options, index)
-      buf = '['
+      tab_array = []
+
       tab_buffers = Array(tabs).map do |tab|
-        tab_buf = "{
-          \"anchorString\":\"#{tab[:anchor_string]}\",
-          \"anchorXOffset\": \"#{tab[:anchor_x_offset] || '0'}\",
-          \"anchorYOffset\": \"#{tab[:anchor_y_offset] || '0'}\",
-          \"anchorIgnoreIfNotPresent\": #{tab[:ignore_anchor_if_not_present] || false},
-          \"anchorUnits\": \"pixels\",
-          \"conditionalParentLabel\": null,
-          \"conditionalParentValue\": null,
-          \"documentId\":\"#{tab[:document_id] || '1'}\",
-          \"pageNumber\":\"#{tab[:page_number] || '1'}\",
-          \"recipientId\":\"#{index+1}\",
-          \"required\":\"#{tab[:required] || false}\",
-        "
+        tab_hash = {}
+
+        tab_hash[:anchorString] = tab[:anchor_string]
+        tab_hash[:anchorXOffset] = tab[:anchor_x_offset] || '0'
+        tab_hash[:anchorYOffset] = tab[:anchor_y_offset] || '0'
+        tab_hash[:anchorIgnoreIfNotPresent] = tab[:ignore_anchor_if_not_present] || false
+        tab_hash[:anchorUnits] = "pixels"
+        tab_hash[:conditionalParentLabel] = nil
+        tab_hash[:conditionalParentValue] = nil
+        tab_hash[:documentId] = tab[:document_id] || '1'
+        tab_hash[:pageNumber] = tab[:page_number] || '1'
+        tab_hash[:recipientId] = index+1
+        tab_hash[:required] = tab[:required] || false
+
         if options[:template] == true
-          tab_buf << "
-            \"templateLocked\":#{tab[:template_locked].nil? ? true : tab[:template_locked]},
-            \"templateRequired\":#{tab[:template_required].nil? ? true : tab[:template_required]},
-          "
+          tab_hash[:templateLocked] = tab[:template_locked].nil? ? true : tab[:template_locked]
+          tab_hash[:templateRequired] = tab[:template_required].nil? ? true : tab[:template_required]
         end
-        tab_buf << "
-          \"xPosition\":\"#{tab[:x_position] || '0'}\",
-          \"yPosition\":\"#{tab[:y_position] || '0'}\",
-          \"name\":\"#{tab[:name] || 'Sign Here'}\",
-          \"optional\":false,
-          \"scaleValue\":1,
-          \"tabLabel\":\"#{tab[:label] || 'Signature 1'}\"
-        }"
-        tab_buf
+
+        tab_hash[:xPosition] = tab[:x_position] || '0'
+        tab_hash[:yPosition] = tab[:y_position] || '0'
+        tab_hash[:name] = tab[:name] || 'Sign Here'
+        tab_hash[:optional] = false
+        tab_hash[:scaleValue] = 1
+        tab_hash[:tabLabel] = tab[:label] || 'Signature 1'
+
+        tab_array << tab_hash
       end
-      buf << tab_buffers.join(',')
-      buf << ']'
-      buf
+      tab_array
     end
 
     # Internal: sets up the file ios array
@@ -506,7 +503,7 @@ module DocusignRest
         \"emailSubject\" : \"#{options[:email][:subject] if options[:email]}\",
         \"documents\"    : [#{get_documents(ios)}],
         \"recipients\"   : {
-          \"signers\" : [#{get_signers(options[:signers])}]
+          \"signers\" : #{get_signers(options[:signers])}
         },
         \"status\"       : \"#{options[:status]}\"
       }
@@ -563,7 +560,7 @@ module DocusignRest
         \"emailSubject\" : \"#{options[:email][:subject] if options[:email]}\",
         \"documents\"    : [#{get_documents(ios)}],
         \"recipients\"   : {
-          \"signers\"    : [#{get_signers(options[:signers], template: true)}]
+          \"signers\"    : #{get_signers(options[:signers], template: true)}
         },
         \"envelopeTemplateDefinition\" : {
           \"description\" : \"#{options[:description]}\",
