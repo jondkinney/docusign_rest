@@ -150,7 +150,7 @@ describe DocusignRest::Client do
                     anchor_string: 'sign here',
                     template_locked: true, #doesn't seem to do anything
                     template_required: true, #doesn't seem to do anything
-                    email_notification: false #FIXME if signer is setup as 'embedded' initial email notifications don't go out, but even when I set up a signer as non-embedded this setting didn't seem to make the email notifications actually stop...
+                    email_notification: {supportedLanguage: 'en'} #FIXME if signer is setup as 'embedded' initial email notifications don't go out, but even when I set up a signer as non-embedded this setting didn't seem to make the email notifications actually stop...
                   }
                 ]
               }
