@@ -611,6 +611,34 @@ module DocusignRest
       parsed_response["url"]
     end
 
+    # Public returns the URL for embedded console
+    #
+    # envelope_id - the ID of the envelope you wish to use for embedded signing
+    # headers     - optional hash of headers to merge into the existing
+    #               required headers for a multipart request.
+    #
+    # Returns the URL string for embedded console (can be put in an iFrame)
+    def get_console_view(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      post_body = "{
+        \"envelopeId\" : \"#{options[:envelope_id]}\"
+       }"
+
+      uri = build_uri("/accounts/#{@acct_id}/views/console")
+
+      http = initialize_net_http_ssl(uri)
+
+      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+
+      parsed_response = JSON.parse(response.body)
+      parsed_response["url"]
+    end
+
     # Public returns the envelope recipients for a given envelope
     #
     # include_tabs - boolean, determines if the tabs for each signer will be
