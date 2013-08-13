@@ -1,4 +1,3 @@
-require 'docusign_rest/version'
 require 'docusign_rest/configuration'
 require 'docusign_rest/client'
 require 'docusign_rest/utility'
@@ -9,7 +8,7 @@ require 'net/http'
 require 'json'
 
 module DocusignRest
-  require "docusign_rest/railtie" if defined?(Rails)
+  require "docusign_rest/railtie" if defined?(Rails::Railtie)
 
   extend Configuration
 end

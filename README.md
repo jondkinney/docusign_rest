@@ -73,13 +73,13 @@ The above options allow you to change the endpoint (to be able to hit the produc
 
 ## Usage
 
-The docusign\_rest gem makes creating multipart POST (aka file upload) requests to the DocuSign REST API dead simple. It's built on top of Net:HTTP and utilizes the [multipart-post](https://github.com/nicksieger/multipart-post) gem to assist with formatting the multipart requests. The DocuSign REST API requires that all files be embedded as JSON directly in the request body (not the body\_stream like multipart-post does by default) so the docusign\_rest gem takes care of [setting that up for you](https://github.com/j2fly/docusign_rest/blob/master/lib/docusign_rest/client.rb#L397). 
+The docusign\_rest gem makes creating multipart POST (aka file upload) requests to the DocuSign REST API dead simple. It's built on top of Net:HTTP and utilizes the [multipart-post](https://github.com/nicksieger/multipart-post) gem to assist with formatting the multipart requests. The DocuSign REST API requires that all files be embedded as JSON directly in the request body (not the body\_stream like multipart-post does by default) so the docusign\_rest gem takes care of [setting that up for you](https://github.com/j2fly/docusign_rest/blob/master/lib/docusign_rest/client.rb#L397).
 
-This gem also monkey patches one small part of multipart-post to inject some header values and formatting that DocuSign requires. If you would like to see the monkey patched code please take a look at [lib/multipart-post/parts.rb](https://github.com/j2fly/docusign_rest/blob/master/lib/multipart_post/parts.rb). It's only re-opening one method, but feel free to make sure you understand that code if it concerns you. 
+This gem also monkey patches one small part of multipart-post to inject some header values and formatting that DocuSign requires. If you would like to see the monkey patched code please take a look at [lib/multipart-post/parts.rb](https://github.com/j2fly/docusign_rest/blob/master/lib/multipart_post/parts.rb). It's only re-opening one method, but feel free to make sure you understand that code if it concerns you.
 
 ### Examples
 
-* These examples assume you have already run the `docusign_rest:generate_config` rake task and have the configure block properly setup in an initializer with your username, password, integrator\_key, and account\_id. 
+* These examples assume you have already run the `docusign_rest:generate_config` rake task and have the configure block properly setup in an initializer with your username, password, integrator\_key, and account\_id.
 * Unless noted otherwise, these requests return the JSON parsed body of the response so you can index the returned hash directly. For example: `template_response["templateId"]`.
 
 **Getting account_id:**
@@ -92,56 +92,56 @@ puts client.get_account_id
 
 **Creating an envelope from a document:**
 
-Note: In the example below there are two sign here tabs for the user with a role of 'Attorney'. There are also two documents attached to the envelope, however, this exact configuration would only allow for signature on the first document. If you need signature for a second document, you'll need to add further options, namely: `document_id: 2` in one of the sign_here_tabs so that DocuSign knows where to embed that signature tab.
+Note: In the example below there are two sign here tabs for the user with a role of 'Attorney'. There are also two documents attached to the envelope, however, this exact configuration would only allow for signature on the first document. If you need signature for a second document, you'll need to add further options, namely: `:document_id => 2` in one of the sign_here_tabs so that DocuSign knows where to embed that signature tab.
 
 ```ruby
 client = DocusignRest::Client.new
 document_envelope_response = client.create_envelope_from_document(
-  email: {
-    subject: "test email subject",
-    body: "this is the email body and it's large!"
+  :email => {
+    :subject => "test email subject",
+    :body => "this is the email body and it's large!"
   },
   # If embedded is set to true  in the signers array below, emails
-  # don't go out to the signers and you can embed the signature page in an 
+  # don't go out to the signers and you can embed the signature page in an
   # iFrame by using the client.get_recipient_view method
-  signers: [
+  :signers => [
     {
-      embedded: true,
-      name: 'Test Guy',
-      email: 'someone@gmail.com',
-      role_name: 'Issuer',
-      sign_here_tabs: [
+      :embedded => true,
+      :name => 'Test Guy',
+      :email => 'someone@gmail.com',
+      :role_name => 'Issuer',
+      :sign_here_tabs => [
         {
-          anchor_string: 'sign_here_1',
-          anchor_x_offset: '140',
-          anchor_y_offset: '8'
+          :anchor_string => 'sign_here_1',
+          :anchor_x_offset => '140',
+          :anchor_y_offset => '8'
         }
       ]
     },
     {
-      embedded: true,
-      name: 'Test Girl',
-      email: 'someone+else@gmail.com',
-      role_name: 'Attorney',
-      sign_here_tabs: [
+      :embedded => true,
+      :name => 'Test Girl',
+      :email => 'someone+else@gmail.com',
+      :role_name => 'Attorney',
+      :sign_here_tabs => [
         {
-          anchor_string: 'sign_here_2',
-          anchor_x_offset: '140',
-          anchor_y_offset: '8'
+          :anchor_string => 'sign_here_2',
+          :anchor_x_offset => '140',
+          :anchor_y_offset => '8'
         },
         {
-          anchor_string: 'sign_here_3',
-          anchor_x_offset: '140',
-          anchor_y_offset: '8'
+          :anchor_string => 'sign_here_3',
+          :anchor_x_offset => '140',
+          :anchor_y_offset => '8'
         }
       ]
     }
   ],
-  files: [
-    {path: '/Absolute/path/to/test.pdf', name: 'test.pdf'},
-    {path: '/Absolute/path/to/test2.pdf', name: 'test2.pdf'}
+  :files => [
+    {:path => '/Absolute/path/to/test.pdf', :name => 'test.pdf'},
+    {:path => '/Absolute/path/to/test2.pdf', :name => 'test2.pdf'}
   ],
-  status: 'sent'
+  :status => 'sent'
 )
 ```
 
@@ -151,38 +151,38 @@ document_envelope_response = client.create_envelope_from_document(
 ```ruby
 client = DocusignRest::Client.new
 @template_response = client.create_template(
-  description: 'Template Description',
-  name: "Template Name",
-  signers: [
+  :description => 'Template Description',
+  :name => "Template Name",
+  :signers => [
     {
-      embedded: true,
-      name: 'jon',
-      email: 'someone@gmail.com',
-      role_name: 'Issuer',
-      sign_here_tabs: [
+      :embedded => true,
+      :name => 'jon',
+      :email => 'someone@gmail.com',
+      :role_name => 'Issuer',
+      :sign_here_tabs => [
         {
-          anchor_string: 'issuer_sig',
-          anchor_x_offset: '140',
-          anchor_y_offset: '8'
+          :anchor_string => 'issuer_sig',
+          :anchor_x_offset => '140',
+          :anchor_y_offset => '8'
         }
       ]
     },
     {
-      embedded: true,
-      name: 'tim',
-      email: 'someone+else@gmail.com',
-      role_name: 'Attorney',
-      sign_here_tabs: [
+      :embedded => true,
+      :name => 'tim',
+      :email => 'someone+else@gmail.com',
+      :role_name => 'Attorney',
+      :sign_here_tabs => [
         {
-          anchor_string: 'attorney_sig',
-          anchor_x_offset: '140',
-          anchor_y_offset: '8'
+          :anchor_string => 'attorney_sig',
+          :anchor_x_offset => '140',
+          :anchor_y_offset => '8'
         }
       ]
     }
   ],
-  files: [
-    {path: '/Absolute/path/to/test.pdf', name: 'test.pdf'}
+  :files => [
+    {:path => '/Absolute/path/to/test.pdf', :name => 'test.pdf'}
   ]
 )
 ```
@@ -193,24 +193,24 @@ client = DocusignRest::Client.new
 ```ruby
 client = DocusignRest::Client.new
 @envelope_response = client.create_envelope_from_template(
-  status: 'sent',
-  email: {
-    subject: "The test email subject envelope",
-    body: "Envelope body content here"
+  :status => 'sent',
+  :email => {
+    :subject => "The test email subject envelope",
+    :body => "Envelope body content here"
   },
-  template_id: @template_response["templateId"],
-  signers: [
+  :template_id => @template_response["templateId"],
+  :signers => [
     {
-      embedded: true,
-      name: 'jon',
-      email: 'someone@gmail.com',
-      role_name: 'Issuer'
+      :embedded => true,
+      :name => 'jon',
+      :email => 'someone@gmail.com',
+      :role_name => 'Issuer'
     },
     {
-      embedded: true,
-      name: 'tim',
-      email: 'someone+else@gmail.com',
-      role_name: 'Attorney'
+      :embedded => true,
+      :name => 'tim',
+      :email => 'someone+else@gmail.com',
+      :role_name => 'Attorney'
     }
   ]
 )
@@ -222,10 +222,10 @@ client = DocusignRest::Client.new
 ```ruby
 client = DocusignRest::Client.new
 @url = client.get_recipient_view(
-  envelope_id: @envelope_response["envelopeId"],
-  name: current_user.full_name,
-  email: current_user.email,
-  return_url: 'http://google.com'
+  :envelope_id => @envelope_response["envelopeId"],
+  :name => current_user.full_name,
+  :email => current_user.email,
+  :return_url => 'http://google.com'
 )
 ```
 
@@ -235,9 +235,9 @@ client = DocusignRest::Client.new
 ```ruby
 client = DocusignRest::Client.new
 response = client.get_envelope_recipients(
-  envelope_id: @envelope_response["envelopeId"],
-  include_tabs: true,
-  include_extended: true
+  :envelope_id => @envelope_response["envelopeId"],
+  :include_tabs => true,
+  :include_extended => true
 )
 ```
 
@@ -246,9 +246,9 @@ response = client.get_envelope_recipients(
 ```ruby
 client = DocusignRest::Client.new
 client.get_document_from_envelope(
-  envelope_id: @envelope_response["envelopeId"],
-  document_id: 1,
-  local_save_path: "#{Rails.root.join('docusign_docs/file_name.pdf')}"
+  :envelope_id => @envelope_response["envelopeId"],
+  :document_id => 1,
+  :local_save_path => "#{Rails.root.join('docusign_docs/file_name.pdf')}"
 )
 ```
 
@@ -256,7 +256,7 @@ client.get_document_from_envelope(
 
 In order to return to your application after the signing process is complete it's important to have a way to evaluate whether or not the signing was successful and then do something about each case. The way I set this up was to render the embedded signing iframe for a controller action called 'embedded_signing' and specify the return_url of the `client.get_recipient_view` API call to be something like: http://myapp.com/docusign_response. Then in the same controller as the embedded_signing method, define the docusign_response method. This is where the signing process will redirect to after the user is done interacting with the DocuSign iframe. DocuSign passes a query string parameter in the return_url named 'event' and you can check like so: `if params[:event] == "signing_complete"` then you'll want to redirect to another spot in your app, not in the iframe. To do so, we need to use JavaScript to access the iframe's parent and set it's location to the path of our choosing. To do this, instanciate the DocusignRest::Utility class and call the breakout_path method like this:
 
-```ruby    
+```ruby
 class SomeController < ApplicationController
 
   # the view corresponding to this action has the iFrame in it with the
@@ -267,10 +267,10 @@ class SomeController < ApplicationController
   def embedded_signing
     client = DocusignRest::Client.new
     @url = client.get_recipient_view(
-      envelope_id: @envelope_response["envelopeId"],
-      name: current_user.display_name,
-      email: current_user.email,
-      return_url: "http://localhost:3000/docusign_response"
+      :envelope_id => @envelope_response["envelopeId"],
+      :name => current_user.display_name,
+      :email => current_user.email,
+      :return_url => "http://localhost:3000/docusign_response"
     )
   end
 
@@ -279,10 +279,10 @@ class SomeController < ApplicationController
 
     if params[:event] == "signing_complete"
       flash[:notice] = "Thanks! Successfully signed"
-      render :text => utility.breakout_path(some_path), content_type: :html
+      render :text => utility.breakout_path(some_path), :content_type => 'text/html'
     else
       flash[:notice] = "You chose not to sign the document."
-      render :text => utility.breakout_path(some_other_path), content_type: :html
+      render :text => utility.breakout_path(some_other_path), :content_type => 'text/html'
     end
   end
 

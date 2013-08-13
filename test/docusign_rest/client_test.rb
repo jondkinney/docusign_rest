@@ -81,49 +81,49 @@ describe DocusignRest::Client do
     end
 
     it "should allow creating an envelope from a document" do
-      VCR.use_cassette("create_envelope/from_document", record: :all) do
+      VCR.use_cassette("create_envelope/from_document", :record => :all) do
         response = @client.create_envelope_from_document(
-          email: {
-            subject: "test email subject",
-            body: "this is the email body and it's large!"
+          :email => {
+            :subject => "test email subject",
+            :body => "this is the email body and it's large!"
           },
           # If embedded is set to true  in the signers array below, emails
           # don't go out and you can embed the signature page in an iFrame
           # by using the get_recipient_view method. You can choose 'false' or
           # simply omit the option as I show in the second signer hash.
-          signers: [
+          :signers => [
             {
-              embedded: true,
-              name: 'Test Guy',
-              email: 'testguy@gmail.com',
-              role_name: 'Issuer',
-              sign_here_tabs: [
+              :embedded => true,
+              :name => 'Test Guy',
+              :email => 'testguy@gmail.com',
+              :role_name => 'Issuer',
+              :sign_here_tabs => [
                 {
-                  anchor_string: 'sign here',
-                  anchor_x_offset: '125',
-                  anchor_y_offset: '-12'
+                  :anchor_string => 'sign here',
+                  :anchor_x_offset => '125',
+                  :anchor_y_offset => '-12'
                 }
               ]
             },
             {
-              embedded: true,
-              name: 'Test Girl',
-              email: 'testgirl@gmail.com',
-              role_name: 'Attorney',
-              sign_here_tabs: [
+              :embedded => true,
+              :name => 'Test Girl',
+              :email => 'testgirl@gmail.com',
+              :role_name => 'Attorney',
+              :sign_here_tabs => [
                 {
-                  anchor_string: 'sign here',
-                  anchor_x_offset: '140',
-                  anchor_y_offset: '-12'
+                  :anchor_string => 'sign here',
+                  :anchor_x_offset => '140',
+                  :anchor_y_offset => '-12'
                 }
               ]
             }
           ],
-          files: [
-            {path: 'test.pdf', name: 'test.pdf'},
-            {path: 'test2.pdf', name: 'test2.pdf'}
+          :files => [
+            {:path => 'test.pdf', :name => 'test.pdf'},
+            {:path => 'test2.pdf', :name => 'test2.pdf'}
           ],
-          status: 'sent'
+          :status => 'sent'
         )
         response["status"].must_equal "sent"
       end
@@ -132,47 +132,47 @@ describe DocusignRest::Client do
     describe "embedded signing" do
       before do
         # create the template dynamically
-        VCR.use_cassette("create_template", record: :all)  do
+        VCR.use_cassette("create_template", :record => :all)  do
           @template_response = @client.create_template(
-            description: 'Cool Description',
-            name: "Cool Template Name",
-            signers: [
+            :description => 'Cool Description',
+            :name => "Cool Template Name",
+            :signers => [
               {
-                embedded: true,
-                name: 'jon',
-                email: 'someone@gmail.com',
-                role_name: 'Issuer',
-                sign_here_tabs: [
+                :embedded => true,
+                :name => 'jon',
+                :email => 'someone@gmail.com',
+                :role_name => 'Issuer',
+                :sign_here_tabs => [
                   {
-                    anchor_string: 'sign here',
-                    template_locked: true, #doesn't seem to do anything
-                    template_required: true, #doesn't seem to do anything
-                    email_notification: false #FIXME if signer is setup as 'embedded' initial email notifications don't go out, but even when I set up a signer as non-embedded this setting didn't seem to make the email notifications actually stop...
+                    :anchor_string => 'sign here',
+                    :template_locked => true, #doesn't seem to do anything
+                    :template_required => true, #doesn't seem to do anything
+                    :email_notification => false #FIXME if signer is setup as 'embedded' initial email notifications don't go out, but even when I set up a signer as non-embedded this setting didn't seem to make the email notifications actually stop...
                   }
                 ]
               }
             ],
-            files: [
-              {path: 'test.pdf', name: 'test.pdf'}
+            :files => [
+              {:path => 'test.pdf', :name => 'test.pdf'}
             ]
           )
         end
 
         # use the templateId to get the envelopeId
-        VCR.use_cassette("create_envelope/from_template", record: :all)  do
+        VCR.use_cassette("create_envelope/from_template", :record => :all)  do
           @envelope_response = @client.create_envelope_from_template(
-            status: 'sent',
-            email: {
-              subject: "The test email subject envelope",
-              body: "Envelope body content here"
+            :status => 'sent',
+            :email => {
+              :subject => "The test email subject envelope",
+              :body => "Envelope body content here"
             },
-            template_id: @template_response["templateId"],
-            signers: [
+            :template_id => @template_response["templateId"],
+            :signers => [
               {
-                embedded: true,
-                name: 'jon',
-                email: 'someone@gmail.com',
-                role_name: 'Issuer'
+                :embedded => true,
+                :name => 'jon',
+                :email => 'someone@gmail.com',
+                :role_name => 'Issuer'
               }
             ]
           )
@@ -188,12 +188,12 @@ describe DocusignRest::Client do
         @envelope_response["errorCode"].must_be_nil
 
         #return the URL for embedded signing
-        VCR.use_cassette("get_recipient_view", record: :all)  do
+        VCR.use_cassette("get_recipient_view", :record => :all)  do
           response = @client.get_recipient_view(
-            envelope_id: @envelope_response["envelopeId"],
-            name: 'jon',
-            email: 'someone@gmail.com',
-            return_url: 'http://google.com'
+            :envelope_id => @envelope_response["envelopeId"],
+            :name => 'jon',
+            :email => 'someone@gmail.com',
+            :return_url => 'http://google.com'
           )
           response.must_match(/http/)
         end
@@ -201,11 +201,11 @@ describe DocusignRest::Client do
 
       #status return values = "sent", "delivered", "completed"
       it "should retrieve the envelope recipients status" do
-        VCR.use_cassette("get_envelope_recipients", record: :all)  do
+        VCR.use_cassette("get_envelope_recipients", :record => :all)  do
           response = @client.get_envelope_recipients(
-            envelope_id: @envelope_response["envelopeId"],
-            include_tabs: true,
-            include_extended: true
+            :envelope_id => @envelope_response["envelopeId"],
+            :include_tabs => true,
+            :include_extended => true
           )
           response["signers"].wont_be_nil
           #puts response["signers"]
@@ -214,11 +214,11 @@ describe DocusignRest::Client do
 
       #status return values = "sent", "delivered", "completed"
       it "should retrieve the byte stream of the envelope doc from DocuSign" do
-        VCR.use_cassette("get_document_from_envelope", record: :all)  do
+        VCR.use_cassette("get_document_from_envelope", :record => :all)  do
           @client.get_document_from_envelope(
-            envelope_id: @envelope_response["envelopeId"],
-            document_id: 1,
-            local_save_path: 'docusign_docs/file_name.pdf'
+            :envelope_id => @envelope_response["envelopeId"],
+            :document_id => 1,
+            :local_save_path => 'docusign_docs/file_name.pdf'
           )
           # NOTE manually check that this file has the content you'd expect
         end
