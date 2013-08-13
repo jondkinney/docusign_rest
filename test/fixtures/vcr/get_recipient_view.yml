@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://demo.docusign.net/restapi/v1/accounts/327367/envelopes/e189f413-390e-41d8-aa14-0d93d5d8188e/views/recipient
+    body:
+      encoding: US-ASCII
+      string: ! "{\n        \"authenticationMethod\" : \"email\",\n        \"clientUserId\"
+        \        : \"someone@gmail.com\",\n        \"email\"                : \"someone@gmail.com\",\n
+        \       \"returnUrl\"            : \"http://google.com\",\n        \"userName\"
+        \            : \"jon\",\n       }"
+    headers:
+      x-docusign-authentication:
+      - <DocuSignCredentials><Username>jonkinney@gmail.com</Username><Password>MnUWneAH3xqL2G</Password><IntegratorKey>NAXX-93c39e8c-36c4-4cb5-8099-c4fcedddd7ad</IntegratorKey></DocuSignCredentials>
+      accept:
+      - application/json
+      content-type:
+      - application/json
+      user-agent:
+      - Ruby
+      connection:
+      - close
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 13 Aug 2013 19:46:37 GMT
+      connection:
+      - close
+      strict-transport-security:
+      - max-age=7776000; includeSubDomains
+    body:
+      encoding: US-ASCII
+      string: ! "{\r\n  \"url\": \"https://demo.docusign.net/Member/StartInSession.aspx?t=e43068ad-f727-4391-b991-10a69c33e173\"\r\n}"
+    http_version: '1.1'
+  recorded_at: Tue, 13 Aug 2013 19:46:38 GMT
+recorded_with: VCR 2.2.2

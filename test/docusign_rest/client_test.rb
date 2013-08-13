@@ -81,7 +81,7 @@ describe DocusignRest::Client do
     end
 
     it "should allow creating an envelope from a document" do
-      VCR.use_cassette("create_envelope/from_document", record: :all) do
+      VCR.use_cassette("create_envelope/from_document") do
         response = @client.create_envelope_from_document(
           email: {
             subject: "test email subject",
@@ -132,7 +132,7 @@ describe DocusignRest::Client do
     describe "embedded signing" do
       before do
         # create the template dynamically
-        VCR.use_cassette("create_template", record: :all)  do
+        VCR.use_cassette("create_template")  do
           @template_response = @client.create_template(
             description: 'Cool Description',
             name: "Cool Template Name",
@@ -164,7 +164,7 @@ describe DocusignRest::Client do
         end
 
         # use the templateId to get the envelopeId
-        VCR.use_cassette("create_envelope/from_template", record: :all)  do
+        VCR.use_cassette("create_envelope/from_template")  do
           @envelope_response = @client.create_envelope_from_template(
             status: 'sent',
             email: {
@@ -193,7 +193,7 @@ describe DocusignRest::Client do
         @envelope_response["errorCode"].must_be_nil
 
         #return the URL for embedded signing
-        VCR.use_cassette("get_recipient_view", record: :all)  do
+        VCR.use_cassette("get_recipient_view")  do
           response = @client.get_recipient_view(
             envelope_id: @envelope_response["envelopeId"],
             name: 'jon',
@@ -206,7 +206,7 @@ describe DocusignRest::Client do
 
       #status return values = "sent", "delivered", "completed"
       it "should retrieve the envelope recipients status" do
-        VCR.use_cassette("get_envelope_recipients", record: :all)  do
+        VCR.use_cassette("get_envelope_recipients")  do
           response = @client.get_envelope_recipients(
             envelope_id: @envelope_response["envelopeId"],
             include_tabs: true,
@@ -219,7 +219,7 @@ describe DocusignRest::Client do
 
       #status return values = "sent", "delivered", "completed"
       it "should retrieve the byte stream of the envelope doc from DocuSign" do
-        VCR.use_cassette("get_document_from_envelope", record: :all)  do
+        VCR.use_cassette("get_document_from_envelope")  do
           @client.get_document_from_envelope(
             envelope_id: @envelope_response["envelopeId"],
             document_id: 1,
