@@ -22,3 +22,5 @@ test/docusign_login_config.rb
 .DS_Store
 docusign_docs/*
 spike_files/*
+.ruby-gemset
+.ruby-version
