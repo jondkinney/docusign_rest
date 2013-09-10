@@ -187,12 +187,16 @@ module DocusignRest
           :name => signer[:name],
           :email => signer[:email],
           :roleName => signer[:role_name],
-          :emailNotification => signer[:email_notification].nil? ? {} : signer[:email_notification],
           :tabs => {
             :textTabs => get_signer_tabs(signer[:text_tabs]),
             :checkboxTabs => get_signer_tabs(signer[:checkbox_tabs])
           }
         }
+
+        if signer[:email_notification].present?
+          template_role[:emailNotification] = signer[:email_notification]
+        end
+
         template_role['clientUserId'] = (signer[:client_id] || signer[:email]).to_s if signer[:embedded] == true 
         template_roles << template_role
       end
@@ -269,7 +273,6 @@ module DocusignRest
           :accessCode => "",
           :addAccessCodeToEmail =>  false,
           :customFields => nil,
-          :emailNotification => signer[:email_notification].nil? ? {} : signer[:email_notification],
           :iDCheckConfigurationName => nil,
           :iDCheckInformationInput => nil,
           :inheritEmailNotificationConfiguration => false,
@@ -282,6 +285,10 @@ module DocusignRest
           :routingOrder => index+1,
           :socialAuthentications => nil
         }
+
+        if signer[:email_notification].present?
+          doc_signer[:emailNotification] = signer[:email_notification]
+        end
 
         if signer[:embedded]
           doc_signer[:clientUserId] = signer[:client_id] || signer[:email]
