@@ -149,6 +149,11 @@ describe DocusignRest::Client do
                     template_required: true, #doesn't seem to do anything
                     email_notification: false #FIXME if signer is setup as 'embedded' initial email notifications don't go out, but even when I set up a signer as non-embedded this setting didn't seem to make the email notifications actually stop...
                   }
+                ],
+                date_signed_tabs: [
+                  {
+                    anchor_string: 'investor_as_of_date'
+                  }
                 ]
               }
             ],

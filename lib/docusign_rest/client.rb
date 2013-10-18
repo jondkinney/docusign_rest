@@ -248,7 +248,24 @@ module DocusignRest
             \"approveTabs\":null,
             \"checkboxTabs\":null,
             \"companyTabs\":null,
-            \"dateSignedTabs\":null,
+            \"dateSignedTabs\":["
+
+        signer[:date_signed_tabs].each do |date_signed_tab|
+          doc_signer << "{
+              \"anchorString\":\"#{date_signed_tab[:anchor_string]}\",
+              \"anchorXOffset\": \"#{date_signed_tab[:anchor_x_offset] || '0'}\",
+              \"anchorYOffset\": \"#{date_signed_tab[:anchor_y_offset] || '0'}\",
+              \"anchorIgnoreIfNotPresent\": #{date_signed_tab[:ignore_anchor_if_not_present] || false},
+              \"anchorUnits\": \"pixels\",
+              \"conditionalParentLabel\": null,
+              \"conditionalParentValue\": null,
+              \"documentId\":\"#{date_signed_tab[:document_id] || '1'}\",
+              \"pageNumber\":\"#{date_signed_tab[:page_number] || '1'}\",
+              \"recipientId\":\"#{index+1}\",
+            "
+        end
+        doc_signer << "
+            ],
             \"dateTabs\":null,
             \"declineTabs\":null,
             \"emailTabs\":null,
