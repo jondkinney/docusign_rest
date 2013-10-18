@@ -262,12 +262,18 @@ module DocusignRest
             \"signHereTabs\":[
           "
           signer[:sign_here_tabs].each do |sign_here_tab|
+            
+            if sign_here_tab[:anchor_string].present?
+              doc_signer << "{
+                \"anchorString\":\"#{sign_here_tab[:anchor_string]}\",
+                \"anchorXOffset\": \"#{sign_here_tab[:anchor_x_offset] || '0'}\",
+                \"anchorYOffset\": \"#{sign_here_tab[:anchor_y_offset] || '0'}\",
+                \"anchorIgnoreIfNotPresent\": #{sign_here_tab[:ignore_anchor_if_not_present] || false},
+                \"anchorUnits\": \"pixels\",
+              "
+            end
+
             doc_signer << "{
-              \"anchorString\":\"#{sign_here_tab[:anchor_string]}\",
-              \"anchorXOffset\": \"#{sign_here_tab[:anchor_x_offset] || '0'}\",
-              \"anchorYOffset\": \"#{sign_here_tab[:anchor_y_offset] || '0'}\",
-              \"anchorIgnoreIfNotPresent\": #{sign_here_tab[:ignore_anchor_if_not_present] || false},
-              \"anchorUnits\": \"pixels\",
               \"conditionalParentLabel\": null,
               \"conditionalParentValue\": null,
               \"documentId\":\"#{sign_here_tab[:document_id] || '1'}\",
