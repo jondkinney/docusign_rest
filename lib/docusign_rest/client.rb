@@ -140,14 +140,6 @@ module DocusignRest
       @acct_id
     end
 
-
-    def check_embedded_signer(embedded, email)
-      if embedded && embedded == true
-        "\"clientUserId\" : \"#{email}\","
-      end
-    end
-
-
     # Internal: takes in an array of hashes of signers and concatenates all the
     # hashes with commas
     #
@@ -159,19 +151,22 @@ module DocusignRest
     # email     - The email of the signer
     # role_name - The role name of the signer ('Attorney', 'Client', etc.).
     #
-    # Returns a hash of users that need to be embedded in the template to
-    # create an envelope
+    # Returns an array of hashes of users that need to be embedded in the
+    # template to create an envelope
     def get_template_roles(signers)
       template_roles = []
       signers.each_with_index do |signer, index|
-        template_roles << "{
-          #{check_embedded_signer(signer[:embedded], signer[:email])}
-          \"name\"         : \"#{signer[:name]}\",
-          \"email\"        : \"#{signer[:email]}\",
-          \"roleName\"     : \"#{signer[:role_name]}\"
-        }"
+        template_role = {
+          name: signer[:name],
+          email: signer[:email],
+          roleName: signer[:role_name]
+        }
+
+        template_role[:clientUserId] = signer[:email] if signer[:embedded] == true
+
+        template_roles << template_role
       end
-      template_roles.join(",")
+      template_roles
     end
 
 
@@ -210,97 +205,96 @@ module DocusignRest
       signers.each_with_index do |signer, index|
         # Build up a string with concatenation so that we can append the full
         # string to the doc_signers array as the last step in this block
-        doc_signer = ""
-        doc_signer << "{
-          \"email\":\"#{signer[:email]}\",
-          \"name\":\"#{signer[:name]}\",
-          \"accessCode\":\"\",
-          \"addAccessCodeToEmail\":false,
-          #{check_embedded_signer(signer[:embedded], signer[:email])}
-          \"customFields\":null,
-          \"emailNotification\":#{signer[:email_notification] || 'null'},
-          \"iDCheckConfigurationName\":null,
-          \"iDCheckInformationInput\":null,
-          \"inheritEmailNotificationConfiguration\":false,
-          \"note\":\"\",
-          \"phoneAuthentication\":null,
-          \"recipientAttachment\":null,
-          \"recipientId\":\"#{index+1}\",
-          \"requireIdLookup\":false,
-          \"roleName\":\"#{signer[:role_name]}\",
-          \"routingOrder\":#{index+1},
-          \"socialAuthentications\":null,
-        "
+        doc_signer = {
+          email: signer[:email],
+          name: signer[:name],
+          accessCode: '',
+          addAccessCodeToEmail: false,
+          customFields: nil,
+          emailNotification: signer[:email_notification],
+          iDCheckConfigurationName: nil,
+          iDCheckInformationInput: nil,
+          inheritEmailNotificationConfiguration: false,
+          note: '',
+          phoneAuthentication: nil,
+          recipientAttachment: nil,
+          recipientId: "#{index + 1}",
+          requireIdLookup: false,
+          roleName: signer[:role_name],
+          routingOrder: "#{index + 1}",
+          socialAuthentications: nil,
+          autoNavigation: false,
+          defaultRecipient: false,
+          signatureInfo: nil,
+          tabs: {
+            approveTabs: nil,
+            checkboxTabs: nil,
+            companyTabs: nil,
+            dateSignedTabs: nil,
+            dateTabs: nil,
+            declineTabs: nil,
+            emailTabs: nil,
+            envelopeIdTabs: nil,
+            fullNameTabs: nil,
+            initialHereTabs: nil,
+            listTabs: nil,
+            noteTabs: nil,
+            numberTabs: nil,
+            radioGroupTabs: nil,
+            signHereTabs: nil,
+            signerAttachmentTabs: nil,
+            ssnTabs: nil,
+            textTabs: nil,
+            titleTabs: nil,
+            zipTabs: nil
+          }
+        }
+
+        doc_signer[:clientUserId] = signer[:email] if signer[:embedded] == true
 
         if options[:template] == true
-          doc_signer << "
-            \"templateAccessCodeRequired\":false,
-            \"templateLocked\":#{signer[:template_locked] || true},
-            \"templateRequired\":#{signer[:template_required] || true},
-          "
+          doc_signer.merge!({
+            templateAccessCodeRequired: false,
+            templateLocked: signer[:template_locked] || true,
+            templateRequired: signer[:template_required] || true
+          })
         end
 
-        doc_signer << "
-          \"autoNavigation\":false,
-          \"defaultRecipient\":false,
-          \"signatureInfo\":null,
-          \"tabs\":{
-            \"approveTabs\":null,
-            \"checkboxTabs\":null,
-            \"companyTabs\":null,
-            \"dateSignedTabs\":null,
-            \"dateTabs\":null,
-            \"declineTabs\":null,
-            \"emailTabs\":null,
-            \"envelopeIdTabs\":null,
-            \"fullNameTabs\":null,
-            \"initialHereTabs\":null,
-            \"listTabs\":null,
-            \"noteTabs\":null,
-            \"numberTabs\":null,
-            \"radioGroupTabs\":null,
-            \"signHereTabs\":[
-          "
-          signer[:sign_here_tabs].each do |sign_here_tab|
-            doc_signer << "{
-              \"anchorString\":\"#{sign_here_tab[:anchor_string]}\",
-              \"anchorXOffset\": \"#{sign_here_tab[:anchor_x_offset] || '0'}\",
-              \"anchorYOffset\": \"#{sign_here_tab[:anchor_y_offset] || '0'}\",
-              \"anchorIgnoreIfNotPresent\": #{sign_here_tab[:ignore_anchor_if_not_present] || false},
-              \"anchorUnits\": \"pixels\",
-              \"conditionalParentLabel\": null,
-              \"conditionalParentValue\": null,
-              \"documentId\":\"#{sign_here_tab[:document_id] || '1'}\",
-              \"pageNumber\":\"#{sign_here_tab[:page_number] || '1'}\",
-              \"recipientId\":\"#{index+1}\",
-            "
-            if options[:template] == true
-              doc_signer << "
-                \"templateLocked\":#{sign_here_tab[:template_locked] || true},
-                \"templateRequired\":#{sign_here_tab[:template_required] || true},
-              "
-            end
-            doc_signer << "
-              \"xPosition\":\"#{sign_here_tab[:x_position] || '0'}\",
-              \"yPosition\":\"#{sign_here_tab[:y_position] || '0'}\",
-              \"name\":\"#{sign_here_tab[:sign_here_tab_text] || 'Sign Here'}\",
-              \"optional\":false,
-              \"scaleValue\":1,
-              \"tabLabel\":\"#{sign_here_tab[:tab_label] || 'Signature 1'}\"
-            },"
-          end
-          doc_signer << "],
-            \"signerAttachmentTabs\":null,
-            \"ssnTabs\":null,
-            \"textTabs\":null,
-            \"titleTabs\":null,
-            \"zipTabs\":null
+        doc_signer[:tabs][:signHereTabs] = signer[:sign_here_tabs].map do |sign_here_tab|
+          tab = {
+            anchorString: sign_here_tab[:anchor_string],
+            anchorXOffset: "#{sign_here_tab[:anchor_x_offset] || '0'}",
+            anchorYOffset: "#{sign_here_tab[:anchor_y_offset] || '0'}",
+            anchorIgnoreIfNotPresent: sign_here_tab[:ignore_anchor_if_not_present] || false,
+            anchorUnits: 'pixels',
+            conditionalParentLabel: nil,
+            conditionalParentValue: nil,
+            documentId: "#{sign_here_tab[:document_id] || '1'}",
+            pageNumber: "#{sign_here_tab[:page_number] || '1'}",
+            recipientId: "#{index + 1}",
+            xPosition: "#{sign_here_tab[:x_position] || '0'}",
+            yPosition: "#{sign_here_tab[:y_position] || '0'}",
+            name: "#{sign_here_tab[:sign_here_tab_text] || 'Sign Here'}",
+            optional: false,
+            scaleValue: 1,
+            tabLabel: "#{sign_here_tab[:tab_label] || 'Signature 1'}"
           }
-        }"
+
+          if options[:template] == true
+            tab.merge!({
+              templateLocked: sign_here_tab[:template_locked] || true,
+              templateRequired: sign_here_tab[:template_required] || true
+            })
+          end
+
+          tab
+        end
+
         # append the fully build string to the array
         doc_signers << doc_signer
       end
-      doc_signers.join(",")
+
+      doc_signers
     end
 
     # Internal: sets up the file ios array
@@ -368,14 +362,12 @@ module DocusignRest
     #
     # Returns a hash of documents that are to be uploaded
     def get_documents(ios)
-      documents = []
-      ios.each_with_index do |io, index|
-        documents << "{
-          \"documentId\" : \"#{index+1}\",
-          \"name\"       : \"#{io.original_filename}\"
-        }"
+      ios.each_with_index.map do |io, index|
+        {
+          documentId: "#{index+1}",
+          name: io.original_filename
+        }
       end
-      documents.join(",")
     end
 
 
@@ -442,16 +434,15 @@ module DocusignRest
       ios = create_file_ios(options[:files])
       file_params = create_file_params(ios)
 
-      post_body = "{
-        \"emailBlurb\"   : \"#{options[:email][:body] if options[:email]}\",
-        \"emailSubject\" : \"#{options[:email][:subject] if options[:email]}\",
-        \"documents\"    : [#{get_documents(ios)}],
-        \"recipients\"   : {
-          \"signers\" : [#{get_signers(options[:signers])}]
+      post_body = {
+        emailBlurb: "#{options[:email][:body] if options[:email]}",
+        emailSubject: "#{options[:email][:subject] if options[:email]}",
+        documents: get_documents(ios),
+        recipients: {
+          signers: get_signers(options[:signers])
         },
-        \"status\"       : \"#{options[:status]}\"
-      }
-      "
+        status: options[:status]
+      }.to_json
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes")
 
@@ -499,22 +490,21 @@ module DocusignRest
       ios = create_file_ios(options[:files])
       file_params = create_file_params(ios)
 
-      post_body = "{
-        \"emailBlurb\"   : \"#{options[:email][:body] if options[:email]}\",
-        \"emailSubject\" : \"#{options[:email][:subject] if options[:email]}\",
-        \"documents\"    : [#{get_documents(ios)}],
-        \"recipients\"   : {
-          \"signers\"    : [#{get_signers(options[:signers], template: true)}]
+      post_body = {
+        emailBlurb: "#{options[:email][:body] if options[:email]}",
+        emailSubject: "#{options[:email][:subject] if options[:email]}",
+        documents: get_documents(ios),
+        recipients: {
+          signers: get_signers(options[:signers], template: true)
         },
-        \"envelopeTemplateDefinition\" : {
-          \"description\" : \"#{options[:description]}\",
-          \"name\"        : \"#{options[:name]}\",
-          \"pageCount\"   : 1,
-          \"password\"    : \"\",
-          \"shared\"      : false
+        envelopeTemplateDefinition: {
+          description: options[:description],
+          name: options[:name],
+          pageCount: 1,
+          password: '',
+          shared: false
         }
-      }
-      "
+      }.to_json
 
       uri = build_uri("/accounts/#{@acct_id}/templates")
 
@@ -556,13 +546,13 @@ module DocusignRest
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
 
-      post_body = "{
-        \"status\"        : \"#{options[:status]}\",
-        \"emailBlurb\"    : \"#{options[:email][:body]}\",
-        \"emailSubject\"  : \"#{options[:email][:subject]}\",
-        \"templateId\"    : \"#{options[:template_id]}\",
-        \"templateRoles\" : [#{get_template_roles(options[:signers])}],
-       }"
+      post_body = {
+        status: options[:status],
+        emailBlurb: options[:email][:body],
+        emailSubject: options[:email][:subject],
+        templateId: options[:template_id],
+        templateRoles: get_template_roles(options[:signers])
+      }.to_json
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes")
 
@@ -591,13 +581,13 @@ module DocusignRest
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
 
-      post_body = "{
-        \"authenticationMethod\" : \"email\",
-        \"clientUserId\"         : \"#{options[:email]}\",
-        \"email\"                : \"#{options[:email]}\",
-        \"returnUrl\"            : \"#{options[:return_url]}\",
-        \"userName\"             : \"#{options[:name]}\",
-       }"
+      post_body = {
+        authenticationMethod: 'email',
+        clientUserId: options[:email],
+        email: options[:email],
+        returnUrl: options[:return_url],
+        userName: options[:name]
+      }.to_json
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/views/recipient")
 
