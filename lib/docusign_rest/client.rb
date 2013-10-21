@@ -158,22 +158,6 @@ module DocusignRest
       end
     end
 
-    def check_signer_for_tabs(signer)
-      signer_tabs = signer[:tabs]
-      return '' if signer_tabs.nil? or ! signer_tabs.kind_of?(Hash)
-
-      group_map = signer_tabs.map do |tab_type, tabs|
-        tab_map = tabs.map do |tab|
-          "{ \"tabLabel\" : \"#{tab[:tabLabel]}\",
-             \"name\"     : \"#{tab[:name]}\",
-             \"value\"    : \"#{tab[:value]}\" }"
-        end
-        "\"#{tab_type}\" : [ #{tab_map.join(",")} ]"
-      end
-
-      "\"tabs\" : { #{group_map.join(",")} },"
-    end
-
 
     # Internal: takes in an array of hashes of signers and concatenates all the
     # hashes with commas
@@ -185,8 +169,6 @@ module DocusignRest
     # name      - The name of the signer
     # email     - The email of the signer
     # role_name - The role name of the signer ('Attorney', 'Client', etc.).
-    # tabs      - Array of tab pairs grouped by type (Example type: 'textTabs')
-    #             { textTabs: [ { tabLabel: "label", name: "name", value: "value" } ] } 
     #
     # Returns a hash of users that need to be embedded in the template to
     # create an envelope
@@ -195,7 +177,6 @@ module DocusignRest
       signers.each_with_index do |signer, index|
         template_roles << "{
           #{check_embedded_signer(signer[:embedded], signer[:email])}
-          #{check_signer_for_tabs(signer)}
           \"name\"         : \"#{signer[:name]}\",
           \"email\"        : \"#{signer[:email]}\",
           \"roleName\"     : \"#{signer[:role_name]}\"
@@ -547,6 +528,7 @@ module DocusignRest
       "
 
       uri = build_uri("/accounts/#{@acct_id}/templates")
+
       http = initialize_net_http_ssl(uri)
 
       request = initialize_net_http_multipart_post_request(
