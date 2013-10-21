@@ -764,6 +764,20 @@ module DocusignRest
     def api
       "DocusignRest::Client::#{self.api_version.capitalize}".constantize
     end
-  end
 
+    # Grabs envelope data.
+    # Equivalent to the following call in the API explorer:
+    # Get Envelopev2/accounts/:accountId/envelopes/:envelopeId
+    #
+    # envelope_id- DS id of envelope to be retrieved.
+    def get_envelope(envelope_id)
+      content_type = {'Content-Type' => 'application/json'}
+      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{envelope_id}")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+      parsed_response = JSON.parse(response.body)
+    end
+  end
 end
