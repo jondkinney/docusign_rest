@@ -1,6 +1,6 @@
 module DocusignRest
   module Configuration
-    VALID_CONNECTION_KEYS  = [:endpoint, :api_version, :user_agent, :method].freeze
+    VALID_CONNECTION_KEYS  = [:endpoint, :api_version, :user_agent, :method, :root_ca_file].freeze
     VALID_OPTIONS_KEYS     = [:username, :password, :integrator_key, :account_id, :format].freeze
     VALID_CONFIG_KEYS      = VALID_CONNECTION_KEYS + VALID_OPTIONS_KEYS
 
@@ -8,6 +8,7 @@ module DocusignRest
     DEFAULT_API_VERSION    = 'v1'
     DEFAULT_USER_AGENT     = "DocusignRest API Ruby Gem #{DocusignRest::VERSION}".freeze
     DEFAULT_METHOD         = :get
+    DEFAULT_ROOT_CA_FILE   = '/etc/ssl/certs/cert.pem'
 
     DEFAULT_USERNAME       = nil
     DEFAULT_PASSWORD       = nil
@@ -29,7 +30,8 @@ module DocusignRest
       self.api_version    = DEFAULT_API_VERSION
       self.user_agent     = DEFAULT_USER_AGENT
       self.method         = DEFAULT_METHOD
-
+      self.root_ca_file   = DEFAULT_ROOT_CA_FILE
+      
       self.username       = DEFAULT_USERNAME
       self.password       = DEFAULT_PASSWORD
       self.integrator_key = DEFAULT_INTEGRATOR_KEY

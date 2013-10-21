@@ -1,3 +1,5 @@
+require 'openssl'
+
 module DocusignRest
 
   class Client
@@ -82,11 +84,20 @@ module DocusignRest
     # Returns a configured Net::HTTP object into which a request can be passed
     def initialize_net_http_ssl(uri)
       http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-
-      # Explicitly verifies that the certificate matches the domain. Requires
-      # that we use www when calling the production DocuSign API
-      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+      http.use_ssl = (uri.scheme == 'https')
+      if (http.use_ssl?)
+        if (File.exists?(DocusignRest.root_ca_file))
+          http.ca_file = DocusignRest.root_ca_file
+          # Explicitly verifies that the certificate matches the domain. Requires
+          # that we use www when calling the production DocuSign API
+          http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+          http.verify_depth = 5
+        else
+          raise 'Certificate path not found.'
+        end
+      else
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE 
+      end
 
       http
     end
