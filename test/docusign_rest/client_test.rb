@@ -38,7 +38,7 @@ describe DocusignRest::Client do
           :api_version    => 'av',
           :user_agent     => 'ua',
           :method         => 'md',
-          :ca_file        => 'ca',
+          :root_ca_file   => 'ca',
           :access_token   => 'at'
         }
       end
