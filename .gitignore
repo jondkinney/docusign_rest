@@ -19,3 +19,4 @@ tmp
 test.rb
 .DS_Store
 docusign_docs/*
+.idea/*
