@@ -279,10 +279,10 @@ class SomeController < ApplicationController
 
     if params[:event] == "signing_complete"
       flash[:notice] = "Thanks! Successfully signed"
-      render :text => utility.breakout_path(some_path), content_type: :html
+      render :text => utility.breakout_path(some_path), content_type: 'text/html'
     else
       flash[:notice] = "You chose not to sign the document."
-      render :text => utility.breakout_path(some_other_path), content_type: :html
+      render :text => utility.breakout_path(some_other_path), content_type: 'text/html'
     end
   end
 
