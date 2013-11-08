@@ -233,9 +233,6 @@ describe DocusignRest::Client do
           # NOTE manually check that this file has the content you'd expect
         end
       end
-
     end
-
   end
-
 end

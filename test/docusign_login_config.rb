@@ -2,7 +2,7 @@
 # You can run 'ruby lib/tasks/docusign_task.rb' as many times as you need
 # to replace the content of this file with a new config.
 
-require 'docusign_rest'
+require_relative '../lib/docusign_rest'
 
 DocusignRest.configure do |config|
   config.username       = 'jonkinney@gmail.com'
@@ -10,5 +10,5 @@ DocusignRest.configure do |config|
   config.integrator_key = 'NAXX-93c39e8c-36c4-4cb5-8099-c4fcedddd7ad'
   config.account_id     = '327367'
   config.endpoint       = 'https://demo.docusign.net/restapi'
-  config.api_version    = 'v1'
+  config.api_version    = 'v2'
 end

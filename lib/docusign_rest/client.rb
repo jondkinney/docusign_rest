@@ -193,11 +193,11 @@ module DocusignRest
           }
         }
 
-        if signer[:email_notification].present?
+        if signer[:email_notification]
           template_role[:emailNotification] = signer[:email_notification]
         end
 
-        template_role['clientUserId'] = (signer[:client_id] || signer[:email]).to_s if signer[:embedded] == true 
+        template_role['clientUserId'] = (signer[:client_id] || signer[:email]).to_s if signer[:embedded] == true
         template_roles << template_role
       end
       template_roles
@@ -286,7 +286,7 @@ module DocusignRest
           :socialAuthentications => nil
         }
 
-        if signer[:email_notification].present?
+        if signer[:email_notification]
           doc_signer[:emailNotification] = signer[:email_notification]
         end
 
@@ -778,7 +778,7 @@ module DocusignRest
         else
           value
        end
-    end    
+    end
   end
 
 end
