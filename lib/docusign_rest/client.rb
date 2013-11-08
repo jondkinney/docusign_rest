@@ -175,22 +175,6 @@ module DocusignRest
       acct_id
     end
 
-    def check_signer_for_tabs(signer)
-      signer_tabs = signer[:tabs]
-      return '' if signer_tabs.nil? or ! signer_tabs.kind_of?(Hash)
-
-      group_map = signer_tabs.map do |tab_type, tabs|
-        tab_map = tabs.map do |tab|
-          "{ \"tabLabel\" : \"#{tab[:tabLabel]}\",
-             \"name\"     : \"#{tab[:name]}\",
-             \"value\"    : \"#{tab[:value]}\" }"
-        end
-        "\"#{tab_type}\" : [ #{tab_map.join(",")} ]"
-      end
-
-      "\"tabs\" : { #{group_map.join(",")} },"
-    end
-
 
     # Internal: takes in an array of hashes of signers and concatenates all the
     # hashes with commas

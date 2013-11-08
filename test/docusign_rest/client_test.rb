@@ -224,7 +224,6 @@ describe DocusignRest::Client do
             include_tabs: true,
             include_extended: true
           )
-          puts "signers: #{response["signers"]}"
           response["signers"].wont_be_nil
         end
       end
