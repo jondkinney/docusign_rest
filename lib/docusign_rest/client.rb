@@ -537,7 +537,7 @@ module DocusignRest
 
       # Finally do the Net::HTTP request!
       response = http.request(request)
-      parsed_response = JSON.parse(response.body)
+      JSON.parse(response.body)
     end
 
 
@@ -660,7 +660,7 @@ module DocusignRest
       request.body = post_body
 
       response = http.request(request)
-      parsed_response = JSON.parse(response.body)
+      JSON.parse(response.body)
     end
 
 
@@ -750,7 +750,7 @@ module DocusignRest
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
       response = http.request(request)
-      parsed_response = JSON.parse(response.body)
+      JSON.parse(response.body)
     end
 
 
@@ -855,7 +855,7 @@ module DocusignRest
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
       response = http.request(request)
-      parsed_response = JSON.parse(response.body)
+      JSON.parse(response.body)
     end
   end
 end
