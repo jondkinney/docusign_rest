@@ -17,19 +17,24 @@ module DocusignRest
 
       # Set up the DocuSign Authentication headers with the values passed from
       # our config block
-      @docusign_authentication_headers = {
-        "X-DocuSign-Authentication" => "" \
-          "<DocuSignCredentials>" \
-            "<Username>#{DocusignRest.username}</Username>" \
-            "<Password>#{DocusignRest.password}</Password>" \
-            "<IntegratorKey>#{DocusignRest.integrator_key}</IntegratorKey>" \
-          "</DocuSignCredentials>"
-      }
+      if access_token.nil?
+        @docusign_authentication_headers = {
+          "X-DocuSign-Authentication" => {
+            "Username" => username,
+            "Password" => password,
+            "IntegratorKey" => integrator_key
+          }.to_json
+        }
+      else
+        @docusign_authentication_headers = {
+          'Authorization' => "Bearer #{access_token}"
+        }
+      end
 
       # Set the account_id from the configure block if present, but can't call
       # the instance var @account_id because that'll override the attr_accessor
       # that is automatically configured for the configure block
-      @acct_id = DocusignRest.account_id
+      @acct_id = account_id
     end
 
 
@@ -52,7 +57,7 @@ module DocusignRest
     # user-defined headers along with the X-DocuSign-Authentication headers
     def headers(user_defined_headers={})
       default = {
-        "Accept" => "application/json" #this seems to get added automatically, so I can probably remove this
+        "Accept" => "json" #this seems to get added automatically, so I can probably remove this
       }
 
       default.merge!(user_defined_headers) if user_defined_headers
@@ -72,7 +77,7 @@ module DocusignRest
     #
     # Returns a parsed URI object
     def build_uri(url)
-      URI.parse("#{DocusignRest.endpoint}/#{DocusignRest.api_version}#{url}")
+      URI.parse("#{endpoint}/#{api_version}#{url}")
     end
 
 
@@ -88,7 +93,21 @@ module DocusignRest
       # that we use www when calling the production DocuSign API
       http.verify_mode = OpenSSL::SSL::VERIFY_PEER
 
+      http.ca_file = ca_file if ca_file
+
       http
+    end
+
+    def get_token(account_id, email, password)
+      content_type = {"Content-Type" => "application/x-www-form-urlencoded", "Accept" => "application/json"}
+      uri = build_uri("/oauth2/token")
+
+      request = Net::HTTP::Post.new(uri.request_uri, content_type)
+      request.body = "grant_type=password&client_id=#{integrator_key}&username=#{email}&password=#{password}&scope=api"
+
+      http = initialize_net_http_ssl(uri)
+      response = http.request(request)
+      JSON.parse(response.body)
     end
 
 
@@ -141,9 +160,9 @@ module DocusignRest
     end
 
 
-    def check_embedded_signer(embedded, email)
+    def check_embedded_signer(embedded, client_id)
       if embedded && embedded == true
-        "\"clientUserId\" : \"#{email}\","
+        "\"clientUserId\" : \"#{client_id}\","
       end
     end
 
@@ -164,14 +183,52 @@ module DocusignRest
     def get_template_roles(signers)
       template_roles = []
       signers.each_with_index do |signer, index|
-        template_roles << "{
-          #{check_embedded_signer(signer[:embedded], signer[:email])}
-          \"name\"         : \"#{signer[:name]}\",
-          \"email\"        : \"#{signer[:email]}\",
-          \"roleName\"     : \"#{signer[:role_name]}\"
-        }"
+        template_role = {
+          :name => signer[:name],
+          :email => signer[:email],
+          :roleName => signer[:role_name],
+          :tabs => {
+            :textTabs => get_signer_tabs(signer[:text_tabs]),
+            :checkboxTabs => get_signer_tabs(signer[:checkbox_tabs])
+          }
+        }
+
+        if signer[:email_notification].present?
+          template_role[:emailNotification] = signer[:email_notification]
+        end
+
+        template_role['clientUserId'] = (signer[:client_id] || signer[:email]).to_s if signer[:embedded] == true 
+        template_roles << template_role
       end
-      template_roles.join(",")
+      template_roles
+    end
+
+    def get_signer_tabs(tabs)
+      Array(tabs).map do |tab|
+        {
+          'tabLabel' => tab[:label],
+          'name' => tab[:name],
+          'value' => tab[:value],
+          'documentId' => tab[:document_id],
+          'selected' => tab[:selected]
+        }
+      end
+    end
+
+    def get_event_notification(event_notification)
+      return {} unless event_notification
+      {
+        useSoapInterface: event_notification[:use_soap_interface] || false,
+        includeCertificatWithSoap: event_notification[:include_certificate_with_soap] || false,
+        url: event_notification[:url],
+        loggingEnabled: event_notification[:logging],
+        'EnvelopeEvents' => Array(event_notification[:envelope_events]).map do |envelope_event|
+          {
+            includeDocuments: envelope_event[:include_documents] || false,
+            envelopeEventStatusCode: envelope_event[:envelope_event_status_code]
+          }
+        end
+      }
     end
 
 
@@ -207,100 +264,106 @@ module DocusignRest
     # tab_label          - TODO: figure out what this is
     def get_signers(signers, options={})
       doc_signers = []
-      signers.each_with_index do |signer, index|
-        # Build up a string with concatenation so that we can append the full
-        # string to the doc_signers array as the last step in this block
-        doc_signer = ""
-        doc_signer << "{
-          \"email\":\"#{signer[:email]}\",
-          \"name\":\"#{signer[:name]}\",
-          \"accessCode\":\"\",
-          \"addAccessCodeToEmail\":false,
-          #{check_embedded_signer(signer[:embedded], signer[:email])}
-          \"customFields\":null,
-          \"emailNotification\":#{signer[:email_notification] || 'null'},
-          \"iDCheckConfigurationName\":null,
-          \"iDCheckInformationInput\":null,
-          \"inheritEmailNotificationConfiguration\":false,
-          \"note\":\"\",
-          \"phoneAuthentication\":null,
-          \"recipientAttachment\":null,
-          \"recipientId\":\"#{index+1}\",
-          \"requireIdLookup\":false,
-          \"roleName\":\"#{signer[:role_name]}\",
-          \"routingOrder\":#{index+1},
-          \"socialAuthentications\":null,
-        "
 
-        if options[:template] == true
-          doc_signer << "
-            \"templateAccessCodeRequired\":false,
-            \"templateLocked\":#{signer[:template_locked] || true},
-            \"templateRequired\":#{signer[:template_required] || true},
-          "
+
+      signers.each_with_index do |signer, index|
+        doc_signer = {
+          :email => signer[:email],
+          :name => signer[:name],
+          :accessCode => "",
+          :addAccessCodeToEmail =>  false,
+          :customFields => nil,
+          :iDCheckConfigurationName => nil,
+          :iDCheckInformationInput => nil,
+          :inheritEmailNotificationConfiguration => false,
+          :note => "",
+          :phoneAuthentication => nil,
+          :recipientAttachment => nil,
+          :recipientId => index+1,
+          :requireIdLookup => false,
+          :roleName => signer[:role_name],
+          :routingOrder => index+1,
+          :socialAuthentications => nil
+        }
+
+        if signer[:email_notification].present?
+          doc_signer[:emailNotification] = signer[:email_notification]
         end
 
-        doc_signer << "
-          \"autoNavigation\":false,
-          \"defaultRecipient\":false,
-          \"signatureInfo\":null,
-          \"tabs\":{
-            \"approveTabs\":null,
-            \"checkboxTabs\":null,
-            \"companyTabs\":null,
-            \"dateSignedTabs\":null,
-            \"dateTabs\":null,
-            \"declineTabs\":null,
-            \"emailTabs\":null,
-            \"envelopeIdTabs\":null,
-            \"fullNameTabs\":null,
-            \"initialHereTabs\":null,
-            \"listTabs\":null,
-            \"noteTabs\":null,
-            \"numberTabs\":null,
-            \"radioGroupTabs\":null,
-            \"signHereTabs\":[
-          "
-          signer[:sign_here_tabs].each do |sign_here_tab|
-            doc_signer << "{
-              \"anchorString\":\"#{sign_here_tab[:anchor_string]}\",
-              \"anchorXOffset\": \"#{sign_here_tab[:anchor_x_offset] || '0'}\",
-              \"anchorYOffset\": \"#{sign_here_tab[:anchor_y_offset] || '0'}\",
-              \"anchorIgnoreIfNotPresent\": #{sign_here_tab[:ignore_anchor_if_not_present] || false},
-              \"anchorUnits\": \"pixels\",
-              \"conditionalParentLabel\": null,
-              \"conditionalParentValue\": null,
-              \"documentId\":\"#{sign_here_tab[:document_id] || '1'}\",
-              \"pageNumber\":\"#{sign_here_tab[:page_number] || '1'}\",
-              \"recipientId\":\"#{index+1}\",
-            "
-            if options[:template] == true
-              doc_signer << "
-                \"templateLocked\":#{sign_here_tab[:template_locked] || true},
-                \"templateRequired\":#{sign_here_tab[:template_required] || true},
-              "
-            end
-            doc_signer << "
-              \"xPosition\":\"#{sign_here_tab[:x_position] || '0'}\",
-              \"yPosition\":\"#{sign_here_tab[:y_position] || '0'}\",
-              \"name\":\"#{sign_here_tab[:sign_here_tab_text] || 'Sign Here'}\",
-              \"optional\":false,
-              \"scaleValue\":1,
-              \"tabLabel\":\"#{sign_here_tab[:tab_label] || 'Signature 1'}\"
-            },"
-          end
-          doc_signer << "],
-            \"signerAttachmentTabs\":null,
-            \"ssnTabs\":null,
-            \"textTabs\":null,
-            \"titleTabs\":null,
-            \"zipTabs\":null
-          }
-        }"
+        if signer[:embedded]
+          doc_signer[:clientUserId] = signer[:client_id] || signer[:email]
+        end
+
+        if options[:template] == true
+          doc_signer[:templateAccessCodeRequired] = false
+          doc_signer[:templateLocked] = signer[:template_locked].nil? ? true : signer[:template_locked]
+          doc_signer[:templateRequired] = signer[:template_required].nil? ? true : signer[:template_required]
+        end
+
+        doc_signer[:autoNavigation] = false
+        doc_signer[:defaultRecipient] = false
+        doc_signer[:signatureInfo] = nil
+        doc_signer[:tabs] = {}
+        doc_signer[:tabs][:approveTabs] = nil
+        doc_signer[:tabs][:checkboxTabs] = nil
+        doc_signer[:tabs][:companyTabs] = nil
+        doc_signer[:tabs][:dateSignedTabs] = get_tabs(signer[:date_signed_tabs], options, index)
+        doc_signer[:tabs][:dateTabs] = nil
+        doc_signer[:tabs][:declineTabs] = nil
+        doc_signer[:tabs][:emailTabs] = get_tabs(signer[:email_tabs], options, index)
+        doc_signer[:tabs][:envelopeIdTabs] = nil
+        doc_signer[:tabs][:fullNameTabs] = get_tabs(signer[:full_name_tabs], options, index)
+        doc_signer[:tabs][:listTabs] = nil
+        doc_signer[:tabs][:noteTabs] = nil
+        doc_signer[:tabs][:numberTabs] = nil
+        doc_signer[:tabs][:radioGroupTabs] = nil
+        doc_signer[:tabs][:initialHereTabs] = get_tabs(signer[:initial_here_tabs], options, index)
+        doc_signer[:tabs][:signHereTabs] = get_tabs(signer[:sign_here_tabs], options, index)
+        doc_signer[:tabs][:signerAttachmentTabs] = nil
+        doc_signer[:tabs][:ssnTabs] = nil
+        doc_signer[:tabs][:textTabs] = get_tabs(signer[:text_tabs], options, index)
+        doc_signer[:tabs][:titleTabs] = nil
+        doc_signer[:tabs][:zipTabs] = nil
+
         # append the fully build string to the array
         doc_signers << doc_signer
       end
-      doc_signers.join(",")
+      doc_signers.to_json
+    end
+
+    def get_tabs(tabs, options, index)
+      tab_array = []
+
+      tab_buffers = Array(tabs).map do |tab|
+        tab_hash = {}
+
+        tab_hash[:anchorString] = tab[:anchor_string]
+        tab_hash[:anchorXOffset] = tab[:anchor_x_offset] || '0'
+        tab_hash[:anchorYOffset] = tab[:anchor_y_offset] || '0'
+        tab_hash[:anchorIgnoreIfNotPresent] = tab[:ignore_anchor_if_not_present] || false
+        tab_hash[:anchorUnits] = "pixels"
+        tab_hash[:conditionalParentLabel] = nil
+        tab_hash[:conditionalParentValue] = nil
+        tab_hash[:documentId] = tab[:document_id] || '1'
+        tab_hash[:pageNumber] = tab[:page_number] || '1'
+        tab_hash[:recipientId] = index+1
+        tab_hash[:required] = tab[:required] || false
+
+        if options[:template] == true
+          tab_hash[:templateLocked] = tab[:template_locked].nil? ? true : tab[:template_locked]
+          tab_hash[:templateRequired] = tab[:template_required].nil? ? true : tab[:template_required]
+        end
+
+        tab_hash[:xPosition] = tab[:x_position] || '0'
+        tab_hash[:yPosition] = tab[:y_position] || '0'
+        tab_hash[:name] = tab[:name] || 'Sign Here'
+        tab_hash[:optional] = false
+        tab_hash[:scaleValue] = 1
+        tab_hash[:tabLabel] = tab[:label] || 'Signature 1'
+
+        tab_array << tab_hash
+      end
+      tab_array
     end
 
     # Internal: sets up the file ios array
@@ -447,7 +510,7 @@ module DocusignRest
         \"emailSubject\" : \"#{options[:email][:subject] if options[:email]}\",
         \"documents\"    : [#{get_documents(ios)}],
         \"recipients\"   : {
-          \"signers\" : [#{get_signers(options[:signers])}]
+          \"signers\" : #{get_signers(options[:signers])}
         },
         \"status\"       : \"#{options[:status]}\"
       }
@@ -504,7 +567,7 @@ module DocusignRest
         \"emailSubject\" : \"#{options[:email][:subject] if options[:email]}\",
         \"documents\"    : [#{get_documents(ios)}],
         \"recipients\"   : {
-          \"signers\"    : [#{get_signers(options[:signers], template: true)}]
+          \"signers\"    : #{get_signers(options[:signers], template: true)}
         },
         \"envelopeTemplateDefinition\" : {
           \"description\" : \"#{options[:description]}\",
@@ -526,7 +589,19 @@ module DocusignRest
 
       # Finally do the Net::HTTP request!
       response = http.request(request)
-      parsed_response = JSON.parse(response.body)
+      JSON.parse(response.body)
+    end
+
+    def get_template(template_id, options = {})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{@acct_id}/templates/#{template_id}")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+      JSON.parse(response.body)
     end
 
 
@@ -556,13 +631,14 @@ module DocusignRest
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
 
-      post_body = "{
-        \"status\"        : \"#{options[:status]}\",
-        \"emailBlurb\"    : \"#{options[:email][:body]}\",
-        \"emailSubject\"  : \"#{options[:email][:subject]}\",
-        \"templateId\"    : \"#{options[:template_id]}\",
-        \"templateRoles\" : [#{get_template_roles(options[:signers])}],
-       }"
+      post_body = {
+        :status => options[:status],
+        :emailBlurb => options[:email][:body],
+        :emailSubject => options[:email][:subject],
+        :templateId => options[:template_id],
+        :eventNotification => get_event_notification(options[:event_notification]),
+        :templateRoles => get_template_roles(options[:signers])
+       }.to_json
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes")
 
@@ -591,13 +667,13 @@ module DocusignRest
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
 
-      post_body = "{
-        \"authenticationMethod\" : \"email\",
-        \"clientUserId\"         : \"#{options[:email]}\",
-        \"email\"                : \"#{options[:email]}\",
-        \"returnUrl\"            : \"#{options[:return_url]}\",
-        \"userName\"             : \"#{options[:name]}\",
-       }"
+      post_body = {
+        :authenticationMethod => 'email',
+        :clientUserId => options[:client_id] || options[:email],
+        :email => options[:email],
+        :returnUrl => options[:return_url],
+        :userName => options[:name]
+       }.to_json
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/views/recipient")
 
@@ -607,8 +683,7 @@ module DocusignRest
       request.body = post_body
 
       response = http.request(request)
-      parsed_response = JSON.parse(response.body)
-      parsed_response["url"]
+      JSON.parse(response.body)
     end
 
     # Public returns the envelope recipients for a given envelope
@@ -662,17 +737,48 @@ module DocusignRest
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
-      response = http.request(request)
-
-      split_path = options[:local_save_path].split('/')
-      split_path.pop #removes the document name and extension from the array
-      path = split_path.join("/") #rejoins the array to form path to the folder that will contain the file
-
-      FileUtils.mkdir_p(path)
-      File.open(options[:local_save_path], 'wb') do |output|
-        output << response.body
-      end
+      http.request(request)
     end
+
+    def create_account(options)
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts")
+
+      post_body = convert_hash_keys(options).to_json
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+      response = http.request(request)
+      JSON.parse(response.body)
+    end
+
+    def delete_account(account_id, options = {})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{account_id}")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Delete.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+      json = response.body
+      json = "{}" if json.nil? || json == ""
+      JSON.parse(json)
+    end
+
+    def convert_hash_keys(value)
+      case value
+        when Array
+          value.map { |v| convert_hash_keys(v) }
+        when Hash
+          Hash[value.map { |k, v| [k.to_s.camelize(:lower), convert_hash_keys(v)] }]
+        else
+          value
+       end
+    end    
   end
 
 end
