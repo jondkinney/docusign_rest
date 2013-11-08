@@ -229,13 +229,13 @@ module DocusignRest
     def get_event_notification(event_notification)
       return {} unless event_notification
       {
-        useSoapInterface: event_notification[:use_soap_interface] || false,
+        useSoapInterface:          event_notification[:use_soap_interface] || false,
         includeCertificatWithSoap: event_notification[:include_certificate_with_soap] || false,
-        url: event_notification[:url],
-        loggingEnabled: event_notification[:logging],
+        url:                       event_notification[:url],
+        loggingEnabled:            event_notification[:logging],
         'EnvelopeEvents' => Array(event_notification[:envelope_events]).map do |envelope_event|
           {
-            includeDocuments: envelope_event[:include_documents] || false,
+            includeDocuments:        envelope_event[:include_documents] || false,
             envelopeEventStatusCode: envelope_event[:envelope_event_status_code]
           }
         end
@@ -339,7 +339,7 @@ module DocusignRest
         # append the fully build string to the array
         doc_signers << doc_signer
       end
-      doc_signers.to_json
+      doc_signers
     end
 
 
@@ -445,14 +445,12 @@ module DocusignRest
     #
     # Returns a hash of documents that are to be uploaded
     def get_documents(ios)
-      documents = []
-      ios.each_with_index do |io, index|
-        documents << "{
-          \"documentId\" : \"#{index + 1}\",
-          \"name\"       : \"#{io.original_filename}\"
-        }"
+      ios.each_with_index.map do |io, index|
+        {
+          documentId: "#{index + 1}",
+          name: io.original_filename
+        }
       end
-      documents.join(',')
     end
 
 
@@ -475,7 +473,7 @@ module DocusignRest
       #
       request = Net::HTTP::Post::Multipart.new(
         uri.request_uri,
-        {post_body: post_body}.merge(file_params),
+        { post_body: post_body }.merge(file_params),
         headers
       )
 
@@ -519,16 +517,15 @@ module DocusignRest
       ios = create_file_ios(options[:files])
       file_params = create_file_params(ios)
 
-      post_body = "{
-        \"emailBlurb\"   : \"#{options[:email][:body] if options[:email]}\",
-        \"emailSubject\" : \"#{options[:email][:subject] if options[:email]}\",
-        \"documents\"    : [#{get_documents(ios)}],
-        \"recipients\"   : {
-          \"signers\" : #{get_signers(options[:signers])}
+      post_body = {
+        emailBlurb:   "#{options[:email][:body] if options[:email]}",
+        emailSubject: "#{options[:email][:subject] if options[:email]}",
+        documents: get_documents(ios),
+        recipients: {
+          signers: get_signers(options[:signers])
         },
-        \"status\"       : \"#{options[:status]}\"
-      }
-      "
+        status: "#{options[:status]}"
+      }.to_json
 
       uri = build_uri("/accounts/#{acct_id}/envelopes")
 
@@ -576,22 +573,21 @@ module DocusignRest
       ios = create_file_ios(options[:files])
       file_params = create_file_params(ios)
 
-      post_body = "{
-        \"emailBlurb\"   : \"#{options[:email][:body] if options[:email]}\",
-        \"emailSubject\" : \"#{options[:email][:subject] if options[:email]}\",
-        \"documents\"    : [#{get_documents(ios)}],
-        \"recipients\"   : {
-          \"signers\"    : #{get_signers(options[:signers], template: true)}
+      post_body = {
+        emailBlurb: "#{options[:email][:body] if options[:email]}",
+        emailSubject: "#{options[:email][:subject] if options[:email]}",
+        documents: get_documents(ios),
+        recipients: {
+          signers: get_signers(options[:signers], template: true)
         },
-        \"envelopeTemplateDefinition\" : {
-          \"description\" : \"#{options[:description]}\",
-          \"name\"        : \"#{options[:name]}\",
-          \"pageCount\"   : 1,
-          \"password\"    : \"\",
-          \"shared\"      : false
+        envelopeTemplateDefinition: {
+          description: options[:description],
+          name: options[:name],
+          pageCount: 1,
+          password: '',
+          shared: false
         }
-      }
-      "
+      }.to_json
 
       uri = build_uri("/accounts/#{acct_id}/templates")
 
@@ -683,12 +679,12 @@ module DocusignRest
       content_type.merge(options[:headers]) if options[:headers]
 
       post_body = {
-        :authenticationMethod => 'email',
-        :clientUserId => options[:client_id] || options[:email],
-        :email => options[:email],
-        :returnUrl => options[:return_url],
-        :userName => options[:name]
-       }.to_json
+        authenticationMethod: 'email',
+        clientUserId:         options[:client_id] || options[:email],
+        email:                options[:email],
+        returnUrl:            options[:return_url],
+        userName:             options[:name]
+      }.to_json
 
       uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/views/recipient")
 
@@ -713,9 +709,9 @@ module DocusignRest
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
 
-      post_body = "{
-        \"envelopeId\" : \"#{options[:envelope_id]}\"
-       }"
+      post_body = {
+        envelopeId: options[:envelope_id]
+      }.to_json
 
       uri = build_uri("/accounts/#{acct_id}/views/console")
 
@@ -820,13 +816,13 @@ module DocusignRest
 
     def convert_hash_keys(value)
       case value
-        when Array
-          value.map { |v| convert_hash_keys(v) }
-        when Hash
-          Hash[value.map { |k, v| [k.to_s.camelize(:lower), convert_hash_keys(v)] }]
-        else
-          value
-       end
+      when Array
+        value.map { |v| convert_hash_keys(v) }
+      when Hash
+        Hash[value.map { |k, v| [k.to_s.camelize(:lower), convert_hash_keys(v)] }]
+      else
+        value
+      end
     end
 
 
