@@ -90,18 +90,22 @@ module DocusignRest
     def initialize_net_http_ssl(uri)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = (uri.scheme == 'https')
-      if (http.use_ssl?)
-        if (File.exists?(DocusignRest.root_ca_file))
-          http.ca_file = DocusignRest.root_ca_file
-          # Explicitly verifies that the certificate matches the domain. Requires
-          # that we use www when calling the production DocuSign API
-          http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-          http.verify_depth = 5
+      if http.use_ssl?
+        if ca_file
+          if (File.exists?(DocusignRest.ca_file))
+            http.ca_file = DocusignRest.ca_file
+            # Explicitly verifies that the certificate matches the domain. Requires
+            # that we use www when calling the production DocuSign API
+            http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+            http.verify_depth = 5
+          else
+            raise 'Certificate path not found.'
+          end
         else
-          raise 'Certificate path not found.'
+          http.verify_mode = OpenSSL::SSL::VERIFY_PEER
         end
       else
-        http.verify_mode = OpenSSL::SSL::VERIFY_NONE 
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
 
       http.ca_file = ca_file if ca_file
