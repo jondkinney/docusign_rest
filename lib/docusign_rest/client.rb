@@ -21,10 +21,10 @@ module DocusignRest
       # our config block
       if access_token.nil?
         @docusign_authentication_headers = {
-          "X-DocuSign-Authentication" => {
-            "Username" => username,
-            "Password" => password,
-            "IntegratorKey" => integrator_key
+          'X-DocuSign-Authentication' => {
+            'Username' => username,
+            'Password' => password,
+            'IntegratorKey' => integrator_key
           }.to_json
         }
       else
@@ -45,7 +45,7 @@ module DocusignRest
     # the X-DocuSign-Authentication header to authorize the request.
     #
     # Client can pass in header options to any given request:
-    # headers: {"Some-Key" => "some/value", "Another-Key" => "another/value"}
+    # headers: {'Some-Key' => 'some/value', 'Another-Key' => 'another/value'}
     #
     # Then we pass them on to this method to merge them with the other
     # required headers
@@ -55,11 +55,11 @@ module DocusignRest
     #   headers(options[:headers])
     #
     # Returns a merged hash of headers overriding the default Accept header if
-    # the user passes in a new "Accept" header key and adds any other
+    # the user passes in a new 'Accept' header key and adds any other
     # user-defined headers along with the X-DocuSign-Authentication headers
     def headers(user_defined_headers={})
       default = {
-        "Accept" => "json" #this seems to get added automatically, so I can probably remove this
+        'Accept' => 'json' #this seems to get added automatically, so I can probably remove this
       }
 
       default.merge!(user_defined_headers) if user_defined_headers
@@ -75,7 +75,7 @@ module DocusignRest
     #
     # Example:
     #
-    #   build_uri("/login_information")
+    #   build_uri('/login_information')
     #
     # Returns a parsed URI object
     def build_uri(url)
@@ -115,8 +115,8 @@ module DocusignRest
 
 
     def get_token(account_id, email, password)
-      content_type = {"Content-Type" => "application/x-www-form-urlencoded", "Accept" => "application/json"}
-      uri = build_uri("/oauth2/token")
+      content_type = {'Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json'}
+      uri = build_uri('/oauth2/token')
 
       request = Net::HTTP::Post.new(uri.request_uri, content_type)
       request.body = "grant_type=password&client_id=#{integrator_key}&username=#{email}&password=#{password}&scope=api"
@@ -146,7 +146,7 @@ module DocusignRest
     #   userId    - # TODO determine what this is used for, if anything
     #   userName  - Full name provided when signing up for DocuSign
     def get_login_information(options={})
-      uri = build_uri("/login_information")
+      uri = build_uri('/login_information')
       request = Net::HTTP::Get.new(uri.request_uri, headers(options[:headers]))
       http = initialize_net_http_ssl(uri)
       http.request(request)
@@ -287,13 +287,13 @@ module DocusignRest
         doc_signer = {
           :email => signer[:email],
           :name => signer[:name],
-          :accessCode => "",
+          :accessCode => '',
           :addAccessCodeToEmail =>  false,
           :customFields => nil,
           :iDCheckConfigurationName => nil,
           :iDCheckInformationInput => nil,
           :inheritEmailNotificationConfiguration => false,
-          :note => "",
+          :note => '',
           :phoneAuthentication => nil,
           :recipientAttachment => nil,
           :recipientId => index+1,
@@ -359,7 +359,7 @@ module DocusignRest
         tab_hash[:anchorXOffset] = tab[:anchor_x_offset] || '0'
         tab_hash[:anchorYOffset] = tab[:anchor_y_offset] || '0'
         tab_hash[:anchorIgnoreIfNotPresent] = tab[:ignore_anchor_if_not_present] || false
-        tab_hash[:anchorUnits] = "pixels"
+        tab_hash[:anchorUnits] = 'pixels'
         tab_hash[:conditionalParentLabel] = nil
         tab_hash[:conditionalParentValue] = nil
         tab_hash[:documentId] = tab[:document_id] || '1'
@@ -407,8 +407,8 @@ module DocusignRest
       #
       # Usage:
       #
-      #     UploadIO.new("file.txt", "text/plain")
-      #     UploadIO.new(file_io, "text/plain", "file.txt")
+      #     UploadIO.new('file.txt', 'text/plain')
+      #     UploadIO.new(file_io, 'text/plain', 'file.txt')
       # ********************************************************************
       #
       # There is also a 4th undocumented argument, opts={}, which allows us
@@ -419,9 +419,9 @@ module DocusignRest
       files.each_with_index do |file, index|
         ios << UploadIO.new(
                  file[:io] || file[:path],
-                 file[:content_type] || "application/pdf",
+                 file[:content_type] || 'application/pdf',
                  file[:name],
-                 "Content-Disposition" => "file; documentid=#{index+1}"
+                 'Content-Disposition' => "file; documentid=#{index+1}"
                )
       end
       ios
@@ -456,7 +456,7 @@ module DocusignRest
           \"name\"       : \"#{io.original_filename}\"
         }"
       end
-      documents.join(",")
+      documents.join(',')
     end
 
 
@@ -484,7 +484,7 @@ module DocusignRest
       )
 
       # DocuSign requires that we embed the document data in the body of the
-      # JSON request directly so we need to call ".read" on the multipart-post
+      # JSON request directly so we need to call '.read' on the multipart-post
       # provided body_stream in order to serialize all the files into a
       # compatible JSON string.
       request.body = request.body_stream.read
@@ -731,7 +731,7 @@ module DocusignRest
       response = http.request(request)
 
       parsed_response = JSON.parse(response.body)
-      parsed_response["url"]
+      parsed_response['url']
     end
 
 
@@ -773,7 +773,7 @@ module DocusignRest
     # Example
     #
     #   client.get_document_from_envelope(
-    #     envelope_id: @envelope_response["envelopeId"],
+    #     envelope_id: @envelope_response['envelopeId'],
     #     document_id: 1,
     #     local_save_path: 'docusign_docs/file_name.pdf'
     #   )
@@ -795,7 +795,7 @@ module DocusignRest
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
 
-      uri = build_uri("/accounts")
+      uri = build_uri('/accounts')
 
       post_body = convert_hash_keys(options).to_json
 
@@ -817,7 +817,7 @@ module DocusignRest
       request = Net::HTTP::Delete.new(uri.request_uri, headers(content_type))
       response = http.request(request)
       json = response.body
-      json = "{}" if json.nil? || json == ""
+      json = '{}' if json.nil? || json == ''
       JSON.parse(json)
     end
 
@@ -845,7 +845,7 @@ module DocusignRest
       uri = build_uri("/accounts/#{@acct_id}/templates")
 
       http = initialize_net_http_ssl(uri)
-      request = Net::HTTP::Get.new(uri.request_uri, headers({"Content-Type" => "application/json"}))
+      request = Net::HTTP::Get.new(uri.request_uri, headers({'Content-Type' => 'application/json'}))
       JSON.parse(http.request(request).body)
     end
 
