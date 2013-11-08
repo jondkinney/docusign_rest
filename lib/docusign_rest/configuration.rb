@@ -15,7 +15,7 @@ module DocusignRest
     DEFAULT_PASSWORD       = nil
     DEFAULT_INTEGRATOR_KEY = nil
     DEFAULT_ACCOUNT_ID     = nil
-    DEFAULT_CA_FILE        = nil
+    DEFAULT_CA_FILE        = nil # often found at: '/etc/ssl/certs/cert.pem'
     DEFAULT_FORMAT         = :json
 
     # Build accessor methods for every config options so we can do this, for example:
@@ -32,9 +32,7 @@ module DocusignRest
       self.api_version    = DEFAULT_API_VERSION
       self.user_agent     = DEFAULT_USER_AGENT
       self.method         = DEFAULT_METHOD
-
       self.access_token   = DEFAULT_ACCESS_TOKEN
-
       self.username       = DEFAULT_USERNAME
       self.password       = DEFAULT_PASSWORD
       self.integrator_key = DEFAULT_INTEGRATOR_KEY

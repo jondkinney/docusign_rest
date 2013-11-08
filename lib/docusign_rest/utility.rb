@@ -1,5 +1,4 @@
 module DocusignRest
-
   class Utility
     # Public takes a path to redirect to and breaks the redirect out of an iFrame
     #
@@ -35,10 +34,10 @@ module DocusignRest
     #
     #       if params[:event] == "signing_complete"
     #         flash[:notice] = "Thanks! Successfully signed"
-    #         render :text => utility.breakout_path(posts_path), content_type: :html
+    #         render :text => utility.breakout_path(posts_path), content_type: 'text/html'
     #       else
     #         flash[:notice] = "You chose not to sign the document."
-    #         render :text => utility.breakout_path(logout_path), content_type: :html
+    #         render :text => utility.breakout_path(logout_path), content_type: 'text/html'
     #       end
     #     end
     #
@@ -50,5 +49,4 @@ module DocusignRest
       "<html><body><script type='text/javascript' charset='utf-8'>parent.location.href = '#{path}';</script></body></html>"
     end
   end
-
 end

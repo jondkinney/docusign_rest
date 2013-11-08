@@ -1,4 +1,3 @@
-*.gem
 *.rbc
 .bundle
 .config
@@ -14,11 +13,14 @@ rdoc
 spec/reports
 test/tmp
 test/version_tmp
+test/fixtures/vcr/*
 tmp
 .rvmrc
 test.rb
 .DS_Store
 docusign_docs/*
+<<<<<<< HEAD
 spike_files/*
 .ruby-gemset
 .ruby-version
+.idea/*
