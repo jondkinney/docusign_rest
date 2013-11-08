@@ -265,7 +265,6 @@ module DocusignRest
     def get_signers(signers, options={})
       doc_signers = []
 
-
       signers.each_with_index do |signer, index|
         doc_signer = {
           :email => signer[:email],
@@ -334,7 +333,7 @@ module DocusignRest
     def get_tabs(tabs, options, index)
       tab_array = []
 
-      tab_buffers = Array(tabs).map do |tab|
+      Array(tabs).map do |tab|
         tab_hash = {}
 
         tab_hash[:anchorString] = tab[:anchor_string]
