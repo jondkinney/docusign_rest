@@ -38,6 +38,8 @@ describe DocusignRest::Client do
           :api_version    => 'av',
           :user_agent     => 'ua',
           :method         => 'md',
+          :ca_file        => 'ca',
+          :access_token   => 'at'
         }
       end
 
@@ -125,6 +127,7 @@ describe DocusignRest::Client do
           ],
           status: 'sent'
         )
+
         response["status"].must_equal "sent"
       end
     end
@@ -147,7 +150,7 @@ describe DocusignRest::Client do
                     anchor_string: 'sign here',
                     template_locked: true, #doesn't seem to do anything
                     template_required: true, #doesn't seem to do anything
-                    email_notification: false #FIXME if signer is setup as 'embedded' initial email notifications don't go out, but even when I set up a signer as non-embedded this setting didn't seem to make the email notifications actually stop...
+                    email_notification: {supportedLanguage: 'en'} #FIXME if signer is setup as 'embedded' initial email notifications don't go out, but even when I set up a signer as non-embedded this setting didn't seem to make the email notifications actually stop...
                   }
                 ]
               }
@@ -179,6 +182,13 @@ describe DocusignRest::Client do
         end
       end
 
+      it "should get a template" do
+        VCR.use_cassette("get_template", record: :all)  do
+          response = @client.get_template(@template_response["templateId"])
+          assert_equal @template_response["templateId"], response['envelopeTemplateDefinition']['templateId']
+        end
+      end
+
       it "should return a URL for embedded signing" do
         #ensure template was created
         @template_response["templateId"].wont_be_nil
@@ -195,7 +205,7 @@ describe DocusignRest::Client do
             email: 'someone@gmail.com',
             return_url: 'http://google.com'
           )
-          response.must_match(/http/)
+          response['url'].must_match(/http/)
         end
       end
 
