@@ -89,22 +89,28 @@ module DocusignRest
     # Returns a configured Net::HTTP object into which a request can be passed
     def initialize_net_http_ssl(uri)
       http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = uri.scheme == 'https' && !Rails.env.test?
 
-      if http.use_ssl?
+      http.use_ssl = uri.scheme == 'https'
+
+      if defined?(Rails) && Rails.env.test?
+        in_rails_test_env = true
+      else
+        in_rails_test_env = false
+      end
+
+      if http.use_ssl? && !in_rails_test_env
         if ca_file
           if File.exists?(ca_file)
             http.ca_file = ca_file
-            # Explicitly verifies that the certificate matches the domain.
-            # Requires that we use www when calling the production DocuSign API
-            http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-            http.verify_depth = 5
           else
             raise 'Certificate path not found.'
           end
-        else
-          http.verify_mode = OpenSSL::SSL::VERIFY_PEER
         end
+
+        # Explicitly verifies that the certificate matches the domain.
+        # Requires that we use www when calling the production DocuSign API
+        http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+        http.verify_depth = 5
       else
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
