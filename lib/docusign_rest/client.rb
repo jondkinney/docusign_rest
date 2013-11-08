@@ -98,6 +98,7 @@ module DocusignRest
       http
     end
 
+
     def get_token(account_id, email, password)
       content_type = {"Content-Type" => "application/x-www-form-urlencoded", "Accept" => "application/json"}
       uri = build_uri("/oauth2/token")
@@ -203,6 +204,7 @@ module DocusignRest
       template_roles
     end
 
+
     def get_signer_tabs(tabs)
       Array(tabs).map do |tab|
         {
@@ -214,6 +216,7 @@ module DocusignRest
         }
       end
     end
+
 
     def get_event_notification(event_notification)
       return {} unless event_notification
@@ -329,6 +332,7 @@ module DocusignRest
       end
       doc_signers.to_json
     end
+
 
     def get_tabs(tabs, options, index)
       tab_array = []
@@ -591,6 +595,7 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+
     def get_template(template_id, options = {})
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
@@ -685,6 +690,7 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+
     # Public returns the URL for embedded console
     #
     # envelope_id - the ID of the envelope you wish to use for embedded signing
@@ -713,6 +719,7 @@ module DocusignRest
       parsed_response["url"]
     end
 
+
     # Public returns the envelope recipients for a given envelope
     #
     # include_tabs - boolean, determines if the tabs for each signer will be
@@ -737,6 +744,7 @@ module DocusignRest
       response = http.request(request)
       parsed_response = JSON.parse(response.body)
     end
+
 
     # Public retrieves the attached file from a given envelope
     #
@@ -767,6 +775,7 @@ module DocusignRest
       http.request(request)
     end
 
+
     def create_account(options)
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
@@ -782,6 +791,7 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+
     def delete_account(account_id, options = {})
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
@@ -796,6 +806,7 @@ module DocusignRest
       JSON.parse(json)
     end
 
+
     def convert_hash_keys(value)
       case value
         when Array
@@ -806,6 +817,7 @@ module DocusignRest
           value
        end
     end
+
 
     # Public: Retrieves a list of available templates
     #
@@ -821,6 +833,7 @@ module DocusignRest
       request = Net::HTTP::Get.new(uri.request_uri, headers({"Content-Type" => "application/json"}))
       JSON.parse(http.request(request).body)
     end
+
 
     # Grabs envelope data.
     # Equivalent to the following call in the API explorer:
