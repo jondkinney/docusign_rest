@@ -165,21 +165,14 @@ module DocusignRest
     #
     # Returns the accountId string
     def get_account_id
-      unless @acct_id
+      unless acct_id
         response = get_login_information.body
         hashed_response = JSON.parse(response)
         login_accounts = hashed_response['loginAccounts']
-        @acct_id ||= login_accounts.first['accountId']
+        acct_id ||= login_accounts.first['accountId']
       end
 
-      @acct_id
-    end
-
-
-    def check_embedded_signer(embedded, client_id)
-      if embedded && embedded == true
-        "\"clientUserId\" : \"#{client_id}\","
-      end
+      acct_id
     end
 
 
@@ -534,7 +527,7 @@ module DocusignRest
       }
       "
 
-      uri = build_uri("/accounts/#{@acct_id}/envelopes")
+      uri = build_uri("/accounts/#{acct_id}/envelopes")
 
       http = initialize_net_http_ssl(uri)
 
@@ -597,7 +590,7 @@ module DocusignRest
       }
       "
 
-      uri = build_uri("/accounts/#{@acct_id}/templates")
+      uri = build_uri("/accounts/#{acct_id}/templates")
 
       http = initialize_net_http_ssl(uri)
 
@@ -615,7 +608,7 @@ module DocusignRest
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
 
-      uri = build_uri("/accounts/#{@acct_id}/templates/#{template_id}")
+      uri = build_uri("/accounts/#{acct_id}/templates/#{template_id}")
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
@@ -659,7 +652,7 @@ module DocusignRest
         :templateRoles => get_template_roles(options[:signers])
        }.to_json
 
-      uri = build_uri("/accounts/#{@acct_id}/envelopes")
+      uri = build_uri("/accounts/#{acct_id}/envelopes")
 
       http = initialize_net_http_ssl(uri)
 
@@ -694,7 +687,7 @@ module DocusignRest
         :userName => options[:name]
        }.to_json
 
-      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/views/recipient")
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/views/recipient")
 
       http = initialize_net_http_ssl(uri)
 
@@ -721,7 +714,7 @@ module DocusignRest
         \"envelopeId\" : \"#{options[:envelope_id]}\"
        }"
 
-      uri = build_uri("/accounts/#{@acct_id}/views/console")
+      uri = build_uri("/accounts/#{acct_id}/views/console")
 
       http = initialize_net_http_ssl(uri)
 
@@ -752,7 +745,7 @@ module DocusignRest
 
       include_tabs = options[:include_tabs] || false
       include_extended = options[:include_extended] || false
-      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients?include_tabs=#{include_tabs}&include_extended=#{include_extended}")
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/recipients?include_tabs=#{include_tabs}&include_extended=#{include_extended}")
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
@@ -783,7 +776,7 @@ module DocusignRest
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
 
-      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/documents/#{options[:document_id]}")
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/documents/#{options[:document_id]}")
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
@@ -842,7 +835,7 @@ module DocusignRest
     #
     # Returns a list of the available templates.
     def get_templates
-      uri = build_uri("/accounts/#{@acct_id}/templates")
+      uri = build_uri("/accounts/#{acct_id}/templates")
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers({'Content-Type' => 'application/json'}))
@@ -857,7 +850,7 @@ module DocusignRest
     # envelope_id- DS id of envelope to be retrieved.
     def get_envelope(envelope_id)
       content_type = {'Content-Type' => 'application/json'}
-      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{envelope_id}")
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{envelope_id}")
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
