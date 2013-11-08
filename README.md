@@ -301,7 +301,7 @@ end
 
 In order to run the tests you'll need to register for a (free) DocuSign developer account. After doing so you'll have a username, password, and integrator key. Armed with that information execute the following ruby file:
 
-    $ ruby lib/tasks/docusign_task.rb
+    $ bundle exec ruby lib/tasks/docusign_task.rb
 
 This calls a rake task which adds a non-version controlled file in the test folder called `docusign_login_config.rb` which holds your account specific credentials and is required in order to hit the test API through the test suite.
 
