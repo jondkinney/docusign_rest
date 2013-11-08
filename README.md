@@ -216,6 +216,54 @@ client = DocusignRest::Client.new
 )
 ```
 
+**Creating an envelope from a template using custom tabs:**
+
+Note: This feature is not supported in 'v1' of the REST API
+
+```ruby
+client = DocusignRest::Client.new
+@envelope_response = client.create_envelope_from_template(
+  status: 'sent',
+  email: {
+    subject: "The test email subject envelope",
+    body: "Envelope body content here"
+  },
+  template_id: @template_response["templateId"],
+  signers: [
+    {
+      embedded: true,
+      name: 'jon',
+      email: 'someone@gmail.com',
+      role_name: 'Issuer',
+      tabs: {
+        textTabs: [
+          { 
+            tabLabel: 'Seller Full Name', 
+            name: 'Seller Full Name', 
+            value: 'Jon Doe'
+          }
+        ]
+      }
+    },
+    {
+      embedded: true,
+      name: 'tim',
+      email: 'someone+else@gmail.com',
+      role_name: 'Attorney',
+      tabs: {
+        textTabs: [
+          { 
+            tabLabel: 'Attorney Full Name', 
+            name: 'Attorney Full Name', 
+            value: 'Tim Smith'
+          }
+        ]
+      }
+    }
+  ]
+)
+```
+
 
 **Retrieving the url for embedded signing. (Returns a string, not a hash)**
 
@@ -305,6 +353,22 @@ In order to run the tests you'll need to register for a (free) DocuSign develope
 
 This calls a rake task which adds a non-version controlled file in the test folder called `docusign_login_config.rb` which holds your account specific credentials and is required in order to hit the test API through the test suite.
 
+**Guard**
+
+Simply run 'guard' from the root directory of the repository to have the test suite executed automatically as you make changes.
+
 **VCR**
 
 The test suite uses VCR and is configured to record all requests by using the 'all' configuration option surrounding each API request. If you want to speed up the test suite locally for new feature development, you may want to change the VCR config record setting to 'once' temporarily which will not write a new YAML file for each request each time you hit the API and significantly speed up the tests. However, this can lead to false passing tests as the gem changes so it's recommended that you ensure all tests pass by actually hitting the API before submitting a pull request.
+
+**SSL Issue**
+
+In the event that you have an SSL error running the tests, such as;
+
+    SSL_connect returned=1 errno=0 state=SSLv3 read server certificate B: certificate verify failed
+
+there is a sample cert 'cacert.pem' you can use when executing the
+test suite.
+
+    SSL_CERT_FILE=cacert.pem guard
+    SSL_CERT_FILE=cacert.pem ruby lib/tasks/docusign_task.rb
