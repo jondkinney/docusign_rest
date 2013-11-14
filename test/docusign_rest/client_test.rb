@@ -105,7 +105,29 @@ describe DocusignRest::Client do
                   anchor_x_offset: '125',
                   anchor_y_offset: '-12'
                 }
-              ]
+              ],
+              list_tabs: [
+                {
+                  anchor_string: '_1',
+                  width: '180',
+                  height: '14',
+                  anchor_x_offset: '10',
+                  anchor_y_offset: '-5',
+                  label: '_1',
+                  list_items: [
+                    {
+                      selected: false,
+                      text: 'Option 1',
+                      value: 'option_1'
+                    },
+                    {
+                      selected: true,
+                      text: 'Option 2',
+                      value: 'option_2'
+                    }
+                  ]
+                }
+              ],
             },
             {
               embedded: true,

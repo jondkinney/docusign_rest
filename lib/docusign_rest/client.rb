@@ -290,7 +290,7 @@ module DocusignRest
           email:                                 signer[:email],
           name:                                  signer[:name],
           accessCode:                            '',
-          addAccessCodeToEmail:                   false,
+          addAccessCodeToEmail:                  false,
           customFields:                          nil,
           iDCheckConfigurationName:              nil,
           iDCheckInformationInput:               nil,
@@ -324,7 +324,7 @@ module DocusignRest
         doc_signer[:signatureInfo]    = nil
         doc_signer[:tabs]             = {
           approveTabs:          nil,
-          checkboxTabs:         nil,
+          checkboxTabs:         get_tabs(signer[:checkbox_tabs], options, index),
           companyTabs:          nil,
           dateSignedTabs:       get_tabs(signer[:date_signed_tabs], options, index),
           dateTabs:             nil,
@@ -332,16 +332,16 @@ module DocusignRest
           emailTabs:            get_tabs(signer[:email_tabs], options, index),
           envelopeIdTabs:       nil,
           fullNameTabs:         get_tabs(signer[:full_name_tabs], options, index),
-          listTabs:             nil,
+          listTabs:             get_tabs(signer[:list_tabs], options, index),
           noteTabs:             nil,
           numberTabs:           nil,
           radioGroupTabs:       nil,
-          initialHereTabs:      get_tabs(signer[:initial_here_tabs], options, index),
-          signHereTabs:         get_tabs(signer[:sign_here_tabs], options, index),
+          initialHereTabs:      get_tabs(signer[:initial_here_tabs], options.merge!(initial_here_tab: true), index),
+          signHereTabs:         get_tabs(signer[:sign_here_tabs], options.merge!(sign_here_tab: true), index),
           signerAttachmentTabs: nil,
           ssnTabs:              nil,
           textTabs:             get_tabs(signer[:text_tabs], options, index),
-          titleTabs:            nil,
+          titleTabs:            get_tabs(signer[:title_tabs], options, index),
           zipTabs:              nil
         }
 
@@ -365,6 +365,7 @@ module DocusignRest
           tab_hash[:anchorIgnoreIfNotPresent] = tab[:ignore_anchor_if_not_present] || false
           tab_hash[:anchorUnits]              = 'pixels'
         end
+
         tab_hash[:conditionalParentLabel]   = nil
         tab_hash[:conditionalParentValue]   = nil
         tab_hash[:documentId]               = tab[:document_id] || '1'
@@ -377,12 +378,22 @@ module DocusignRest
           tab_hash[:templateRequired] = tab[:template_required].nil? ? true : tab[:template_required]
         end
 
+        if options[:sign_here_tab] == true || options[:initial_here_tab] == true
+          tab_hash[:scaleValue] = tab_hash[:scaleValue] || 1
+        end
+
         tab_hash[:xPosition]  = tab[:x_position] || '0'
         tab_hash[:yPosition]  = tab[:y_position] || '0'
-        tab_hash[:name]       = tab[:name] || 'Sign Here'
+        tab_hash[:name]       = tab[:name] if tab[:name]
         tab_hash[:optional]   = false
-        tab_hash[:scaleValue] = 1
         tab_hash[:tabLabel]   = tab[:label] || 'Signature 1'
+        tab_hash[:width]      = tab[:width] if tab[:width]
+        tab_hash[:height]     = tab[:height] if tab[:width]
+        tab_hash[:value]      = tab[:value] if tab[:value]
+
+        tab_hash[:locked]     = tab[:locked] || false
+
+        tab_hash[:list_items] = tab[:list_items] if tab[:list_items]
 
         tab_array << tab_hash
       end
