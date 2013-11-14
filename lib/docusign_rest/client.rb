@@ -772,6 +772,22 @@ module DocusignRest
     end
 
 
+    # Public retrieves the envelope status
+    #
+    # envelope_id      - ID of the envelope from which the doc will be retrieved
+    def get_envelope_status(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+      JSON.parse(response.body)
+    end
+
+
     # Public retrieves the attached file from a given envelope
     #
     # envelope_id      - ID of the envelope from which the doc will be retrieved
