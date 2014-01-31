@@ -838,7 +838,7 @@ module DocusignRest
       request = Net::HTTP::Put.new(uri.request_uri, headers(content_type))
       response = http.request(request)
 
-      byebug
+      response
     end
 
 
