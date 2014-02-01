@@ -828,14 +828,34 @@ module DocusignRest
       end
     end
 
+    # Public moves the specified envelopes to the given folder
+    #
+    # envelope_ids     - IDs of the envelopes to be moved
+    # folder_id        - ID of the folder to move the envelopes to
+    # headers          - Optional hash of headers to merge into the existing
+    #                    required headers for a multipart request.
+    #
+    # Example
+    #
+    #   client.move_envelope_to_folder(
+    #     envelope_ids: ["xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx"]
+    #     folder_id: "xxxxx-2222xxxxx",
+    #   )
+    #
+    # Returns the response.
     def move_envelope_to_folder(options = {})
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
+
+      post_body = {
+        envelopeIds: options[:envelope_ids]
+      }.to_json
 
       uri = build_uri("/accounts/#{acct_id}/folders/#{options[:folder_id]}")
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Put.new(uri.request_uri, headers(content_type))
+      request.body = post_body
       response = http.request(request)
 
       response
