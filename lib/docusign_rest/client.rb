@@ -555,7 +555,6 @@ module DocusignRest
                   uri, post_body, file_params, headers(options[:headers])
                 )
 
-      # Finally do the Net::HTTP request!
       response = http.request(request)
       JSON.parse(response.body)
     end
@@ -616,7 +615,6 @@ module DocusignRest
                   uri, post_body, file_params, headers(options[:headers])
                 )
 
-      # Finally do the Net::HTTP request!
       response = http.request(request)
       JSON.parse(response.body)
     end
@@ -662,12 +660,12 @@ module DocusignRest
       content_type.merge(options[:headers]) if options[:headers]
 
       post_body = {
-        :status => options[:status],
-        :emailBlurb => options[:email][:body],
-        :emailSubject => options[:email][:subject],
-        :templateId => options[:template_id],
-        :eventNotification => get_event_notification(options[:event_notification]),
-        :templateRoles => get_template_roles(options[:signers])
+        status:             options[:status],
+        emailBlurb:         options[:email][:body],
+        emailSubject:       options[:email][:subject],
+        templateId:         options[:template_id],
+        eventNotification:  get_event_notification(options[:event_notification]),
+        templateRoles:      get_template_roles(options[:signers])
        }.to_json
 
       uri = build_uri("/accounts/#{acct_id}/envelopes")
@@ -859,7 +857,7 @@ module DocusignRest
 
       q ||= []
       options[:query_params].each do |key, val|
-       q << "#{key}=#{val}"
+        q << "#{key}=#{val}"
       end
 
       uri = build_uri("/accounts/#{@acct_id}/folders/#{options[:folder_id]}/?#{q.join('&')}")
