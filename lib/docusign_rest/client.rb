@@ -862,6 +862,8 @@ module DocusignRest
       end
     end
 
+
+
     # Public moves the specified envelopes to the given folder
     #
     # envelope_ids     - IDs of the envelopes to be moved
@@ -894,6 +896,7 @@ module DocusignRest
 
       response
     end
+
 
 
     # Public retrieves the envelope(s) from a specific folder based on search params.
