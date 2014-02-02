@@ -694,6 +694,28 @@ module DocusignRest
     end
 
 
+    # Public returns the names specified for a given email address (existing docusign user)
+    #
+    # email       - the email of the recipient
+    # headers     - optional hash of headers to merge into the existing
+    #               required headers for a multipart request.
+    #
+    # Returns the list of names
+    def get_recipient_names(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{acct_id}/recipient_names?email=#{options[:email]}")
+
+      http = initialize_net_http_ssl(uri)
+
+      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
+
+      response = http.request(request)
+      JSON.parse(response.body)
+    end
+
+
     # Public returns the URL for embedded signing
     #
     # envelope_id - the ID of the envelope you wish to use for embedded signing
