@@ -97,7 +97,7 @@ describe DocusignRest::Client do
             {
               embedded: true,
               name: 'Test Guy',
-              email: 'testguy@gmail.com',
+              email: 'testguy@example.com',
               role_name: 'Issuer',
               sign_here_tabs: [
                 {
@@ -132,7 +132,7 @@ describe DocusignRest::Client do
             {
               embedded: true,
               name: 'Test Girl',
-              email: 'testgirl@gmail.com',
+              email: 'testgirl@example.com',
               role_name: 'Attorney',
               sign_here_tabs: [
                 {
@@ -165,7 +165,7 @@ describe DocusignRest::Client do
               {
                 embedded: true,
                 name: 'jon',
-                email: 'someone@gmail.com',
+                email: 'someone@example.com',
                 role_name: 'Issuer',
                 sign_here_tabs: [
                   {
@@ -200,7 +200,7 @@ describe DocusignRest::Client do
               {
                 embedded: true,
                 name: 'jon',
-                email: 'someone@gmail.com',
+                email: 'someone@example.com',
                 role_name: 'Issuer'
               }
             ]
@@ -231,7 +231,7 @@ describe DocusignRest::Client do
           response = @client.get_recipient_view(
             envelope_id: @envelope_response["envelopeId"],
             name: 'jon',
-            email: 'someone@gmail.com',
+            email: 'someone@example.com',
             return_url: 'http://google.com'
           )
           response['url'].must_match(/http/)
