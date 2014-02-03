@@ -108,12 +108,12 @@ describe DocusignRest::Client do
               ],
               list_tabs: [
                 {
-                  anchor_string: '_1',
+                  anchor_string: 'another test',
                   width: '180',
                   height: '14',
                   anchor_x_offset: '10',
                   anchor_y_offset: '-5',
-                  label: '_1',
+                  label: 'another test',
                   list_items: [
                     {
                       selected: false,

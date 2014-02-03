@@ -821,6 +821,32 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+    # Public retrieves the statuses of envelopes matching the given query
+    #
+    # from_date      - Docusign formatted Date/DateTime. Only return items after this date.
+    #
+    # to_date        - Docusign formatted Date/DateTime. Only return items up to this date.
+    #                  Defaults to the time of the call.
+    #
+    # from_to_status - The status of the envelope checked for in the from_date - to_date period.
+    #                  Defaults to 'changed'
+    #
+    # status         - The current status of the envelope. Defaults to any status.
+    #
+    # Returns an array of hashes containing envelope statuses, ids, and similar information.
+    def get_envelope_statuses(options={})
+      content_type = { 'Content-Type' => 'application/json' }
+      content_type.merge(options[:headers]) if options[:headers]
+
+      query_params = options.slice(:from_date, :to_date, :from_to_status, :status)
+      uri = build_uri("/accounts/#{acct_id}/envelopes?#{query_params.to_query}")
+
+      http     = initialize_net_http_ssl(uri)
+      request  = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+
+      JSON.parse(response.body)
+    end
 
     # Public retrieves the attached file from a given envelope
     #
@@ -862,6 +888,23 @@ module DocusignRest
       end
     end
 
+    # Public retrieves the document infos from a given envelope
+    #
+    # envelope_id - ID of the envelope from which document infos are to be retrieved
+    #
+    # Returns a hash containing the envelopeId and the envelopeDocuments array
+    def get_documents_from_envelope(options={})
+      content_type = { 'Content-Type' => 'application/json' }
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/documents")
+
+      http     = initialize_net_http_ssl(uri)
+      request  = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+
+      JSON.parse(response.body)
+    end
 
 
     # Public moves the specified envelopes to the given folder
