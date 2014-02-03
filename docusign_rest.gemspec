@@ -17,7 +17,7 @@ Gem::Specification.new do |gem|
 
   gem.required_ruby_version = '>= 1.9.2'
 
-  gem.add_dependency('multipart-post', '~> 2.0')
+  gem.add_dependency('multipart-post', '>= 1.2')
   gem.add_dependency('json')
   gem.add_development_dependency('rake')
   gem.add_development_dependency('minitest', '~>4.0')
