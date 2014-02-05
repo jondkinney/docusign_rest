@@ -948,6 +948,28 @@ module DocusignRest
       response
     end
 
+    # Public returns a hash of audit events for a given envelope
+    #
+    # envelope_id       - ID of the envelope to get audit events from
+    #
+    #
+    # Example
+    # client.get_envelope_audit_events(
+    #   envelope_id: "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx"
+    # )
+    # Returns a hash of the events that have happened to the envelope.
+    def get_envelope_audit_events(options = {})
+      content_type = { 'Content-Type' => 'application/json' }
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/audit_events")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+
+      JSON.parse(response.body)
+    end
 
     # Public retrieves the envelope(s) from a specific folder based on search params.
     #
