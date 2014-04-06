@@ -221,7 +221,8 @@ module DocusignRest
           roleName: signer[:role_name],
           tabs: {
             textTabs:     get_signer_tabs(signer[:text_tabs]),
-            checkboxTabs: get_signer_tabs(signer[:checkbox_tabs])
+            checkboxTabs: get_signer_tabs(signer[:checkbox_tabs]),
+            numberTabs:   get_signer_tabs(signer[:number_tabs])
           }
         }
 
