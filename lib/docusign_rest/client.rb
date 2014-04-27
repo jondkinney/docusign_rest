@@ -1093,5 +1093,29 @@ module DocusignRest
       response = http.request(request)
       parsed_response = JSON.parse(response.body)
     end
+
+    # Public voids an in-process envelope
+    #
+    # envelope_id      - ID of the envelope to be voided
+    # voided_reason    - Optional reason for the envelope being voided
+    #
+    # Returns the response (success or failure).
+    def void_envelope(options = {})
+      content_type = { 'Content-Type' => 'application/json' }
+      content_type.merge(options[:headers]) if options[:headers]
+
+      post_body = {
+          "status" =>"voided",
+          "voidedReason" => options[:voided_reason] || "No reason provided."
+      }.to_json
+
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:folder_id]}")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Put.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+      response = http.request(request)
+      response
+    end
   end
 end
