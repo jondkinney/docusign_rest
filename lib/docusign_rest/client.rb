@@ -222,6 +222,7 @@ module DocusignRest
           tabs: {
             textTabs:     get_signer_tabs(signer[:text_tabs]),
             checkboxTabs: get_signer_tabs(signer[:checkbox_tabs]),
+            numberTabs:   get_signer_tabs(signer[:number_tabs]),
             fullNameTabs: get_signer_tabs(signer[:fullname_tabs]),
             dateTabs:     get_signer_tabs(signer[:date_tabs])
           }
@@ -869,7 +870,7 @@ module DocusignRest
     #
     # include_tabs - boolean, determines if the tabs for each signer will be
     #                returned in the response, defaults to false.
-    # envelope_id  - ID of the envelope for which you want to retrive the
+    # envelope_id  - ID of the envelope for which you want to retrieve the
     #                signer info
     # headers      - optional hash of headers to merge into the existing
     #                required headers for a multipart request.
@@ -993,7 +994,7 @@ module DocusignRest
 
       JSON.parse(response.body)
     end
-    
+
     # Public retrieves a PDF containing the combined content of all
     # documents and the certificate for the given envelope.
     #
@@ -1219,6 +1220,55 @@ module DocusignRest
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
       response = http.request(request)
       JSON.parse(response.body)
+    end
+
+    # Public deletes a recipient for a given envelope
+    #
+    # envelope_id  - ID of the envelope for which you want to retrieve the
+    #                signer info
+    # recipient_id - ID of the recipient to delete
+    #
+    # Returns a hash of recipients with an error code for any recipients that
+    # were not successfully deleted.
+    def delete_envelope_recipient(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients")
+      post_body = "{
+        \"signers\" : [{\"recipientId\" : \"#{options[:recipient_id]}\"}]
+       }"
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Delete.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+      parsed_response = JSON.parse(response.body)
+    end
+
+    # Public voids an in-process envelope
+    #
+    # envelope_id      - ID of the envelope to be voided
+    # voided_reason    - Optional reason for the envelope being voided
+    #
+    # Returns the response (success or failure).
+    def void_envelope(options = {})
+      content_type = { 'Content-Type' => 'application/json' }
+      content_type.merge(options[:headers]) if options[:headers]
+
+      post_body = {
+          "status" =>"voided",
+          "voidedReason" => options[:voided_reason] || "No reason provided."
+      }.to_json
+
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:folder_id]}")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Put.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+      response = http.request(request)
+      response
     end
   end
 end
