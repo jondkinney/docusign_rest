@@ -913,7 +913,45 @@ module DocusignRest
 
       JSON.parse(response.body)
     end
+    
+    # Public retrieves a PDF containing the combined content of all
+    # documents and the certificate for the given envelope.
+    #
+    # envelope_id      - ID of the envelope from which the doc will be retrieved
+    # local_save_path  - Local absolute path to save the doc to including the
+    #                    filename itself
+    # headers          - Optional hash of headers to merge into the existing
+    #                    required headers for a multipart request.
+    #
+    # Example
+    #
+    #   client.get_combined_document_from_envelope(
+    #     envelope_id: @envelope_response['envelopeId'],
+    #     local_save_path: 'docusign_docs/file_name.pdf',
+    #     return_stream: true/false # will return the bytestream instead of saving doc to file system.
+    #   )
+    #
+    # Returns the PDF document as a byte stream.
+    def get_combined_document_from_envelope(options={})
+      content_type = { 'Content-Type' => 'application/json' }
+      content_type.merge(options[:headers]) if options[:headers]
 
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/documents/combined")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+      return response.body if options[:return_stream]
+
+      split_path = options[:local_save_path].split('/')
+      split_path.pop #removes the document name and extension from the array
+      path = split_path.join("/") #rejoins the array to form path to the folder that will contain the file
+
+      FileUtils.mkdir_p(path)
+      File.open(options[:local_save_path], 'wb') do |output|
+        output << response.body
+      end
+    end
 
     # Public moves the specified envelopes to the given folder
     #
