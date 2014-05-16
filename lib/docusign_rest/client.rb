@@ -512,6 +512,7 @@ module DocusignRest
       composite_array
     end
 
+
     # Internal: takes signer info and the inline template sequence number
     # and sets up the inline template
     #
@@ -995,6 +996,7 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+
     # Public retrieves a PDF containing the combined content of all
     # documents and the certificate for the given envelope.
     #
@@ -1034,6 +1036,7 @@ module DocusignRest
       end
     end
 
+
     # Public moves the specified envelopes to the given folder
     #
     # envelope_ids     - IDs of the envelopes to be moved
@@ -1067,6 +1070,7 @@ module DocusignRest
       response
     end
 
+
     # Public returns a hash of audit events for a given envelope
     #
     # envelope_id       - ID of the envelope to get audit events from
@@ -1089,6 +1093,7 @@ module DocusignRest
 
       JSON.parse(response.body)
     end
+
 
     # Public retrieves the envelope(s) from a specific folder based on search params.
     #
@@ -1193,6 +1198,7 @@ module DocusignRest
       JSON.parse(http.request(request).body)
     end
 
+
     # Public: Retrieves a list of templates used in an envelope
     #
     # Returns templateId, name and uri for each template found.
@@ -1222,6 +1228,7 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+
     # Public deletes a recipient for a given envelope
     #
     # envelope_id  - ID of the envelope for which you want to retrieve the
@@ -1244,8 +1251,9 @@ module DocusignRest
       request.body = post_body
 
       response = http.request(request)
-      parsed_response = JSON.parse(response.body)
+      JSON.parse(response.body)
     end
+
 
     # Public voids an in-process envelope
     #
