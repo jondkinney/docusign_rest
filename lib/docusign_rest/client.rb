@@ -522,7 +522,13 @@ module DocusignRest
       signers.each do |signer|
         signers_hash = Hash[:email, signer[:email], :name, signer[:name], \
           :recipientId, signer[:recipient_id], :roleName, signer[:role_name], \
-          :clientUserId, signer[:email]]
+          :clientUserId, signer[:client_id] || signer[:email], \
+          :tabs, {
+            textTabs:     get_signer_tabs(signer[:text_tabs]),
+            checkboxTabs: get_signer_tabs(signer[:checkbox_tabs]),
+            fullNameTabs: get_signer_tabs(signer[:fullname_tabs]),
+            dateTabs:     get_signer_tabs(signer[:date_tabs])
+          }]
         signers_array << signers_hash
       end
       template_hash = Hash[:sequence, sequence, :recipients, { signers: signers_array }]
