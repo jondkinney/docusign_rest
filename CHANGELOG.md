@@ -5,6 +5,9 @@
 ### Features:
 * Add certificate option to DocusignRest::Client#get_combined_document_from_envelope (Shane Stanford)
 
+### Misc:
+* Replace monkeypatch with argument usage (Jean-Philippe Moal)
+
 ## v0.2.0 April 28 2017
 
 ### Features:
