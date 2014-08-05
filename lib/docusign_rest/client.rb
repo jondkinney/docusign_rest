@@ -238,6 +238,17 @@ module DocusignRest
       template_roles
     end
 
+    def get_sign_here_tabs(tabs)
+      Array(tabs).map do |tab|
+        {
+          documentId: tab[:document_id],
+          recipientId: tab[:recipient_id],
+          anchorString: tab[:anchor_string],
+          anchorXOffset: tab[:anchorXOffset],
+          anchorYOffset: tab[:anchorYOffset]
+        }
+      end
+    end
 
     # TODO (2014-02-03) jonk => document
     def get_signer_tabs(tabs)
@@ -251,7 +262,6 @@ module DocusignRest
         }
       end
     end
-
 
     # TODO (2014-02-03) jonk => document
     def get_event_notification(event_notification)
@@ -509,8 +519,7 @@ module DocusignRest
 
         templates_hash[:document] = {
           documentId: template[:document_id],
-          name: template[:name],
-          transformPdfFields: template[:transformPdfFields] || "false"
+          name: template[:name]
         } if template[:document_id]
 
         composite_array << templates_hash
@@ -534,7 +543,8 @@ module DocusignRest
             textTabs:     get_signer_tabs(signer[:text_tabs]),
             checkboxTabs: get_signer_tabs(signer[:checkbox_tabs]),
             fullNameTabs: get_signer_tabs(signer[:fullname_tabs]),
-            dateTabs:     get_signer_tabs(signer[:date_tabs])
+            dateTabs:     get_signer_tabs(signer[:date_tabs]),
+            signHereTabs: get_sign_here_tabs(signer[:sign_here_tabs])
           }]
         signers_array << signers_hash
       end
@@ -964,7 +974,6 @@ module DocusignRest
 
       JSON.parse(response.body)
     end
-
 
     # Public retrieves the attached file from a given envelope
     #
