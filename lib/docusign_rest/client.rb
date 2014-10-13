@@ -399,7 +399,7 @@ module DocusignRest
         end
 
         if options[:sign_here_tab] == true || options[:initial_here_tab] == true
-          tab_hash[:scaleValue] = tab_hash[:scaleValue] || 1
+          tab_hash[:scaleValue] = tab[:scale_value] || 1
         end
 
         tab_hash[:xPosition]  = tab[:x_position] || '0'
