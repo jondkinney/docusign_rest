@@ -386,8 +386,8 @@ module DocusignRest
           tab_hash[:anchorUnits]              = 'pixels'
         end
 
-        tab_hash[:conditionalParentLabel]   = nil
-        tab_hash[:conditionalParentValue]   = nil
+        tab_hash[:conditionalParentLabel]   = tab[:conditional_parent_label] if tab.key?(:conditional_parent_label)
+        tab_hash[:conditionalParentValue]   = tab[:conditional_parent_value] if tab.key?(:conditional_parent_value)
         tab_hash[:documentId]               = tab[:document_id] || '1'
         tab_hash[:pageNumber]               = tab[:page_number] || '1'
         tab_hash[:recipientId]              = index + 1
