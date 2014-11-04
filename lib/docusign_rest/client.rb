@@ -717,9 +717,6 @@ module DocusignRest
     #   templateId - The auto-generated ID provided by DocuSign
     #   Uri - the URI where the template is located on the DocuSign servers
     def create_envelope_from_template(options={})
-      content_type = { 'Content-Type' => 'application/json' }
-      content_type.merge(options[:headers]) if options[:headers]
-
       post_body = {
         status:             options[:status],
         emailBlurb:         options[:email][:body],
@@ -728,17 +725,9 @@ module DocusignRest
         eventNotification:  get_event_notification(options[:event_notification]),
         templateRoles:      get_template_roles(options[:signers]),
         customFields:       options[:custom_fields]
-      }.to_json
+      }
 
-      uri = build_uri("/accounts/#{acct_id}/envelopes")
-
-      http = initialize_net_http_ssl(uri)
-
-      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
-      request.body = post_body
-
-      response = http.request(request)
-      JSON.parse(response.body)
+      json_post("/accounts/#{acct_id}/envelopes", post_body, options[:headers])
     end
 
 
@@ -766,23 +755,12 @@ module DocusignRest
     #   statusDateTime - The date/time the envelope was created
     #   status         - Sent, created, or voided
     def create_envelope_from_composite_template(options={})
-      content_type = { 'Content-Type' => 'application/json' }
-      content_type.merge(options[:headers]) if options[:headers]
-
       post_body = {
         status:             options[:status],
         compositeTemplates: get_composite_template(options[:server_template_ids], options[:signers])
-      }.to_json
+      }
 
-      uri = build_uri("/accounts/#{acct_id}/envelopes")
-
-      http = initialize_net_http_ssl(uri)
-
-      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
-      request.body = post_body
-
-      response = http.request(request)
-      JSON.parse(response.body)
+      json_post("/accounts/#{acct_id}/envelopes", post_body, options[:headers])
     end
 
 
@@ -794,17 +772,7 @@ module DocusignRest
     #
     # Returns the list of names
     def get_recipient_names(options={})
-      content_type = { 'Content-Type' => 'application/json' }
-      content_type.merge(options[:headers]) if options[:headers]
-
-      uri = build_uri("/accounts/#{acct_id}/recipient_names?email=#{options[:email]}")
-
-      http = initialize_net_http_ssl(uri)
-
-      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
-
-      response = http.request(request)
-      JSON.parse(response.body)
+      json_post("/accounts/#{acct_id}/recipient_names?email=#{options[:email]}", nil, options[:headers])
     end
 
 
@@ -820,28 +788,16 @@ module DocusignRest
     #
     # Returns the URL string for embedded signing (can be put in an iFrame)
     def get_recipient_view(options={})
-      content_type = { 'Content-Type' => 'application/json' }
-      content_type.merge(options[:headers]) if options[:headers]
-
       post_body = {
         authenticationMethod: 'email',
         clientUserId:         options[:client_id] || options[:email],
         email:                options[:email],
         returnUrl:            options[:return_url],
         userName:             options[:name]
-      }.to_json
+      }
 
-      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/views/recipient")
-
-      http = initialize_net_http_ssl(uri)
-
-      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
-      request.body = post_body
-
-      response = http.request(request)
-      JSON.parse(response.body)
+      json_post("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/views/recipient", post_body, options[:headers])
     end
-
 
     # Public returns the URL for embedded console
     #
@@ -851,23 +807,11 @@ module DocusignRest
     #
     # Returns the URL string for embedded console (can be put in an iFrame)
     def get_console_view(options={})
-      content_type = { 'Content-Type' => 'application/json' }
-      content_type.merge(options[:headers]) if options[:headers]
-
       post_body = {
         envelopeId: options[:envelope_id]
-      }.to_json
+      }
 
-      uri = build_uri("/accounts/#{acct_id}/views/console")
-
-      http = initialize_net_http_ssl(uri)
-
-      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
-      request.body = post_body
-
-      response = http.request(request)
-
-      parsed_response = JSON.parse(response.body)
+      parsed_response = json_post("/accounts/#{acct_id}/views/console", post_body, options[:headers])
       parsed_response['url']
     end
 
@@ -1058,21 +1002,11 @@ module DocusignRest
     #
     # Returns the response.
     def move_envelope_to_folder(options = {})
-      content_type = { 'Content-Type' => 'application/json' }
-      content_type.merge(options[:headers]) if options[:headers]
-
       post_body = {
         envelopeIds: options[:envelope_ids]
-      }.to_json
+      }
 
-      uri = build_uri("/accounts/#{acct_id}/folders/#{options[:folder_id]}")
-
-      http = initialize_net_http_ssl(uri)
-      request = Net::HTTP::Put.new(uri.request_uri, headers(content_type))
-      request.body = post_body
-      response = http.request(request)
-
-      response
+      json_post("/accounts/#{acct_id}/folders/#{options[:folder_id]}", post_body, options[:headers])
     end
 
 
@@ -1144,18 +1078,9 @@ module DocusignRest
 
     # TODO (2014-02-03) jonk => document
     def create_account(options)
-      content_type = { 'Content-Type' => 'application/json' }
-      content_type.merge(options[:headers]) if options[:headers]
+      post_body = convert_hash_keys(options)
 
-      uri = build_uri('/accounts')
-
-      post_body = convert_hash_keys(options).to_json
-
-      http = initialize_net_http_ssl(uri)
-      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
-      request.body = post_body
-      response = http.request(request)
-      JSON.parse(response.body)
+      json_post('/accounts', post_body, options[:headers])
     end
 
 
@@ -1282,6 +1207,23 @@ module DocusignRest
       request.body = post_body
       response = http.request(request)
       response
+    end
+
+    private
+
+    def json_post(path, body, headers={})
+      content_type = { 'Content-Type' => 'application/json' }
+      content_type.merge(headers) if headers
+
+      uri = build_uri(path)
+
+      http = initialize_net_http_ssl(uri)
+
+      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
+      request.body = body.to_json if body
+
+      response = http.request(request)
+      JSON.parse(response.body)
     end
   end
 end
