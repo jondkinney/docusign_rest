@@ -247,7 +247,8 @@ module DocusignRest
           'name' => tab[:name],
           'value' => tab[:value],
           'documentId' => tab[:document_id],
-          'selected' => tab[:selected]
+          'selected' => tab[:selected],
+          'locked' => tab[:locked]
         }
       end
     end
