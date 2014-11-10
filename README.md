@@ -235,30 +235,26 @@ client = DocusignRest::Client.new
       name: 'jon',
       email: 'someone@gmail.com',
       role_name: 'Issuer',
-      tabs: {
-        text_tabs: [
-          { 
-            label: 'Seller Full Name', 
-            name: 'Seller Full Name', 
-            value: 'Jon Doe'
-          }
-        ]
-      }
+      text_tabs: [
+        { 
+          label: 'Seller Full Name', 
+          name: 'Seller Full Name', 
+          value: 'Jon Doe'
+        }
+      ]
     },
     {
       embedded: true,
       name: 'tim',
       email: 'someone+else@gmail.com',
       role_name: 'Attorney',
-      tabs: {
-        text_tabs: [
-          { 
-            label: 'Attorney Full Name', 
-            name: 'Attorney Full Name', 
-            value: 'Tim Smith'
-          }
-        ]
-      }
+      text_tabs: [
+        { 
+          label: 'Attorney Full Name', 
+          name: 'Attorney Full Name', 
+          value: 'Tim Smith'
+        }
+      ]
     }
   ]
 )
