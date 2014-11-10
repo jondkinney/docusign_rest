@@ -354,7 +354,7 @@ module DocusignRest
           listTabs:             get_tabs(signer[:list_tabs], options, index),
           noteTabs:             nil,
           numberTabs:           nil,
-          radioGroupTabs:       nil,
+          radioGroupTabs:       get_tabs(signer[:radio_group_tabs], options, index),
           initialHereTabs:      get_tabs(signer[:initial_here_tabs], options.merge!(initial_here_tab: true), index),
           signHereTabs:         get_tabs(signer[:sign_here_tabs], options.merge!(sign_here_tab: true), index),
           signerAttachmentTabs: nil,
@@ -414,6 +414,9 @@ module DocusignRest
         tab_hash[:locked]     = tab[:locked] || false
 
         tab_hash[:list_items] = tab[:list_items] if tab[:list_items]
+
+        tab_hash[:groupName] = tab[:group_name] if tab.key?(:group_name)
+        tab_hash[:radios] = get_tabs(tab[:radios], options, index) if tab.key?(:radios)
 
         tab_array << tab_hash
       end
