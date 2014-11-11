@@ -526,7 +526,7 @@ module DocusignRest
       signers.each do |signer|
         signers_hash = Hash[:email, signer[:email], :name, signer[:name], \
           :recipientId, signer[:recipient_id], :roleName, signer[:role_name], \
-          :clientUserId, signer[:email]]
+          :clientUserId, signer[:client_id] || signer[:email]]
         signers_array << signers_hash
       end
       template_hash = Hash[:sequence, sequence, :recipients, { signers: signers_array }]
