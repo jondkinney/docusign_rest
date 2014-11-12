@@ -1,7 +1,9 @@
+require 'logger'
+
 module DocusignRest
   module Configuration
     VALID_CONNECTION_KEYS  = [:endpoint, :api_version, :user_agent, :method].freeze
-    VALID_OPTIONS_KEYS     = [:access_token, :username, :password, :integrator_key, :account_id, :format, :ca_file].freeze
+    VALID_OPTIONS_KEYS     = [:access_token, :username, :password, :integrator_key, :account_id, :format, :ca_file, :logger].freeze
     VALID_CONFIG_KEYS      = VALID_CONNECTION_KEYS + VALID_OPTIONS_KEYS
 
     DEFAULT_ENDPOINT       = 'https://demo.docusign.net/restapi'
@@ -17,6 +19,7 @@ module DocusignRest
     DEFAULT_ACCOUNT_ID     = nil
     DEFAULT_CA_FILE        = nil # often found at: '/etc/ssl/certs/cert.pem'
     DEFAULT_FORMAT         = :json
+    DEFAULT_LOGGER         = Logger.new('/dev/null')
 
     # Build accessor methods for every config options so we can do this, for example:
     #   DocusignRest.format = :xml
@@ -39,6 +42,7 @@ module DocusignRest
       self.account_id     = DEFAULT_ACCOUNT_ID
       self.format         = DEFAULT_FORMAT
       self.ca_file        = DEFAULT_CA_FILE
+      self.logger         = DEFAULT_LOGGER
     end
 
     # Allow configuration via a block
