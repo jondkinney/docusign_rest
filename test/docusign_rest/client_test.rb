@@ -39,7 +39,8 @@ describe DocusignRest::Client do
           :user_agent     => 'ua',
           :method         => 'md',
           :ca_file        => 'ca',
-          :access_token   => 'at'
+          :access_token   => 'at',
+          :logger         => Logger.new('/dev/null')
         }
       end
 
@@ -72,6 +73,8 @@ describe DocusignRest::Client do
       #
       # which will populate the test/docusign_login_config.rb file
       @client = DocusignRest::Client.new
+      @s = StringIO.new
+      DocusignRest.logger = Logger.new(@s)
     end
 
     it "should allow access to the auth headers after initialization" do
@@ -82,140 +85,161 @@ describe DocusignRest::Client do
       @client.must_respond_to :acct_id
     end
 
-    it "should allow creating an envelope from a document" do
-      VCR.use_cassette("create_envelope/from_document") do
-        response = @client.create_envelope_from_document(
-          email: {
-            subject: "test email subject",
-            body: "this is the email body and it's large!"
-          },
-          # If embedded is set to true  in the signers array below, emails
-          # don't go out and you can embed the signature page in an iFrame
-          # by using the get_recipient_view method. You can choose 'false' or
-          # simply omit the option as I show in the second signer hash.
-          signers: [
-            {
-              embedded: true,
-              name: 'Test Guy',
-              email: 'testguy@example.com',
-              role_name: 'Issuer',
-              sign_here_tabs: [
-                {
-                  anchor_string: 'sign here',
-                  anchor_x_offset: '125',
-                  anchor_y_offset: '-12'
-                }
+    describe "creating an envelope from a document" do
+      before do
+        @request = {
+              email: {
+                  subject: "test email subject",
+                  body: "this is the email body and it's large!"
+              },
+              # If embedded is set to true  in the signers array below, emails
+              # don't go out and you can embed the signature page in an iFrame
+              # by using the get_recipient_view method. You can choose 'false' or
+              # simply omit the option as I show in the second signer hash.
+              signers: [
+                  {
+                      embedded: true,
+                      name: 'Test Guy',
+                      email: 'testguy@example.com',
+                      role_name: 'Issuer',
+                      sign_here_tabs: [
+                          {
+                              anchor_string: 'sign here',
+                              anchor_x_offset: '125',
+                              anchor_y_offset: '-12'
+                          }
+                      ],
+                      list_tabs: [
+                          {
+                              anchor_string: 'another test',
+                              width: '180',
+                              height: '14',
+                              anchor_x_offset: '10',
+                              anchor_y_offset: '-5',
+                              label: 'another test',
+                              list_items: [
+                                  {
+                                      selected: false,
+                                      text: 'Option 1',
+                                      value: 'option_1'
+                                  },
+                                  {
+                                      selected: true,
+                                      text: 'Option 2',
+                                      value: 'option_2'
+                                  }
+                              ]
+                          }
+                      ],
+                  },
+                  {
+                      embedded: true,
+                      name: 'Test Girl',
+                      email: 'testgirl@example.com',
+                      role_name: 'Attorney',
+                      sign_here_tabs: [
+                          {
+                              anchor_string: 'sign here',
+                              anchor_x_offset: '140',
+                              anchor_y_offset: '-12'
+                          }
+                      ]
+                  }
               ],
-              list_tabs: [
-                {
-                  anchor_string: 'another test',
-                  width: '180',
-                  height: '14',
-                  anchor_x_offset: '10',
-                  anchor_y_offset: '-5',
-                  label: 'another test',
-                  list_items: [
-                    {
-                      selected: false,
-                      text: 'Option 1',
-                      value: 'option_1'
-                    },
-                    {
-                      selected: true,
-                      text: 'Option 2',
-                      value: 'option_2'
-                    }
-                  ]
-                }
+              files: [
+                  {path: 'test.pdf', name: 'test.pdf'},
+                  {path: 'test2.pdf', name: 'test2.pdf'}
               ],
-            },
-            {
-              embedded: true,
-              name: 'Test Girl',
-              email: 'testgirl@example.com',
-              role_name: 'Attorney',
-              sign_here_tabs: [
-                {
-                  anchor_string: 'sign here',
-                  anchor_x_offset: '140',
-                  anchor_y_offset: '-12'
-                }
-              ]
-            }
-          ],
-          files: [
-            {path: 'test.pdf', name: 'test.pdf'},
-            {path: 'test2.pdf', name: 'test2.pdf'}
-          ],
-          status: 'sent'
-        )
+              status: 'sent'
+        }
+        VCR.use_cassette("create_envelope/from_document") do
+          @response = @client.create_envelope_from_document(@request)
+        end
+      end
 
-        response["status"].must_equal "sent"
+      it 'should be sent' do
+        @response["status"].must_equal "sent"
+      end
+
+      it 'should log the request' do
+        @s.string.must_include @request[:email][:body]
       end
     end
 
     describe "embedded signing" do
       before do
         # create the template dynamically
-        VCR.use_cassette("create_template")  do
-          @template_response = @client.create_template(
-            description: 'Cool Description',
-            name: "Cool Template Name",
-            signers: [
+        @create_template = {
+          description: 'Cool Description',
+          name: "Cool Template Name",
+          signers: [
               {
-                embedded: true,
-                name: 'jon',
-                email: 'someone@example.com',
-                role_name: 'Issuer',
-                sign_here_tabs: [
-                  {
-                    anchor_string: 'sign here',
-                    template_locked: true, #doesn't seem to do anything
-                    template_required: true, #doesn't seem to do anything
-                    email_notification: {supportedLanguage: 'en'} #FIXME if signer is setup as 'embedded' initial email notifications don't go out, but even when I set up a signer as non-embedded this setting didn't seem to make the email notifications actually stop...
-                  }
-                ]
+                  embedded: true,
+                  name: 'jon',
+                  email: 'someone@example.com',
+                  role_name: 'Issuer',
+                  sign_here_tabs: [
+                      {
+                          anchor_string: 'sign here',
+                          template_locked: true, #doesn't seem to do anything
+                          template_required: true, #doesn't seem to do anything
+                          email_notification: {supportedLanguage: 'en'} #FIXME if signer is setup as 'embedded' initial email notifications don't go out, but even when I set up a signer as non-embedded this setting didn't seem to make the email notifications actually stop...
+                      }
+                  ]
               }
-            ],
-            files: [
+          ],
+          files: [
               {path: 'test.pdf', name: 'test.pdf'}
-            ]
-          )
+          ]
+        }
+        VCR.use_cassette("create_template")  do
+          @template_response = @client.create_template(@create_template)
           if ! @template_response["errorCode"].nil?
             puts "[API ERROR] (create_template) errorCode: '#{@template_response["errorCode"]}', message: '#{@template_response["message"]}'"
           end
         end
 
-
         # use the templateId to get the envelopeId
-        VCR.use_cassette("create_envelope/from_template")  do
-          @envelope_response = @client.create_envelope_from_template(
-            status: 'sent',
-            email: {
-              subject: "The test email subject envelope",
+        @create_from_template = {
+          status: 'sent',
+              email: {
+              subject: "create envelope from template subject",
               body: "Envelope body content here"
-            },
-            template_id: @template_response["templateId"],
-            signers: [
+          },
+              template_id: @template_response["templateId"],
+              signers: [
               {
-                embedded: true,
-                name: 'jon',
-                email: 'someone@example.com',
-                role_name: 'Issuer'
+                  embedded: true,
+                  name: 'jon',
+                  email: 'someone@example.com',
+                  role_name: 'Issuer'
               }
-            ]
-          )
+          ]
+        }
+
+        VCR.use_cassette("create_envelope/from_template")  do
+          @envelope_response = @client.create_envelope_from_template(@create_from_template)
           if ! @envelope_response["errorCode"].nil?
             puts "[API ERROR] (create_envelope/from_template) errorCode: '#{@envelope_response["errorCode"]}', message: '#{@envelope_response["message"]}'"
           end
         end
       end
 
+      it 'should log the request for create from template' do
+        @s.string.must_include @create_from_template[:email][:subject]
+      end
+
+      it 'should log the request for create template' do
+        @s.string.must_include @create_template[:name]
+      end
+
       it "should get a template" do
-        VCR.use_cassette("get_template", record: :all)  do
+        VCR.use_cassette("get_template")  do
           response = @client.get_template(@template_response["templateId"])
           assert_equal @template_response["templateId"], response['envelopeTemplateDefinition']['templateId']
         end
+
+        @s.string.must_include @template_response["templateId"]
       end
 
       it "should return a URL for embedded signing" do
@@ -236,6 +260,8 @@ describe DocusignRest::Client do
           )
           response['url'].must_match(/http/)
         end
+
+        @s.string.must_include @envelope_response["envelopeId"]
       end
 
       #status return values = "sent", "delivered", "completed"
@@ -248,6 +274,8 @@ describe DocusignRest::Client do
           )
           response["signers"].wont_be_nil
         end
+
+        @s.string.must_include @envelope_response["envelopeId"]
       end
 
       #status return values = "sent", "delivered", "completed"
@@ -260,6 +288,8 @@ describe DocusignRest::Client do
           )
           # NOTE manually check that this file has the content you'd expect
         end
+
+        @s.string.must_include @envelope_response["envelopeId"]
       end
     end
   end
