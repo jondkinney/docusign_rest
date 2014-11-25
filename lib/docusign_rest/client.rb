@@ -586,6 +586,9 @@ module DocusignRest
     # status        - Options include: 'sent', 'created', 'voided' and determine
     #                 if the envelope is sent out immediately or stored for
     #                 sending at a later time
+    # customFields  - (Optional) A hash of listCustomFields and textCustomFields.
+    #                 Each contains an array of corresponding customField hashes.
+    #                 For details, please see: http://bit.ly/1FnmRJx
     # headers       - Allows a client to pass in some
     #
     # Returns a JSON parsed response object containing:
@@ -604,7 +607,8 @@ module DocusignRest
         recipients: {
           signers: get_signers(options[:signers])
         },
-        status: "#{options[:status]}"
+        status: "#{options[:status]}",
+        customFields: options[:custom_fields]
       }.to_json
 
       uri = build_uri("/accounts/#{acct_id}/envelopes")
