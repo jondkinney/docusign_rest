@@ -459,6 +459,9 @@ module DocusignRest
         tab_hash[:groupName] = tab[:group_name] if tab.key?(:group_name)
         tab_hash[:radios] = get_tabs(tab[:radios], options, index) if tab.key?(:radios)
 
+        tab_hash[:validationMessage] = tab[:validation_message] if tab[:validation_message]
+        tab_hash[:validationPattern] = tab[:validation_pattern] if tab[:validation_pattern]
+
         tab_array << tab_hash
       end
       tab_array
