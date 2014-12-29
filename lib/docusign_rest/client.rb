@@ -1,4 +1,5 @@
 require 'openssl'
+
 module DocusignRest
 
   class Client
@@ -617,6 +618,7 @@ module DocusignRest
       request = initialize_net_http_multipart_post_request(
                   uri, post_body, file_params, headers(options[:headers])
                 )
+
       response = http.request(request)
       generate_log(request, response, uri)
       JSON.parse(response.body)
