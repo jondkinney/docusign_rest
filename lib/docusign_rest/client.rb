@@ -143,9 +143,10 @@ module DocusignRest
 
       request = Net::HTTP::Post.new(uri.request_uri, content_type)
       request.body = "grant_type=password&client_id=#{integrator_key}&username=#{email}&password=#{password}&scope=api"
-
+      
       http = initialize_net_http_ssl(uri)
       response = http.request(request)
+      generate_log(request, response, uri)
       JSON.parse(response.body)
     end
 
@@ -172,7 +173,9 @@ module DocusignRest
       uri = build_uri('/login_information')
       request = Net::HTTP::Get.new(uri.request_uri, headers(options[:headers]))
       http = initialize_net_http_ssl(uri)
-      http.request(request)
+      response = http.request(request)
+      generate_log(request, response, uri)
+      response
     end
 
 
@@ -1321,8 +1324,10 @@ module DocusignRest
       log << "#{request.method} #{uri.to_s}"
       request.each_capitalized{ |k,v| log << "#{k}: #{v.gsub(/(?<="Password":")(.+?)(?=")/, '[FILTERED]')}" }
       # Trims out the actual binary file to reduce log size
-      request_body = request.body.gsub(/(?<=Content-Transfer-Encoding: binary).+?(?=-------------RubyMultipartPost)/m, "\n[BINARY BLOB]\n")
-      log << "Body: #{request_body}"
+      if request.body
+        request_body = request.body.gsub(/(?<=Content-Transfer-Encoding: binary).+?(?=-------------RubyMultipartPost)/m, "\n[BINARY BLOB]\n")
+        log << "Body: #{request_body}"
+      end
       log << '--DocuSign RESPONSE--'
       log << "HTTP/#{response.http_version} #{response.code} #{response.msg}"
       response.each_capitalized{ |k,v| log << "#{k}: #{v}" }
