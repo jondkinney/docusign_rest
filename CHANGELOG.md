@@ -5,6 +5,7 @@
 ### Features:
 * Add certificate option to DocusignRest::Client#get_combined_document_from_envelope (Shane Stanford)
 * Add brandId and allow_reassign options to DocusignRest::Client#create_envelope_from_template and DocusignRest::Client#create_envelope_from_composite_template (Jayan Jacob)
+* Add envelopeIds option to DocusignRest::Client#get_envelope_statuses (Amit Chakradeo)
 
 ### Misc:
 * Replace monkeypatch with argument usage (Jean-Philippe Moal)
