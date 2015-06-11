@@ -1,4 +1,5 @@
 require 'openssl'
+require 'open-uri'
 
 module DocusignRest
 
@@ -1286,6 +1287,116 @@ module DocusignRest
       request.body = post_body
       response = http.request(request)
       response
+    end
+
+    # Public deletes a document for a given envelope
+    # See https://www.docusign.com/p/RESTAPIGuide/RESTAPIGuide.htm#REST API References/Remove Documents from a Draft Envelope.htm%3FTocPath%3DREST%2520API%2520References%7C_____54
+    #
+    # envelope_id  - ID of the envelope from which the doc will be retrieved
+    # document_id - ID of the document to delete
+    #
+    # Returns the success or failure of each document being added to the envelope and
+    # the envelope ID. Failed operations on array elements will add the "errorDetails"
+    # structure containing an error code and message. If "errorDetails" is null, then
+    # the operation was successful for that item.
+    def delete_envelope_document(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/documents")
+      post_body = {
+        documents: [
+          { documentId: options[:document_id] }
+        ]
+      }.to_json
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Delete.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+      JSON.parse(response.body)
+    end
+
+    # Public adds a document to a given envelope
+    # See https://www.docusign.com/p/RESTAPIGuide/RESTAPIGuide.htm#REST API References/Add Document.htm%3FTocPath%3DREST%2520API%2520References%7C_____56
+    #
+    # envelope_id  - ID of the envelope from which the doc will be added
+    # document_id - ID of the document to add
+    # file_path - Local or remote path to file
+    # content_type - optional content type for file.  Defaults to application/pdf.
+    # file_name - optional name for file.  Defaults to basename of file_path.
+    # file_extension - optional extension for file.  Defaults to extname of file_name.
+    #
+    # The response only returns a success or failure.
+    def add_envelope_document(options={})
+      options[:content_type] ||= 'application/pdf'
+      options[:file_name] ||= File.basename(options[:file_path])
+      options[:file_extension] ||= File.extname(options[:file_name])[1..-1]
+
+      headers = {
+        'Content-Type' => options[:content_type],
+        'Content-Disposition' => "file; filename=\"#{options[:file_name]}\"; documentid=#{options[:document_id]}; fileExtension=\"#{options[:file_extension]}\""
+      }
+
+      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/documents/#{options[:document_id]}")
+      post_body = open(options[:file_path]).read
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Put.new(uri.request_uri, headers(headers))
+      request.body = post_body
+
+      response = http.request(request)
+    end
+
+    # Public adds recipient tabs to a given envelope
+    # See https://www.docusign.com/p/RESTAPIGuide/RESTAPIGuide.htm#REST API References/Add Tabs for a Recipient.htm%3FTocPath%3DREST%2520API%2520References%7C_____86
+    #
+    # envelope_id  - ID of the envelope from which the doc will be added
+    # recipient - ID of the recipient to add tabs to
+    # tabs - hash of tab (see example below)
+    # {
+    #   signHereTabs: [
+    #     {
+    #       anchorString: '/s1/',
+    #       anchorXOffset: '5',
+    #       anchorYOffset: '8',
+    #       anchorIgnoreIfNotPresent: 'true',
+    #       documentId: '1',
+    #       pageNumber: '1',
+    #       recipientId: '1'
+    #     }
+    #   ],
+    #   initialHereTabs: [
+    #     {
+    #       anchorString: '/i1/',
+    #       anchorXOffset: '5',
+    #       anchorYOffset: '8',
+    #       anchorIgnoreIfNotPresent: 'true',
+    #       documentId: '1',
+    #       pageNumber: '1',
+    #       recipientId: '1'
+    #     }
+    #   ]
+    # }
+    #
+    # The response returns the success or failure of each document being added
+    # to the envelope and the envelope ID. Failed operations on array elements
+    # will add the "errorDetails" structure containing an error code and message.
+    # If "errorDetails" is null, then the operation was successful for that item.
+    def add_recipient_tabs(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients/#{options[:recipient_id]}/tabs")
+      post_body = options[:tabs].to_json
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+      JSON.parse(response.body)
     end
   end
 end
