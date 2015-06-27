@@ -2,6 +2,7 @@
 
 ## v0.3.2 ????
 
+* Fix parameter name type in DocusignRest::Client#void_envelope (Ryan Wood)
 * Implement DocusignRest::Client#get_page_image (Tom Copeland)
 
 ## v0.3.1 May 16 2017
