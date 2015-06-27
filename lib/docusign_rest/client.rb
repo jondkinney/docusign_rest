@@ -1280,7 +1280,7 @@ module DocusignRest
           "voidedReason" => options[:voided_reason] || "No reason provided."
       }.to_json
 
-      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:folder_id]}")
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}")
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Put.new(uri.request_uri, headers(content_type))
