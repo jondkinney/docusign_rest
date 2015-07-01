@@ -418,6 +418,12 @@ module DocusignRest
         tab_hash[:width]      = tab[:width] if tab[:width]
         tab_hash[:height]     = tab[:height] if tab[:width]
         tab_hash[:value]      = tab[:value] if tab[:value]
+        tab_hash[:fontSize]   = tab[:font_size] if tab[:font_size]
+        tab_hash[:fontColor]  = tab[:font_color] if tab[:font_color]
+        tab_hash[:bold]       = tab[:bold] if tab[:bold]
+        tab_hash[:bold]       = tab[:bold] if tab[:bold]
+        tab_hash[:italic]     = tab[:italic] if tab[:italic]
+        tab_hash[:underline]  = tab[:underline] if tab[:underline]
 
         tab_hash[:locked]     = tab[:locked] || false
 
