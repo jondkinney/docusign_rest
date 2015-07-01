@@ -1440,7 +1440,7 @@ module DocusignRest
         signers: get_signers(options[:signers])
       }.to_json
 
-      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients?resend_envelope=#{options[:resend_envelope]}")
+      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients?resend_envelope=#{options[:resend_envelope].to_s}")
 
       http = initialize_net_http_ssl(uri)
 
