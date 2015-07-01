@@ -1398,5 +1398,51 @@ module DocusignRest
       response = http.request(request)
       JSON.parse(response.body)
     end
+
+    # Public adds recipients to a given envelope
+    # See https://www.docusign.com/p/RESTAPIGuide/RESTAPIGuide.htm#REST API References/Add Recipients to an Envelope.htm?Highlight=add recipient to envelope
+    #
+    # envelope_id  - ID of the envelope from which the doc will be added
+    # signers - array of hash of signer (see example below)
+    # signers: [{
+    #   email: 'String content',
+    #   name: 'String content',
+    #   signHereTabs: [
+    #     {
+    #       anchorString: '/s1/',
+    #       anchorXOffset: '5',
+    #       anchorYOffset: '8',
+    #       anchorIgnoreIfNotPresent: 'true',
+    #       documentId: '1',
+    #       pageNumber: '1',
+    #       recipientId: '1'
+    #     }
+    #   ]
+    # }]
+    #
+    # The response returns the success or failure of each document being added
+    # to the envelope and the envelope ID. Failed operations on array elements
+    # will add the "errorDetails" structure containing an error code and message.
+    # If "errorDetails" is null, then the operation was successful for that item.
+    def add_recipients(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      options[:resend_envelope] ||= false
+
+      post_body = {
+        signers: get_signers(options[:signers])
+      }.to_json
+
+      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients?resend_envelope=#{options[:resend_envelope]}")
+
+      http = initialize_net_http_ssl(uri)
+
+      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+      JSON.parse(response.body)
+    end
   end
 end
