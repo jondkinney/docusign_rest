@@ -307,6 +307,12 @@ module DocusignRest
       doc_signers = []
 
       signers.each_with_index do |signer, index|
+        if signer[:recipient_id]
+          index = signer[:recipient_id]
+        else
+          index += 1
+        end
+
         doc_signer = {
           email:                                 signer[:email],
           name:                                  signer[:name],
@@ -319,10 +325,10 @@ module DocusignRest
           note:                                  '',
           phoneAuthentication:                   nil,
           recipientAttachment:                   nil,
-          recipientId:                           "#{index + 1}",
+          recipientId:                           "#{index}",
           requireIdLookup:                       false,
           roleName:                              signer[:role_name],
-          routingOrder:                          index + 1,
+          routingOrder:                          index,
           socialAuthentications:                 nil
         }
 
@@ -392,7 +398,7 @@ module DocusignRest
         tab_hash[:conditionalParentValue]   = tab[:conditional_parent_value] if tab.key?(:conditional_parent_value)
         tab_hash[:documentId]               = tab[:document_id] || '1'
         tab_hash[:pageNumber]               = tab[:page_number] || '1'
-        tab_hash[:recipientId]              = index + 1
+        tab_hash[:recipientId]              = index
         tab_hash[:required]                 = tab[:required] || false
 
         if options[:template] == true
