@@ -823,7 +823,7 @@ module DocusignRest
     # headers     - optional hash of headers to merge into the existing
     #               required headers for a multipart request.
     #
-    # Returns the URL string for embedded signing (can be put in an iFrame)
+    # Returns a hash with the URL for embedded signing (can be put in an iFrame)
     def get_recipient_view(options={})
       content_type = { 'Content-Type' => 'application/json' }
       content_type.merge(options[:headers]) if options[:headers]
