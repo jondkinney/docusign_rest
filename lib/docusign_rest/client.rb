@@ -307,6 +307,12 @@ module DocusignRest
       doc_signers = []
 
       signers.each_with_index do |signer, index|
+        if signer[:recipient_id]
+          index = signer[:recipient_id]
+        else
+          index += 1
+        end
+
         doc_signer = {
           email:                                 signer[:email],
           name:                                  signer[:name],
@@ -319,10 +325,10 @@ module DocusignRest
           note:                                  '',
           phoneAuthentication:                   nil,
           recipientAttachment:                   nil,
-          recipientId:                           "#{index + 1}",
+          recipientId:                           "#{index}",
           requireIdLookup:                       false,
           roleName:                              signer[:role_name],
-          routingOrder:                          index + 1,
+          routingOrder:                          index,
           socialAuthentications:                 nil
         }
 
@@ -392,7 +398,7 @@ module DocusignRest
         tab_hash[:conditionalParentValue]   = tab[:conditional_parent_value] if tab.key?(:conditional_parent_value)
         tab_hash[:documentId]               = tab[:document_id] || '1'
         tab_hash[:pageNumber]               = tab[:page_number] || '1'
-        tab_hash[:recipientId]              = index + 1
+        tab_hash[:recipientId]              = index
         tab_hash[:required]                 = tab[:required] || false
 
         if options[:template] == true
@@ -412,6 +418,12 @@ module DocusignRest
         tab_hash[:width]      = tab[:width] if tab[:width]
         tab_hash[:height]     = tab[:height] if tab[:width]
         tab_hash[:value]      = tab[:value] if tab[:value]
+        tab_hash[:fontSize]   = tab[:font_size] if tab[:font_size]
+        tab_hash[:fontColor]  = tab[:font_color] if tab[:font_color]
+        tab_hash[:bold]       = tab[:bold] if tab[:bold]
+        tab_hash[:bold]       = tab[:bold] if tab[:bold]
+        tab_hash[:italic]     = tab[:italic] if tab[:italic]
+        tab_hash[:underline]  = tab[:underline] if tab[:underline]
 
         tab_hash[:locked]     = tab[:locked] || false
 
@@ -1392,6 +1404,52 @@ module DocusignRest
       post_body = options[:tabs].to_json
 
       http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+      JSON.parse(response.body)
+    end
+
+    # Public adds recipients to a given envelope
+    # See https://www.docusign.com/p/RESTAPIGuide/RESTAPIGuide.htm#REST API References/Add Recipients to an Envelope.htm?Highlight=add recipient to envelope
+    #
+    # envelope_id  - ID of the envelope from which the doc will be added
+    # signers - array of hash of signer (see example below)
+    # signers: [{
+    #   email: 'String content',
+    #   name: 'String content',
+    #   signHereTabs: [
+    #     {
+    #       anchorString: '/s1/',
+    #       anchorXOffset: '5',
+    #       anchorYOffset: '8',
+    #       anchorIgnoreIfNotPresent: 'true',
+    #       documentId: '1',
+    #       pageNumber: '1',
+    #       recipientId: '1'
+    #     }
+    #   ]
+    # }]
+    #
+    # The response returns the success or failure of each document being added
+    # to the envelope and the envelope ID. Failed operations on array elements
+    # will add the "errorDetails" structure containing an error code and message.
+    # If "errorDetails" is null, then the operation was successful for that item.
+    def add_recipients(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      options[:resend_envelope] ||= false
+
+      post_body = {
+        signers: get_signers(options[:signers])
+      }.to_json
+
+      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients?resend_envelope=#{options[:resend_envelope].to_s}")
+
+      http = initialize_net_http_ssl(uri)
+
       request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
       request.body = post_body
 
