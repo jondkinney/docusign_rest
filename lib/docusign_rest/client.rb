@@ -552,6 +552,13 @@ module DocusignRest
       # headers={} - The fully merged, final request headers
       # boundary   - Optional: you can give the request a custom boundary
       #
+
+      headers = headers.merge(
+        parts: {
+          post_body: { 'Content-Type' => 'application/json' }
+        }
+      )
+
       request = Net::HTTP::Post::Multipart.new(
         uri.request_uri,
         { post_body: post_body }.merge(file_params),

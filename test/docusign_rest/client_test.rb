@@ -1,7 +1,6 @@
-require 'helper'
+require_relative '../helper'
 
 describe DocusignRest::Client do
-
   before do
     @keys = DocusignRest::Configuration::VALID_CONFIG_KEYS
   end
