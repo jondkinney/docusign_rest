@@ -1200,11 +1200,18 @@ module DocusignRest
     #    client.get_templates()
     #
     # Returns a list of the available templates.
-    def get_templates
-      uri = build_uri("/accounts/#{acct_id}/templates")
-
-      http = initialize_net_http_ssl(uri)
-      request = Net::HTTP::Get.new(uri.request_uri, headers({ 'Content-Type' => 'application/json' }))
+    def get_templates(options={})
+      params    = {
+                    :search_text => options[:search_text],
+                    :folder => options[:folder],
+                    :count => options[:count],
+                    :start_position => options[:start_position] || 0,
+                    :order_by => options[:order_by] || 'name'
+                  }
+      uri       = build_uri("/accounts/#{acct_id}/templates")
+      uri.query = URI.encode_www_form(params)
+      http      = initialize_net_http_ssl(uri)
+      request   = Net::HTTP::Get.new(uri.request_uri, headers({ 'Content-Type' => 'application/json' }))
       JSON.parse(http.request(request).body)
     end
 
