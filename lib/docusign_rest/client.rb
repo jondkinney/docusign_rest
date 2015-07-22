@@ -1236,7 +1236,8 @@ module DocusignRest
                     :folder => options[:folder],
                     :count => options[:count],
                     :start_position => options[:start_position] || 0,
-                    :order_by => options[:order_by] || 'name'
+                    :order_by => options[:order_by] || 'name',
+                    :include => options[:include] || ''
                   }
       uri       = build_uri("/accounts/#{acct_id}/templates")
       uri.query = URI.encode_www_form(params)
