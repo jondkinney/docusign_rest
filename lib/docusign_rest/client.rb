@@ -757,7 +757,7 @@ module DocusignRest
         templateId:         options[:template_id],
         eventNotification:  get_event_notification(options[:event_notification]),
         templateRoles:      get_template_roles(options[:signers]),
-        enableWetSign:      options[:enable_wet_sign] || true,
+        enableWetSign:      options[:enable_wet_sign] || false,
         recipientsLock:     options[:recipients_lock] || false,
         customFields:       options[:custom_fields]
       }.to_json
