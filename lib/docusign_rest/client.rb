@@ -319,7 +319,7 @@ module DocusignRest
           note:                                  '',
           phoneAuthentication:                   nil,
           recipientAttachment:                   nil,
-          recipientId:                           "#{index + 1}",
+          recipientId:                           signer[:recipient_id] || "#{index + 1}",
           requireIdLookup:                       false,
           roleName:                              signer[:role_name],
           routingOrder:                          index + 1,
