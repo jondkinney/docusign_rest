@@ -128,13 +128,13 @@ module DocusignRest
     # Examples:
     #
     #   client = DocusignRest::Client.new
-    #   response = client.get_token('someone@example.com', 'p@ssw0rd01')
+    #   response = client.get_token(integrator_key, 'someone@example.com', 'p@ssw0rd01')
     #
     # Returns:
     #   access_token - Access token information
     #   scope - This should always be "api"
     #   token_type - This should always be "bearer"
-    def get_token(account_id, email, password)
+    def get_token(integrator_key, email, password)
       content_type = { 'Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' }
       uri = build_uri('/oauth2/token')
 
