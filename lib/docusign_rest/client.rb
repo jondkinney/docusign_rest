@@ -263,6 +263,7 @@ module DocusignRest
         includeCertificatWithSoap:      event_notification[:include_certificate_with_soap] || false,
         url:                            event_notification[:url],
         loggingEnabled:                 event_notification[:logging],
+        requireAcknowledgment:          event_notification[:require_acknowledgement] || false,
         includeCertificateOfCompletion: event_notification[:include_certificate_of_completion] || false,
         :envelopeEvents => Array(event_notification[:envelope_events]).map do |envelope_event|
           {
