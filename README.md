@@ -113,8 +113,8 @@ document_envelope_response = client.create_envelope_from_document(
       sign_here_tabs: [
         {
           anchor_string: 'sign_here_1',
-          anchor_x_offset: '140',
-          anchor_y_offset: '8'
+          x_position: '140',
+          y_position: '8'
         }
       ]
     },
@@ -126,13 +126,13 @@ document_envelope_response = client.create_envelope_from_document(
       sign_here_tabs: [
         {
           anchor_string: 'sign_here_2',
-          anchor_x_offset: '140',
-          anchor_y_offset: '8'
+          x_position: '140',
+          y_position: '8'
         },
         {
           anchor_string: 'sign_here_3',
-          anchor_x_offset: '140',
-          anchor_y_offset: '8'
+          x_position: '140',
+          y_position: '8'
         }
       ]
     }
@@ -162,8 +162,8 @@ client = DocusignRest::Client.new
       sign_here_tabs: [
         {
           anchor_string: 'issuer_sig',
-          anchor_x_offset: '140',
-          anchor_y_offset: '8'
+          x_position: '140',
+          y_position: '8'
         }
       ]
     },
@@ -175,8 +175,8 @@ client = DocusignRest::Client.new
       sign_here_tabs: [
         {
           anchor_string: 'attorney_sig',
-          anchor_x_offset: '140',
-          anchor_y_offset: '8'
+          x_position: '140',
+          y_position: '8'
         }
       ]
     }
