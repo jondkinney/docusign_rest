@@ -1,5 +1,6 @@
 require 'openssl'
 require 'open-uri'
+require 'active_support/core_ext'
 
 module DocusignRest
 
@@ -40,7 +41,17 @@ module DocusignRest
       @acct_id = account_id
     end
 
+    def send_envelope(envelope_id)
+      send_request(:put, "/accounts/#{acct_id}/envelopes/#{envelope_id}", { status: 'sent' } )
+    end
 
+    def retrieve_tabs(envelope_id, recipient_id)
+      send_request(:get, "/accounts/#{acct_id}/envelopes/#{envelope_id}/recipients/#{recipient_id}/tabs")
+    end
+
+    def modify_tabs(envelope_id, recipient_id, tab_updates)
+      send_request(:put, "/accounts/#{acct_id}/envelopes/#{envelope_id}/recipients/#{recipient_id}/tabs", tab_updates)
+    end
     # Internal: sets the default request headers allowing for user overrides
     # via options[:headers] from within other requests. Additionally injects
     # the X-DocuSign-Authentication header to authorize the request.
@@ -1398,5 +1409,25 @@ module DocusignRest
       response = http.request(request)
       JSON.parse(response.body)
     end
+
+
+    def send_request(method, uri, body=nil)
+      content_type = { 'Content-Type' => 'application/json' }
+
+      uri = build_uri(uri)
+      request_uri = uri.request_uri
+      headers = headers(content_type)
+
+      request = case method
+      when :post then Net::HTTP::Post.new(request_uri, headers)
+      when :get  then Net::HTTP::Get.new(request_uri, headers)
+      when :put  then Net::HTTP::Put.new(request_uri, headers)
+      end
+      request.body = body.to_json  if body.present?
+
+      response = initialize_net_http_ssl(uri).request(request)
+      result = JSON.parse(response.body).deep_symbolize_keys
+    end
+
   end
 end

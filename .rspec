@@ -1,0 +1,4 @@
+--color
+--format documentation
+--format Nc
+--require spec_helper
