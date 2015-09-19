@@ -19,6 +19,9 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency('multipart-post', '>= 1.2')
   gem.add_dependency('json')
+  gem.add_dependency('activesupport')
+  gem.add_dependency('andand')
+
   gem.add_development_dependency('rake')
   gem.add_development_dependency('minitest', '~>4.0')
   gem.add_development_dependency('guard-minitest')
@@ -26,5 +29,11 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency('turn')
   gem.add_development_dependency('pry')
   gem.add_development_dependency('vcr')
+  gem.add_development_dependency('factory_girl')
+  gem.add_development_dependency('webmock')
+  gem.add_development_dependency('rspec')
+  gem.add_development_dependency('rspec-nc')
+  gem.add_development_dependency('rspec-its')
+  gem.add_development_dependency('rspec-collection_matchers')
   gem.add_development_dependency('fakeweb')
 end
