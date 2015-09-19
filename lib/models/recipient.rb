@@ -22,6 +22,25 @@ module Docusign
         embedded: embedded
       }
     end
-  end
 
+    def self.merge(recipients)
+      recipients.sort_by { |recipient| recipient.id }
+        .group_by { |recipient| recipient.role_name }
+        .values
+        .map { |recipients| merge_tabs(recipients) }
+    end
+
+  private
+
+    def self.merge_tabs(recipients)
+      result = recipients.first.dup
+      result.tabs = {}
+
+      recipients.each do |recipient|
+        result.tabs.merge!(recipient.tabs)  if recipient.tabs.present?
+      end
+      result.tabs = nil  if result.tabs.empty?
+      result
+    end
+  end
 end
