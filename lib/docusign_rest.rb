@@ -8,6 +8,9 @@ require_relative 'models/tab'
 require_relative 'models/tabs_updater'
 require_relative 'models/tabs/checkbox_tab'
 require_relative 'models/tabs/text_tab'
+require_relative 'models/tabs/sign_here_tab'
+require_relative 'models/tabs/full_name_tab'
+require_relative 'models/tabs/date_signed_tab'
 require 'active_support/core_ext'
 require 'multipart_post' #require the multipart-post gem itself
 require 'net/http/post/multipart' #require the multipart-post net/http/post/multipart monkey patch

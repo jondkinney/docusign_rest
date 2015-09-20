@@ -3,10 +3,5 @@ module Docusign
     def to_h
       super.merge(selected: value)
     end
-
-    def self.collection_name
-      :checkboxTabs
-    end
-
   end
 end

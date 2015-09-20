@@ -1,5 +1,5 @@
 module Docusign
-  class TextTab < Tab
+  class DateSignedTab < Tab
     def to_h
       super.merge(value: value)
     end
