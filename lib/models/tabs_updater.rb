@@ -32,6 +32,11 @@ module Docusign
       metadata = docusign_client.retrieve_tabs(envelope_id, recipient_id)
       metadata.each do |collection_type, tabs|
         tab_class = Tab.class_for(collection_type)
+    def class_for(collection_name)
+      name = collection_name.to_s.singularize.camelize
+      "Docusign::#{name}".constantize
+    rescue => e
+    end
         tabs.each do |tab|
           label = tab[:tabLabel]
           @lookup[label] = tab_class.new(id: tab[:tabId], label: label)

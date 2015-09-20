@@ -1,7 +1,7 @@
 describe Docusign::Tab do
 
   describe ".class_for" do
-    subject{ described_class.class_for(key) }
+    subject{ Docusign::Tab.to_class(key) }
 
     context ":checkboxTabs" do
       let(:key) { :checkboxTabs }
@@ -35,14 +35,19 @@ describe Docusign::Tab do
   end
 
   describe "#to_h" do
-    let(:tab) { described_class.new(id: 'abc', label: 'myLabel') }
-    subject { tab.to_h }
+    subject { described_class.new(id: 'abc', label: 'myLabel').to_h }
     its(:to_h) { is_expected.to eq(tabId: 'abc', tabLabel: 'myLabel', locked: true) }
   end
 
-  describe ".collection_name" do
-    it "raises error" do
-      expect{ described_class.collection_name }.to raise_error
+  describe "#collection_name" do
+    context Docusign::Tab do
+      it("equals :tabs") { expect(described_class.new.collection_name).to eq(:tabs) }
+    end
+    context Docusign::TextTab do
+      it("equals :textTabs") { expect(described_class.new.collection_name).to eq(:textTabs) }
+    end
+    context Docusign::CheckboxTab do
+      it("equals :checkboxTabs") { expect(described_class.new.collection_name).to eq(:checkboxTabs) }
     end
   end
 

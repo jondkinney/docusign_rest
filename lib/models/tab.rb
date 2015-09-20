@@ -20,16 +20,8 @@ module Docusign
       !!dirty
     end
 
-    def self.collection_name
-      raise "implement collection_type in subclass!"
-    end
-
-    def self.class_for(key)
-      @@tab_types ||= subclasses.reduce({}) do |result, tab_subclass|
-        result[tab_subclass.collection_name] = tab_subclass
-        result
-      end
-      @@tab_types[key.to_sym]
+    def collection_name
+      self.class.name.demodulize.pluralize.camelize(:lower).to_sym
     end
 
   end
