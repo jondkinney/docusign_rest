@@ -20,14 +20,11 @@ module Docusign
 
     def update_tabs!
       recipients.each do |recipient|
-        tabs_metadata = docusign_client.retrieve_tabs(id, recipient.id)
-
-        tab_ids = tab_ids(tabs_metadata)
-        text_tab_updates = text_tab_updates(tab_ids, recipient)
-
-        unless text_tab_updates.empty?
-          docusign_client.modify_tabs(id, recipient.id, { textTabs: text_tab_updates })
-        end
+        updater = TabsUpdater.new(id, recipient.id)
+        recipient.tabs.each do |label,value|
+          updater.set(label, value)
+        end  if recipient.tabs.present?
+        updater.execute!
       end
     end
 
@@ -40,21 +37,11 @@ module Docusign
 
   private
 
-    # creates tab_id lookup map for a tab_label
-    def tab_ids(tabs_metadata)
-      result = {}
-      tabs_metadata[:textTabs].each do |textTab|
-        label = textTab[:tabLabel].to_sym
-        result[label] = textTab[:tabId]
-      end  if tabs_metadata.andand[:textTabs].present?
-      result
-    end
-
     def text_tab_updates(tab_ids, recipient)
       result = []
       recipient.tabs.each do |label, value|
-        tab_id = tab_ids[label]
-        next  unless tab_id.present?
+        tab = tab_ids[label]
+        next  unless tab.present?
         result << { tabId: tab_id, value: value, locked: true }
       end  if recipient.tabs.present?
       result

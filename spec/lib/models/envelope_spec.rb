@@ -58,27 +58,15 @@ describe Docusign::Envelope do
       envelope.update_tabs!
     end
 
+    let(:updater) { double }
+
     it "calls DocusignRest::Client#retrieve_tabs for each recipient" do
-      expect(docusign_client).to receive(:retrieve_tabs).with(envelope_id, recipient_id1)
-      expect(docusign_client).to receive(:retrieve_tabs).with(envelope_id, recipient_id2)
-      go!
-    end
-
-
-    it "calls DocusignRest::Client#modify_tabs for only recipients with tabs" do
-      allow(docusign_client).to receive(:retrieve_tabs).with(envelope_id, recipient_id1).and_return({
-        textTabs: [ { tabLabel: 'given_name', tabId: tab_id1 },
-                    { tabLabel: 'surname', tabId: tab_id2 },
-                    { tabLabel: 'citizenship', tabId: tab_id3 } ] })
-      allow(docusign_client).to receive(:retrieve_tabs).with(envelope_id, recipient_id2).and_return({})
-
-      expect(docusign_client).to receive(:modify_tabs).with(envelope_id, recipient_id1, {
-        textTabs: [
-          { tabId: tab_id1, value: 'John', locked: true },
-          { tabId: tab_id2, value: 'Smith', locked: true },
-          { tabId: tab_id3, value: 'Canadian', locked: true },
-        ]
-      })
+      allow(Docusign::TabsUpdater).to receive(:new).and_return(updater)
+      allow(updater).to receive(:execute!)
+      expect(updater).to receive(:set).with(:given_name, 'John')
+      expect(updater).to receive(:set).with(:surname, 'Smith')
+      expect(updater).to receive(:set).with(:citizenship, 'Canadian')
+      expect(updater).to receive(:execute!).twice
       go!
     end
   end
