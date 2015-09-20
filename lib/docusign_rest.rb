@@ -4,6 +4,9 @@ require_relative 'docusign_rest/client'
 require_relative 'docusign_rest/utility'
 require_relative 'models/envelope'
 require_relative 'models/recipient'
+require_relative 'models/tab'
+require_relative 'models/tabs/checkbox_tab'
+require_relative 'models/tabs/text_tab'
 require 'multipart_post' #require the multipart-post gem itself
 require 'net/http/post/multipart' #require the multipart-post net/http/post/multipart monkey patch
 require_relative 'multipart_post/parts' #require my monkey patched parts.rb which adjusts the build_part method
