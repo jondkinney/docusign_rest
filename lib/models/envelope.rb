@@ -1,4 +1,7 @@
 module Docusign
+
+  class InvalidRecipientId < StandardError; end
+
   class Envelope
     attr_accessor :recipients, :template_ids, :id, :docusign_client
 
@@ -35,9 +38,8 @@ module Docusign
 
     def recipient_view(recipient_id, return_url='http://www.google.com')
       recipient = recipients.find { |recipient| recipient.id == recipient_id }
-      unless recipient.nil?
-        docusign_client.get_recipient_view(envelope_id: id, name: recipient.name, email: recipient.email, return_url: return_url)['url']
-      end
+      raise InvalidRecipientId.new("no recipient_id=#{recipient_id} in envelope_id=#{id}")  if recipient.nil?
+      docusign_client.get_recipient_view(envelope_id: id, name: recipient.name, email: recipient.email, return_url: return_url)['url']
     end
 
   private

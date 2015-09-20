@@ -124,7 +124,7 @@ describe Docusign::Envelope do
         allow(docusign_client).to receive(:get_recipient_view).and_return({})
       end
       it "returns nil" do
-        expect(envelope.recipient_view(999)).to be(nil)
+        expect{ envelope.recipient_view(999) }.to raise_error(Docusign::InvalidRecipientId)
       end
     end
 
