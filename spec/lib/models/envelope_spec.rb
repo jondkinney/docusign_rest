@@ -98,4 +98,42 @@ describe Docusign::Envelope do
     end
   end
 
+  describe "#recipient_view" do
+
+    let(:url) { 'myUrl'}
+    let(:response) { {'url' => url } }
+    let(:recipient) { envelope.recipients.first }
+    let(:recipient_id) { recipient.id }
+    let(:envelope) do
+      FactoryGirl.build(:envelope, :with_recipients, :with_template_ids, :with_envelope_id)
+    end
+
+    before(:each) do
+      allow(docusign_client).to receive(:get_recipient_view).and_return(response)
+    end
+
+    context "valid recipient id" do
+      it "calls DocusignRest::Client#get_recipient_view" do
+        expect(docusign_client).to receive(:get_recipient_view).with(envelope_id: envelope.id, name: recipient.name, email: recipient.email, return_url: 'http://www.google.com')
+        expect(envelope.recipient_view(recipient_id)).to eq(url)
+      end
+    end
+
+    context "invalid recipient_id" do
+      before(:each) do
+        allow(docusign_client).to receive(:get_recipient_view).and_return({})
+      end
+      it "returns nil" do
+        expect(envelope.recipient_view(999)).to be(nil)
+      end
+    end
+
+    context "with return_url" do
+      let(:return_url) { 'my return url' }
+      it "calls DocusignRest::Client#get_recipient_view with return_url" do
+        expect(docusign_client).to receive(:get_recipient_view).with(envelope_id: envelope.id, name: recipient.name, email: recipient.email, return_url: return_url)
+        expect(envelope.recipient_view(recipient_id, return_url)).to eq(url)
+      end
+    end
+  end
 end

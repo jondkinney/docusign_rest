@@ -33,6 +33,13 @@ module Docusign
       { envelope_id: id }
     end
 
+    def recipient_view(recipient_id, return_url='http://www.google.com')
+      recipient = recipients.find { |recipient| recipient.id == recipient_id }
+      unless recipient.nil?
+        docusign_client.get_recipient_view(envelope_id: id, name: recipient.name, email: recipient.email, return_url: return_url)['url']
+      end
+    end
+
   private
 
     def text_tab_updates(tab_ids, recipient)
