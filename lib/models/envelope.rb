@@ -21,9 +21,7 @@ module Docusign
     def update_tabs!
       recipients.each do |recipient|
         updater = TabsUpdater.new(id, recipient.id)
-        recipient.tabs.each do |label,value|
-          updater.set(label, value)
-        end  if recipient.tabs.present?
+        recipient.tabs.each { |label,value| updater.set(label, value) }  if recipient.tabs.present?
         updater.execute!
       end
     end
