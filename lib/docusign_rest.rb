@@ -5,6 +5,7 @@ require_relative 'docusign_rest/utility'
 require_relative 'models/envelope'
 require_relative 'models/recipient'
 require_relative 'models/tab'
+require_relative 'models/tabs_updater'
 require_relative 'models/tabs/checkbox_tab'
 require_relative 'models/tabs/text_tab'
 require 'multipart_post' #require the multipart-post gem itself
