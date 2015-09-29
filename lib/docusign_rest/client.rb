@@ -756,7 +756,6 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
-
     # Public: create an envelope for delivery from a composite template
     #
     # headers               - Optional hash of headers to merge into the existing
@@ -800,6 +799,9 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+    def create_envelope(envelope)
+      send_request(:post, "/accounts/#{acct_id}/envelopes", envelope.to_h)
+    end
 
     # Public returns the names specified for a given email address (existing docusign user)
     #
