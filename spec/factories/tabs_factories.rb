@@ -1,13 +1,16 @@
 FactoryGirl.define do
+  skip_create
 
   factory :text_tab, class: Docusign::TextTab do
-    id { generate(:tab_id) }
     label 'myTextLabel'
   end
 
   factory :checkbox_tab, class: Docusign::CheckboxTab do
-    id { generate(:tab_id) }
     label 'myCheckboxLabel'
+  end
+
+  factory :tab, class: Docusign::Tab do
+    label 'someTab'
   end
 
 end
