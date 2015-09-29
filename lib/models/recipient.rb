@@ -3,44 +3,25 @@ module Docusign
   class Recipient
     attr_accessor :id, :role_name, :name, :email, :tabs, :embedded
 
-    def initialize(options={})
-      @id = options[:id]
-      @role_name = options[:role_name]
-      @name = options[:name]
-      @email = options[:email]
-      @tabs = options[:tabs]
-      @embedded = options[:embedded] || true
+    def initialize(id: nil, role_name: nil, name: nil, email: nil, embedded: false, tabs: nil)
+      @id = id
+      @role_name = role_name
+      @name = name
+      @email = email
+      @embedded = embedded
+      @tabs = tabs
     end
 
     def to_h
       {
-        recipient_id: id,
-        role_name: role_name,
-        name: name,
+        recipientId: id,
+        roleName: role_name,
         email: email,
-        tabs: tabs,
+        clientUserId: email,
+        name: name,
+        tabs: Tab.group(tabs).andand.each { |_,tabs| tabs.map!(&:to_h) },
         embedded: embedded
-      }
-    end
-
-    def self.merge(recipients)
-      recipients.sort_by { |recipient| recipient.id }
-        .group_by { |recipient| recipient.role_name }
-        .values
-        .map { |recipients| merge_tabs(recipients) }
-    end
-
-  private
-
-    def self.merge_tabs(recipients)
-      result = recipients.first.dup
-      result.tabs = {}
-
-      recipients.each do |recipient|
-        result.tabs.merge!(recipient.tabs)  if recipient.tabs.present?
-      end
-      result.tabs = nil  if result.tabs.empty?
-      result
+      }.compact
     end
   end
 end
