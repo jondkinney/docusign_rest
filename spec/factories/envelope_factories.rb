@@ -3,17 +3,13 @@ FactoryGirl.define do
   factory :envelope, class: Docusign::Envelope do
     skip_create
 
-    trait :with_envelope_id do
-      id { generate(:envelope_id) }
+    trait :with_email do
+      email { { subject: 'email subject', body: 'email body' } }
     end
 
-    trait :with_recipients do
-      recipients { [build(:recipient, :with_tabs), build(:recipient, :cco)] }
+    trait :with_composite_templates do
+      composite_templates { FactoryGirl.create_list(:composite_template, 2, :with_server_templates, :with_inline_templates) }
     end
 
-    trait :with_template_ids do
-      template_ids { [generate(:template_id), generate(:template_id)] }
-    end
   end
-
 end
