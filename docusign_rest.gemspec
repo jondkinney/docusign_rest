@@ -15,17 +15,17 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
   gem.version       = DocusignRest::VERSION
 
-  gem.required_ruby_version = '>= 1.9.2'
+  gem.required_ruby_version = '>= 2.2.2'
 
+  gem.add_dependency('activesupport')
   gem.add_dependency('multipart-post', '>= 1.2')
   gem.add_dependency('json')
-  gem.add_dependency('activesupport')
   gem.add_dependency('andand')
 
   gem.add_development_dependency('rake')
-  gem.add_development_dependency('minitest', '~>4.0')
+  gem.add_development_dependency('minitest')
   gem.add_development_dependency('guard-minitest')
-  gem.add_development_dependency('rb-fsevent', '~> 0.9')
+  gem.add_development_dependency('rb-fsevent')
   gem.add_development_dependency('turn')
   gem.add_development_dependency('pry')
   gem.add_development_dependency('vcr')
