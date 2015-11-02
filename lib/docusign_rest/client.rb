@@ -1159,7 +1159,10 @@ module DocusignRest
     end
 
     def request_with_logging(http, request, uri, body=nil)
-      JSON.parse(unparsed_request_with_logging(http, request, uri, body))
+      unparsed_response = unparsed_request_with_logging(http, request, uri, body)
+      JSON.parse(unparsed_response)
+    rescue JSON::ParserError => e
+      { 'error_message' => e, 'response' => unparsed_response }
     end
 
     def unparsed_request_with_logging(http, request, uri, body=nil)
