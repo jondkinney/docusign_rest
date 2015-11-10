@@ -400,9 +400,9 @@ module DocusignRest
         doc_signer[:tabs]             = {
           approveTabs:          nil,
           checkboxTabs:         get_tabs(signer[:checkbox_tabs], options, index),
-          companyTabs:          nil,
+          companyTabs:          get_tabs(signer[:company_tabs], options, index),
           dateSignedTabs:       get_tabs(signer[:date_signed_tabs], options, index),
-          dateTabs:             nil,
+          dateTabs:             get_tabs(signer[:date_tabs], options, index),
           declineTabs:          nil,
           emailTabs:            get_tabs(signer[:email_tabs], options, index),
           envelopeIdTabs:       nil,
