@@ -1367,6 +1367,31 @@ module DocusignRest
       http.request(request)
     end
 
+    # Public adds signers to a given envelope
+    # See https://www.docusign.com/p/RESTAPIGuide/RESTAPIGuide.htm#REST%20API%20References/Add%20Recipients%20to%20an%20Envelope.htm%3FTocPath%3DREST%2520API%2520References|_____77
+    #
+    # envelope_id - ID of the envelope to which the recipient will be added
+    # signers - Array of hashes
+    #           See https://www.docusign.com/p/RESTAPIGuide/RESTAPIGuide.htm#REST%20API%20References/Recipients/Signers%20Recipient.htm%3FTocPath%3DREST%2520API%2520References|Send%2520an%2520Envelope%2520or%2520Create%2520a%2520Draft%2520Envelope|Recipient%2520Parameters|_____7
+    #
+    # TODO: This could be made more general as an add_envelope_recipient method
+    # to handle recipient types other than Signer
+    # See: https://www.docusign.com/p/RESTAPIGuide/RESTAPIGuide.htm#REST%20API%20References/Recipient%20Parameter.htm%3FTocPath%3DREST%2520API%2520References|Send%2520an%2520Envelope%2520or%2520Create%2520a%2520Draft%2520Envelope|Recipient%2520Parameters|_____0
+    def add_envelope_signers(options = {})
+      content_type = { "Content-Type" => "application/json" }
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients")
+      post_body = { signers: options[:signers] }.to_json
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Put.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+      JSON.parse(response.body)
+    end
+
     # Public adds recipient tabs to a given envelope
     # See https://www.docusign.com/p/RESTAPIGuide/RESTAPIGuide.htm#REST API References/Add Tabs for a Recipient.htm%3FTocPath%3DREST%2520API%2520References%7C_____86
     #
