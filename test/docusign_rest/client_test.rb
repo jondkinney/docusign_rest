@@ -262,6 +262,22 @@ describe DocusignRest::Client do
           # NOTE manually check that this file has the content you'd expect
         end
       end
+
+      it "should add signers to an envelope" do
+        VCR.use_cassette("add_envelope_signers") do
+          response = @client.add_envelope_signers(
+            envelope_id: @envelope_response["envelopeId"],
+            signers: [{
+              email: "signer@example.com",
+              name: "Signer Person",
+              recipientId: 2,
+            }],
+          )
+
+          response["recipientUpdateResults"].first["errorDetails"]["errorCode"]
+            .must_equal "SUCCESS"
+        end
+      end
     end
   end
 end
