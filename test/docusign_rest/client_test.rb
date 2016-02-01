@@ -114,6 +114,7 @@ describe DocusignRest::Client do
                   anchor_x_offset: '10',
                   anchor_y_offset: '-5',
                   label: 'another test',
+                  selected: true,
                   list_items: [
                     {
                       selected: false,

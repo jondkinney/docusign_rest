@@ -412,6 +412,7 @@ module DocusignRest
         tab_hash[:width]      = tab[:width] if tab[:width]
         tab_hash[:height]     = tab[:height] if tab[:width]
         tab_hash[:value]      = tab[:value] if tab[:value]
+        tab_hash[:selected]   = tab[:selected] if tab[:selected]
 
         tab_hash[:locked]     = tab[:locked] || false
 
