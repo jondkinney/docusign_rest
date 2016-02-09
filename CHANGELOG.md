@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.1 April ?? 2017
+
+### Features:
+* Add certificate option to DocusignRest::Client#get_combined_document_from_envelope (Shane Stanford)
+
 ## v0.2.0 April 28 2017
 
 ### Features:
