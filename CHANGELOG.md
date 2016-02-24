@@ -3,6 +3,7 @@
 ## v0.2.0 April ??? 2017
 
 ### Features:
+* Implement DocusignRest::Client#get_folder_list (Matthew Santeler)
 * Implement DocusignRest::Client#get_composite_template (lbspen)
 * Implement DocusignRest::Client#create_envelope_from_composite_template (lbspen)
 * Implement DocusignRest::Client#get_templates_in_envelope (lbspen)
