@@ -1105,6 +1105,18 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+    # Public retrieves folder information. Helpful to use before client.search_folder_for_envelopes
+    def get_folder_list(options={})
+      content_type = { 'Content-Type' => 'application/json' }
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{@acct_id}/folders/")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+      JSON.parse(response.body)
+    end
 
     # Public retrieves the envelope(s) from a specific folder based on search params.
     #
