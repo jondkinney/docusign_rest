@@ -758,9 +758,11 @@ module DocusignRest
         emailBlurb:         options[:email][:body],
         emailSubject:       options[:email][:subject],
         templateId:         options[:template_id],
+        brandId:            options[:brand_id],
         eventNotification:  get_event_notification(options[:event_notification]),
         templateRoles:      get_template_roles(options[:signers]),
-        customFields:       options[:custom_fields]
+        customFields:       options[:custom_fields],
+        allowReassign:      options[:allow_reassign]
       }.to_json
 
       uri = build_uri("/accounts/#{acct_id}/envelopes")
@@ -811,6 +813,8 @@ module DocusignRest
         emailBlurb:        "#{options[:email][:body] if options[:email]}",
         emailSubject:      "#{options[:email][:subject] if options[:email]}",
         status:             options[:status],
+        brandId:            options[:brand_id],
+        allowReassign:      options[:allow_reassign],
         compositeTemplates: get_composite_template(options[:server_template_ids], options[:signers], options[:files])
       }.to_json
 

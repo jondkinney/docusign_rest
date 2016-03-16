@@ -1,9 +1,10 @@
 # Changelog
 
-## v0.2.1 April ?? 2017
+## v0.2.1 May ?? 2017
 
 ### Features:
 * Add certificate option to DocusignRest::Client#get_combined_document_from_envelope (Shane Stanford)
+* Add brandId and allow_reassign options to DocusignRest::Client#create_envelope_from_template and DocusignRest::Client#create_envelope_from_composite_template (Jayan Jacob)
 
 ### Misc:
 * Replace monkeypatch with argument usage (Jean-Philippe Moal)
