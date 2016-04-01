@@ -134,7 +134,7 @@ module DocusignRest
     #   access_token - Access token information
     #   scope - This should always be "api"
     #   token_type - This should always be "bearer"
-    def get_token(account_id, email, password)
+    def get_token(email, password)
       content_type = { 'Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' }
       uri = build_uri('/oauth2/token')
 
