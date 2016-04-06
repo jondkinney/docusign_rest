@@ -312,7 +312,7 @@ module DocusignRest
           name:                                  signer[:name],
           accessCode:                            '',
           addAccessCodeToEmail:                  false,
-          customFields:                          nil,
+          customFields:                          signer[:custom_fields],
           iDCheckConfigurationName:              nil,
           iDCheckInformationInput:               nil,
           inheritEmailNotificationConfiguration: false,
@@ -322,7 +322,7 @@ module DocusignRest
           recipientId:                           "#{index + 1}",
           requireIdLookup:                       false,
           roleName:                              signer[:role_name],
-          routingOrder:                          index + 1,
+          routingOrder:                          signer[:routing_order] || index + 1,
           socialAuthentications:                 nil
         }
 
