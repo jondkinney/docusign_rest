@@ -289,6 +289,7 @@ module DocusignRest
     #                      the clientUserId value to the signer's email.
     # email_notification - Send an email or not
     # role_name          - The signer's role, like 'Attorney' or 'Client', etc.
+    # routing_order      - The signer's routing order(signing order)
     # template_locked    - Doesn't seem to work/do anything
     # template_required  - Doesn't seem to work/do anything
     # anchor_string      - The string of text to anchor the 'sign here' tab to
