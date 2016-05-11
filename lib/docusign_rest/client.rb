@@ -896,7 +896,7 @@ module DocusignRest
         returnUrl: options[:return_url] || 'https://www.docusign.com/devcenter'
       }.to_json
 
-      uri = build_uri("/accounts/#{acct_id}/envelopes/#{envelope_id}/views/sender")
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/views/sender")
 
       http = initialize_net_http_ssl(uri)
 
