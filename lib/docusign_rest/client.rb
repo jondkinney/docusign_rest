@@ -878,6 +878,37 @@ module DocusignRest
     end
 
 
+
+    # Public returns the URL for sender view of a draft envelope
+    #
+    # envelope_id - the ID of the envelope you wish to use for embedded signing
+    # headers     - optional hash of headers to merge into the existing
+    #               required headers for a multipart request.
+    # return_url  - the redirect url after sending the envelope, defaults to
+    #               https://www.docusign.com/devcenter
+    #
+    # Returns the URL string for embedded console (can be put in an iFrame)
+    def get_sender_view(options={})
+      content_type = { 'Content-Type' => 'application/json' }
+      content_type.merge(options[:headers]) if options[:headers]
+
+      post_body = {
+        returnUrl: options[:return_url] || 'https://www.docusign.com/devcenter'
+      }.to_json
+
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{envelope_id}/views/sender")
+
+      http = initialize_net_http_ssl(uri)
+
+      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+
+      parsed_response = JSON.parse(response.body)
+      parsed_response['url']
+    end
+
     # Public returns the envelope recipients for a given envelope
     #
     # include_tabs - boolean, determines if the tabs for each signer will be
