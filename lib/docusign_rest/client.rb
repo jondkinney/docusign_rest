@@ -608,6 +608,7 @@ module DocusignRest
         recipients: {
           signers: get_signers(options[:signers])
         },
+        eventNotification:  get_event_notification(options[:event_notification]),
         status: "#{options[:status]}",
         customFields: options[:custom_fields]
       }.to_json
