@@ -61,7 +61,7 @@ docusign_headers = %{
 
 headers = {
   'X-DocuSign-Authentication' => "#{docusign_headers}",
-  'Content-Type'              => "multipart/form-data, boundary=#{BOUNDARY}",
+  'Content-Type'              => "multipart/form-data; boundary=#{BOUNDARY}",
   'Accept'                    => 'application/json',
   'Content-Length'            => "#{post_body.length}"
 }
