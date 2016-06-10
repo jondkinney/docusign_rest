@@ -535,9 +535,20 @@ module DocusignRest
     def get_inline_signers(signers, sequence)
       signers_array = []
       signers.each do |signer|
-        signers_hash = Hash[:email, signer[:email], :name, signer[:name], \
-          :recipientId, signer[:recipient_id], :roleName, signer[:role_name], \
-          :clientUserId, signer[:client_id] || signer[:email]]
+        signers_hash = {
+          email: signer[:email],
+          name: signer[:name],
+          recipientId: signer[:recipient_id],
+          roleName: signer[:role_name],
+          clientUserId: signer[:client_id] || signer[:email],
+          tabs: {
+            textTabs:     get_signer_tabs(signer[:text_tabs]),
+            checkboxTabs: get_signer_tabs(signer[:checkbox_tabs]),
+            numberTabs:   get_signer_tabs(signer[:number_tabs]),
+            fullNameTabs: get_signer_tabs(signer[:fullname_tabs]),
+            dateTabs:     get_signer_tabs(signer[:date_tabs])
+          }
+        }
         signers_array << signers_hash
       end
       template_hash = {sequence: sequence, recipients: { signers: signers_array }}
