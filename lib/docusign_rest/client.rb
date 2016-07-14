@@ -500,19 +500,22 @@ module DocusignRest
       end
     end
 
-
     # Internal: takes in an array of server template ids and an array of the signers
     # and sets up the composite template
     #
     # Returns an array of server template hashes
-    def get_composite_template(server_template_ids, signers)
+    def get_composite_template(server_template_ids, signers, files)
       composite_array = []
       index = 0
       server_template_ids.each  do |template_id|
-        server_template_hash = Hash[:sequence, index += 1, \
+        document_hash = Hash[:documentId, index+1, \
+          :name, files[index][:name]]
+        server_template_hash = Hash[:sequence, index+1, \
           :templateId, template_id]
         templates_hash = Hash[:serverTemplates, [server_template_hash], \
-          :inlineTemplates,  get_inline_signers(signers, index += 1)]
+          :inlineTemplates,  get_inline_signers(signers, index += 1), \
+          :document, document_hash]
+
         composite_array << templates_hash
       end
       composite_array
@@ -531,7 +534,7 @@ module DocusignRest
           :clientUserId, signer[:client_id] || signer[:email]]
         signers_array << signers_hash
       end
-      template_hash = Hash[:sequence, sequence, :recipients, { signers: signers_array }]
+      template_hash = Hash[:sequence, sequence, :recipients, { signers: signers_array } ]
       [template_hash]
     end
 
@@ -772,20 +775,23 @@ module DocusignRest
     #   statusDateTime - The date/time the envelope was created
     #   status         - Sent, created, or voided
     def create_envelope_from_composite_template(options={})
-      content_type = { 'Content-Type' => 'application/json' }
-      content_type.merge(options[:headers]) if options[:headers]
+      ios = create_file_ios(options[:files])
+      file_params = create_file_params(ios)
 
       post_body = {
+        emailBlurb:        "#{options[:email][:body] if options[:email]}",
+        emailSubject:      "#{options[:email][:subject] if options[:email]}",
         status:             options[:status],
-        compositeTemplates: get_composite_template(options[:server_template_ids], options[:signers])
+        compositeTemplates: get_composite_template(options[:server_template_ids], options[:signers], options[:files])
       }.to_json
 
       uri = build_uri("/accounts/#{acct_id}/envelopes")
 
       http = initialize_net_http_ssl(uri)
 
-      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
-      request.body = post_body
+      request = initialize_net_http_multipart_post_request(
+                  uri, post_body, file_params, headers(options[:headers])
+                )
 
       response = http.request(request)
       JSON.parse(response.body)
