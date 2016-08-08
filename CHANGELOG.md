@@ -5,6 +5,7 @@
 ### Features:
 * Add brandId and allow_reassign options to DocusignRest::Client#create_envelope_from_template and DocusignRest::Client#create_envelope_from_composite_template (Jayan Jacob)
 * Add envelopeIds option to DocusignRest::Client#get_envelope_statuses (Amit Chakradeo)
+* Add recipientEvents option to event notification payload (Guillermo Wu)
 * Support routingOrder option when generating signers (Guillaume Dott)
 * Support arbitrary parameters to DocusignRest::Client#get_combined_document_from_envelope (Coley Brown)
 * Support event notifications in DocusignRest::Client#get_combined_document_from_envelope (Maxime Orefice)
