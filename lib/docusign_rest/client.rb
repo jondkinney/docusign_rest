@@ -503,18 +503,23 @@ module DocusignRest
     # Internal: takes in an array of server template ids and an array of the signers
     # and sets up the composite template
     #
+    # Takes an optional array of files, which consist of documents to be used instead of templates
+    #
     # Returns an array of server template hashes
     def get_composite_template(server_template_ids, signers, files)
       composite_array = []
       index = 0
       server_template_ids.each  do |template_id|
-        document_hash = Hash[:documentId, index+1, \
-          :name, files[index][:name]]
         server_template_hash = Hash[:sequence, index+1, \
           :templateId, template_id]
         templates_hash = Hash[:serverTemplates, [server_template_hash], \
-          :inlineTemplates,  get_inline_signers(signers, index += 1), \
-          :document, document_hash]
+          :inlineTemplates, get_inline_signers(signers, index += 1)]
+
+        if files
+          document_hash = Hash[:documentId, index, \
+          :name, files[index][:name]]
+          templates_hash[:document] = document_hash
+        end
 
         composite_array << templates_hash
       end
@@ -760,6 +765,7 @@ module DocusignRest
     #                         stored for sending at a later time
     # email/body            - Sets the text in the email body
     # email/subject         - Sets the text in the email subject line
+    # files                 - Sets documents to be used instead of inline or server templates
     # template_roles        - See the get_template_roles method definition for a list
     #                         of options to pass. Note: for consistency sake we call
     #                         this 'signers' and not 'templateRoles' when we build up
@@ -775,8 +781,12 @@ module DocusignRest
     #   statusDateTime - The date/time the envelope was created
     #   status         - Sent, created, or voided
     def create_envelope_from_composite_template(options={})
-      ios = create_file_ios(options[:files])
-      file_params = create_file_params(ios)
+      file_params = {}
+
+      if options[:files]
+        ios = create_file_ios(options[:files])
+        file_params = create_file_params(ios)
+      end
 
       post_body = {
         emailBlurb:        "#{options[:email][:body] if options[:email]}",
