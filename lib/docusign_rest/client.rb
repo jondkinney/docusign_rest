@@ -312,7 +312,7 @@ module DocusignRest
           name:                                  signer[:name],
           accessCode:                            '',
           addAccessCodeToEmail:                  false,
-          customFields:                          nil,
+          customFields:                          signer[:custom_fields],
           iDCheckConfigurationName:              nil,
           iDCheckInformationInput:               nil,
           inheritEmailNotificationConfiguration: false,
@@ -355,7 +355,7 @@ module DocusignRest
           fullNameTabs:         get_tabs(signer[:full_name_tabs], options, index),
           listTabs:             get_tabs(signer[:list_tabs], options, index),
           noteTabs:             nil,
-          numberTabs:           nil,
+          numberTabs:           get_tabs(signer[:number_tabs], options, index),
           radioGroupTabs:       get_tabs(signer[:radio_group_tabs], options, index),
           initialHereTabs:      get_tabs(signer[:initial_here_tabs], options.merge!(initial_here_tab: true), index),
           signHereTabs:         get_tabs(signer[:sign_here_tabs], options.merge!(sign_here_tab: true), index),
@@ -372,6 +372,46 @@ module DocusignRest
       doc_signers
     end
 
+
+    # Internal: Allow people to be Carbon Copied on the document that is created
+    # https://www.docusign.com/p/RESTAPIGuide/RESTAPIGuide.htm#REST%20API%20References/Recipients/Carbon%20Copies%20Recipient.htm
+    # 
+    # Expecting options to be an array of hashes, with each hash representing a person to carbon copy
+    #
+    # email         - The email of the recipient to be copied on the document
+    # name          - The name of the recipient
+    # signer_count  - Used to generate required attributes recipientId and routingOrder which must be unique in the document
+    #
+    def get_carbon_copies(options, signer_count)
+      copies = []
+        options.each do |cc|
+          signer_count += 1
+          raise "Missing required data [:email, :name]" unless (cc[:email] && cc[:name])
+          cc.merge!(recipient_id: signer_count, routing_order: signer_count)
+          copies << camelize_keys(cc)
+        end
+      copies
+    end
+
+    # Public: Translate ruby oriented keys to camel cased keys recursively through the hash received
+    #
+    # The method expects symbol parameters in ruby form ":access_code" and translates them to camel cased "accessCode"
+    #
+    # example [{access_code: '12345', email_notification: {email_body: 'abcdef'}}] -> [{'accessCode': '12345', 'emailNotification': {'emailBody': 'abcdef'}}]
+    #
+    def camelize_keys(hash)
+      new_hash={}
+      hash.each do |k,v|
+        new_hash[camelize(k.to_s)] = (v.is_a?(Hash) ? camelize_keys(v) : v)
+      end
+      new_hash
+    end
+
+    # Generic implementation to avoid having to pull in Rails dependencies
+    #
+    def camelize(str)
+      str.gsub(/_([a-z])/) { $1.upcase }
+    end
 
     # TODO (2014-02-03) jonk => document
     def get_tabs(tabs, options, index)
@@ -419,6 +459,9 @@ module DocusignRest
 
         tab_hash[:groupName] = tab[:group_name] if tab.key?(:group_name)
         tab_hash[:radios] = get_tabs(tab[:radios], options, index) if tab.key?(:radios)
+
+        tab_hash[:validationMessage] = tab[:validation_message] if tab[:validation_message]
+        tab_hash[:validationPattern] = tab[:validation_pattern] if tab[:validation_pattern]
 
         tab_array << tab_hash
       end
@@ -578,12 +621,14 @@ module DocusignRest
     # file_name     - The name you want to give to the file you are uploading
     # content_type  - (for the request body) application/json is what DocuSign
     #                 is expecting
-    # email_subject - (Optional) short subject line for the email
-    # email_body    - (Optional) custom text that will be injected into the
+    # email[subject] - (Optional) short subject line for the email
+    # email[body]    - (Optional) custom text that will be injected into the
     #                 DocuSign generated email
     # signers       - A hash of users who should receive the document and need
     #                 to sign it. More info about the options available for
     #                 this method are documented above it's method definition.
+    # carbon_copies - An array of hashes that includes users names and email who
+    #                 should receive a copy of the document once it is complete.
     # status        - Options include: 'sent', 'created', 'voided' and determine
     #                 if the envelope is sent out immediately or stored for
     #                 sending at a later time
@@ -606,7 +651,8 @@ module DocusignRest
         emailSubject: "#{options[:email][:subject] if options[:email]}",
         documents: get_documents(ios),
         recipients: {
-          signers: get_signers(options[:signers])
+          signers: get_signers(options[:signers]),
+          carbonCopies: get_carbon_copies(options[:carbon_copies],options[:signers].size)
         },
         eventNotification:  get_event_notification(options[:event_notification]),
         status: "#{options[:status]}",

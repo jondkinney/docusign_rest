@@ -154,6 +154,37 @@ describe DocusignRest::Client do
       end
     end
 
+    describe "#carbon_copies" do
+      before do
+        options = [
+          {name: 'first', email: 'user@example.com', access_code: '12345', email_notification: {email_body: 'This is an email'}},
+          {name: 'second', email: 'user2@example.com'}
+        ]
+        @result = @client.get_carbon_copies(options, 1)
+      end
+
+      it 'carbon copies returns an array' do
+        @result.must_be_instance_of Array
+      end
+      it 'carbon copies processes multiple records' do
+        @result.size.must_equal(2)
+      end
+      it 'carbon copies converts key to camel case' do
+        @result[0]['accessCode'].wont_be_nil
+      end
+      it 'carbon copies translates nested key to camel case' do
+        @result[0]['emailNotification']['emailBody'].wont_be_nil
+      end
+      it 'carbon copies increments and injects recipientId' do
+        @result[0]['recipientId'].wont_be_nil
+        @result[0]['recipientId'].must_equal(2)
+      end
+      it 'carbon copies increments and injects routingOrder' do
+        @result[0]['routingOrder'].wont_be_nil
+        @result[0]['routingOrder'].must_equal(2)
+      end
+    end
+
     describe "embedded signing" do
       before do
         # create the template dynamically
