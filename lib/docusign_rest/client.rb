@@ -383,34 +383,12 @@ module DocusignRest
     # signer_count  - Used to generate required attributes recipientId and routingOrder which must be unique in the document
     #
     def get_carbon_copies(options, signer_count)
-      copies = []
-        options.each do |cc|
-          signer_count += 1
-          raise "Missing required data [:email, :name]" unless (cc[:email] && cc[:name])
-          cc.merge!(recipient_id: signer_count, routing_order: signer_count)
-          copies << camelize_keys(cc)
-        end
-      copies
-    end
-
-    # Public: Translate ruby oriented keys to camel cased keys recursively through the hash received
-    #
-    # The method expects symbol parameters in ruby form ":access_code" and translates them to camel cased "accessCode"
-    #
-    # example [{access_code: '12345', email_notification: {email_body: 'abcdef'}}] -> [{'accessCode': '12345', 'emailNotification': {'emailBody': 'abcdef'}}]
-    #
-    def camelize_keys(hash)
-      new_hash={}
-      hash.each do |k,v|
-        new_hash[camelize(k.to_s)] = (v.is_a?(Hash) ? camelize_keys(v) : v)
+      return [] unless options
+      options.map do |cc|
+        signer_count += 1
+        raise "Missing required data [:email, :name]" unless (cc[:email] && cc[:name])
+        convert_hash_keys cc.merge(recipient_id: signer_count, routing_order: signer_count)
       end
-      new_hash
-    end
-
-    # Generic implementation to avoid having to pull in Rails dependencies
-    #
-    def camelize(str)
-      str.gsub(/_([a-z])/) { $1.upcase }
     end
 
     # TODO (2014-02-03) jonk => document
