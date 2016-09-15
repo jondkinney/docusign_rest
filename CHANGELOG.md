@@ -3,6 +3,7 @@
 ## v0.2.0 April ??? 2017
 
 ### Features:
+* Implement DocusignRest::Client#get_sender_view (Gonzalo Rodríguez)
 * Implement DocusignRest::Client#add_envelope_signers (Dan Rench)
 * Implement DocusignRest::Client#get_folder_list (Matthew Santeler)
 * Implement DocusignRest::Client#get_composite_template (lbspen)
