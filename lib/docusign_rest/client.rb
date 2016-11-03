@@ -305,6 +305,7 @@ module DocusignRest
     # tab_label          - TODO: figure out what this is
     def get_signers(signers, options={})
       doc_signers = []
+      index_start = options[:index_start] || 0
 
       signers.each_with_index do |signer, index|
         doc_signer = {
@@ -319,10 +320,10 @@ module DocusignRest
           note:                                  '',
           phoneAuthentication:                   nil,
           recipientAttachment:                   nil,
-          recipientId:                           "#{index + 1}",
+          recipientId:                           "#{index_start + index + 1}",
           requireIdLookup:                       false,
           roleName:                              signer[:role_name],
-          routingOrder:                          index + 1,
+          routingOrder:                          index_start + index + 1,
           socialAuthentications:                 nil
         }
 
@@ -345,24 +346,24 @@ module DocusignRest
         doc_signer[:signatureInfo]    = nil
         doc_signer[:tabs]             = {
           approveTabs:          nil,
-          checkboxTabs:         get_tabs(signer[:checkbox_tabs], options, index),
-          companyTabs:          get_tabs(signer[:company_tabs], options, index),
-          dateSignedTabs:       get_tabs(signer[:date_signed_tabs], options, index),
-          dateTabs:             get_tabs(signer[:date_tabs], options, index),
+          checkboxTabs:         get_tabs(signer[:checkbox_tabs], options, index_start + index),
+          companyTabs:          get_tabs(signer[:company_tabs], options, index_start + index),
+          dateSignedTabs:       get_tabs(signer[:date_signed_tabs], options, index_start + index),
+          dateTabs:             get_tabs(signer[:date_tabs], options, index_start + index),
           declineTabs:          nil,
-          emailTabs:            get_tabs(signer[:email_tabs], options, index),
+          emailTabs:            get_tabs(signer[:email_tabs], options, index_start + index),
           envelopeIdTabs:       nil,
-          fullNameTabs:         get_tabs(signer[:full_name_tabs], options, index),
-          listTabs:             get_tabs(signer[:list_tabs], options, index),
+          fullNameTabs:         get_tabs(signer[:full_name_tabs], options, index_start + index),
+          listTabs:             get_tabs(signer[:list_tabs], options, index_start + index),
           noteTabs:             nil,
-          numberTabs:           get_tabs(signer[:number_tabs], options, index),
-          radioGroupTabs:       get_tabs(signer[:radio_group_tabs], options, index),
-          initialHereTabs:      get_tabs(signer[:initial_here_tabs], options.merge!(initial_here_tab: true), index),
-          signHereTabs:         get_tabs(signer[:sign_here_tabs], options.merge!(sign_here_tab: true), index),
+          numberTabs:           get_tabs(signer[:number_tabs], options, index_start + index),
+          radioGroupTabs:       get_tabs(signer[:radio_group_tabs], options, index_start + index),
+          initialHereTabs:      get_tabs(signer[:initial_here_tabs], options.merge!(initial_here_tab: true), index_start + index),
+          signHereTabs:         get_tabs(signer[:sign_here_tabs], options.merge!(sign_here_tab: true), index_start + index),
           signerAttachmentTabs: nil,
           ssnTabs:              nil,
-          textTabs:             get_tabs(signer[:text_tabs], options, index),
-          titleTabs:            get_tabs(signer[:title_tabs], options, index),
+          textTabs:             get_tabs(signer[:text_tabs], options, index_start + index),
+          titleTabs:            get_tabs(signer[:title_tabs], options, index_start + index),
           zipTabs:              nil
         }
 
@@ -629,8 +630,8 @@ module DocusignRest
         emailSubject: "#{options[:email][:subject] if options[:email]}",
         documents: get_documents(ios),
         recipients: {
-          signers: get_signers(options[:signers]),
-          carbonCopies: get_carbon_copies(options[:carbon_copies],options[:signers].size)
+          signers: get_signers(options[:signers], index_start: options[:carbon_copies_first] ? Array(options[:carbon_copies]).size : 0),
+          carbonCopies: get_carbon_copies(options[:carbon_copies], options[:carbon_copies_first] ? 0 : options[:signers].size)
         },
         eventNotification:  get_event_notification(options[:event_notification]),
         status: "#{options[:status]}",
