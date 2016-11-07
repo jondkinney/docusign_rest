@@ -326,6 +326,10 @@ module DocusignRest
           socialAuthentications:                 nil
         }
 
+        if signer[:signing_group_id]
+          doc_signer[:signingGroupId] = signer[:signing_group_id]
+        end
+
         if signer[:email_notification]
           doc_signer[:emailNotification] = signer[:email_notification]
         end
@@ -1403,6 +1407,58 @@ module DocusignRest
       request.body = post_body
 
       response = http.request(request)
+      JSON.parse(response.body)
+    end
+
+    # Public method - Creates Signing group
+    # group_name: The display name for the signing group. This can be a maximum of 100 characters.
+    # users: An array of group members for the signing group. (see example below)
+    #        It is composed of two elements:
+    #        name – The name for the group member. This can be a maximum of 100 characters.
+    #        email – The email address for the group member. This can be a maximum of 100 characters.
+    # [
+    #   {name: 'test1', email: 'test1@ygrene.us'}
+    #   {name: 'test2', email: 'test2@ygrene.us'}
+    # ]
+    #
+    #
+    # The response returns a success or failure with any error messages.
+    # For successes DocuSign generates a signingGroupId for each group, which is included in the response.
+    # The response also includes information about when the group was created and modified,
+    # including the account user that created and modified the group.
+    def create_signing_group(options={})
+      content_type = { 'Content-Type' => 'application/json' }
+      content_type.merge(options[:headers]) if options[:headers]
+
+      group_users = []
+      if options[:users]
+        options[:users].each do |user|
+          group_users << {
+            userName: user[:name],
+            email: user[:email]
+          }
+        end
+      end
+
+      post_body = {
+          groups: [
+            {
+              groupName: options[:group_name],
+              groupType: 'sharedSigningGroup',
+              users: group_users
+            }
+          ]
+        }.to_json
+
+      uri = build_uri("/accounts/#{@acct_id}/signing_groups")
+
+      http = initialize_net_http_ssl(uri)
+
+      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+
       JSON.parse(response.body)
     end
   end

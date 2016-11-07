@@ -27,4 +27,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency('pry')
   gem.add_development_dependency('vcr')
   gem.add_development_dependency('fakeweb')
+  gem.add_dependency('safe_yaml')
 end

@@ -1,0 +1,57 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://demo.docusign.net/restapi/v2/accounts/<AccountID>/signing_groups
+    body:
+      encoding: UTF-8
+      string: '{"groups":[{"groupName":"sample_group","groupType":"sharedSigningGroup","users":[{"userName":"test1","email":"test@ygrene.us"}]}]}'
+    headers:
+      x-docusign-authentication:
+      - '{"Username":"<Username>","Password":"<Password>","IntegratorKey":"<IntegratorKey>"}'
+      accept:
+      - json
+      content-type:
+      - application/json
+      accept-encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      user-agent:
+      - Ruby
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '421'
+      content-type:
+      - application/json; charset=utf-8
+      x-ratelimit-reset:
+      - '1478527200'
+      x-ratelimit-limit:
+      - '1000'
+      x-ratelimit-remaining:
+      - '970'
+      date:
+      - Mon, 07 Nov 2016 13:31:21 GMT
+      connection:
+      - close
+      set-cookie:
+      - BIGipDocuSign_Demo_Signing=!6U/PGYr7uCIYIE0z9XZB9DG0AZECKbta3GgKIA9RQcX6m5u8Mz/7B3ak2NF2gTClGoq+SPM3VdMd4g==;
+        path=/
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: "{\r\n  \"groups\": [\r\n    {\r\n      \"signingGroupId\": \"7942\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 5:31:21 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 5:31:21 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\",\r\n      \"users\": [\r\n        {\r\n          \"userName\":
+        \"test1\",\r\n          \"email\": \"test@ygrene.us\"\r\n        }\r\n      ]\r\n
+        \   }\r\n  ]\r\n}"
+    http_version: '1.1'
+  recorded_at: Mon, 07 Nov 2016 13:31:21 GMT
+recorded_with: VCR 3.0.3
