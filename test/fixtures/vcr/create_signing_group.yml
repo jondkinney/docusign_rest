@@ -1,0 +1,50 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://demo.docusign.net/restapi/v2/accounts/<AccountID>/signing_groups
+    body:
+      encoding: UTF-8
+      string: '{"groups":[{"groupName":"sample_group","groupType":"sharedSigningGroup","users":[{"userName":"test1","email":"test@ygrene.us"}]}]}'
+    headers:
+      X-Docusign-Authentication:
+      - '{"Username":"<Username>","Password":"<Password>","IntegratorKey":"<IntegratorKey>"}'
+      Accept:
+      - json
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Length:
+      - '194'
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Ratelimit-Reset:
+      - '1501106400'
+      X-Ratelimit-Limit:
+      - '1000'
+      X-Ratelimit-Remaining:
+      - '965'
+      X-Docusign-Tracetoken:
+      - 59a5f0d7-208c-4000-93b0-5e96d9b79fc7
+      Date:
+      - Wed, 26 Jul 2017 21:12:33 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: "{\r\n  \"groups\": [\r\n    {\r\n      \"errorDetails\": {\r\n        \"errorCode\":
+        \"ACCOUNT_LACKS_PERMISSIONS\",\r\n        \"message\": \"Account does not
+        have Signing Groups permission.\"\r\n      }\r\n    }\r\n  ]\r\n}"
+    http_version: 
+  recorded_at: Wed, 26 Jul 2017 21:12:33 GMT
+recorded_with: VCR 3.0.3

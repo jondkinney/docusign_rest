@@ -2,6 +2,7 @@
 
 ## v0.3.2 ????
 
+* Implement DocusignRest::Client#create_signing_group (Lakshmi Narayana Chitturi)
 * Fix parameter name type in DocusignRest::Client#void_envelope (Ryan Wood)
 * Implement DocusignRest::Client#get_page_image (Tom Copeland)
 

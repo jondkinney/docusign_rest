@@ -190,6 +190,41 @@ describe DocusignRest::Client do
       end
     end
 
+    describe "Signing groups" do
+      describe 'When all options are passed it should create' do
+        before do
+          VCR.use_cassette('create_signing_group') do
+            @signing_group_response = @client.create_signing_group(
+              {
+                users: [{name: 'test1', email: 'test@ygrene.us'}],
+                group_name: 'sample_group'
+              }
+            )
+          end
+        end
+
+        it "should create_signing_group" do
+          signing_group = @signing_group_response["groups"].first
+          signing_group['signingGroupId'].wont_be_nil
+          signing_group['groupName'].must_equal "sample_group"
+        end
+      end
+
+      describe "when no options are passed it should return errors" do
+        before do
+          VCR.use_cassette('signing_group_error') do
+            @signing_group_response = @client.create_signing_group()
+          end
+        end
+
+        it "should return error when improper options are sent" do
+          error_response = {"groups"=>[{"errorDetails"=>{"errorCode"=>"INVALID_GROUP_NAME", "message"=>"No group name was provided."}}]}
+
+          @signing_group_response.must_equal error_response
+        end
+      end
+    end
+
     describe "embedded signing" do
       before do
         # create the template dynamically

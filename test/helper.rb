@@ -11,4 +11,20 @@ VCR.configure do |c|
   c.cassette_library_dir = "test/fixtures/vcr"
   c.hook_into :webmock
   c.default_cassette_options = { record: :all }
+
+  c.filter_sensitive_data('<Password>') do
+    DocusignRest.password
+  end
+
+  c.filter_sensitive_data('<IntegratorKey>') do
+    DocusignRest.integrator_key
+  end
+
+  c.filter_sensitive_data('<Username>') do
+    DocusignRest.username
+  end
+
+  c.filter_sensitive_data('<AccountID>') do
+    DocusignRest.account_id
+  end
 end
