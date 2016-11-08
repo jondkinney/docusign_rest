@@ -154,17 +154,19 @@ describe DocusignRest::Client do
     end
 
     describe "Signing groups" do
-      describe 'When all options are passed it should create' do
-        before do
-          VCR.use_cassette('create_signing_group') do
-            @signing_group_response = @client.create_signing_group(
-              {
-                users: [{name: 'test1', email: 'test@ygrene.us'}],
-                group_name: 'sample_group'
-              }
-            )
-          end
+      def create_signing_group
+        VCR.use_cassette('create_signing_group') do
+          @signing_group_response = @client.create_signing_group(
+            {
+              users: [{name: 'test1', email: 'test@ygrene.us'}],
+              group_name: 'sample_group'
+            }
+          )
         end
+      end
+
+      describe 'When all options are passed it should create' do
+        before { create_signing_group }
 
         it "should create_signing_group" do
           signing_group = @signing_group_response["groups"].first
@@ -184,6 +186,60 @@ describe DocusignRest::Client do
           error_response = {"groups"=>[{"errorDetails"=>{"errorCode"=>"INVALID_GROUP_NAME", "message"=>"No group name was provided."}}]}
 
           @signing_group_response.must_equal error_response
+        end
+      end
+
+      describe 'When signingGroupId is passed it should delete' do
+        before do
+          create_signing_group
+          VCR.use_cassette('delete_signing_groups') do
+            signing_group = @signing_group_response["groups"].first
+            @signing_group_response = @client.delete_signing_groups(
+              {
+                 groups: [{signing_group_id: signing_group['signingGroupId']}]
+              }
+            )
+          end
+        end
+
+        it "should delete_signing_groups with success response" do
+          signing_group = @signing_group_response["groups"].first
+          signing_group['signingGroupId'].wont_be_nil
+          signing_group['groupName'].must_equal "sample_group"
+          signing_group['errorDetails'].must_be_nil
+        end
+      end
+
+      describe 'When signingGroupId is not passed it should return error' do
+        before do
+          VCR.use_cassette('delete_signing_groups_error') do
+            @signing_group_response = @client.delete_signing_groups(
+              {
+                 groups: [{}]
+              }
+            )
+          end
+        end
+
+        it "should return error with error details" do
+          error_response = {"groups"=>[{"errorDetails"=>{"errorCode"=>"SIGNING_GROUP_INVALID", "message"=>"Invalid signing group supplied."}}]}
+          @signing_group_response.must_equal error_response
+        end
+      end
+
+      describe 'returns list of signing groups' do
+        before do
+          create_signing_group
+          VCR.use_cassette('list_signing_groups') do
+            signing_group = @signing_group_response["groups"].first
+            @signing_group_response = @client.get_signing_groups
+          end
+        end
+
+        it "should return list of signing groups" do
+          signing_group = @signing_group_response["groups"].last
+          signing_group['signingGroupId'].wont_be_nil
+          signing_group['groupName'].must_equal "sample_group"
         end
       end
     end

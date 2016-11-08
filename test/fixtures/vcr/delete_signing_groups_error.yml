@@ -1,0 +1,53 @@
+---
+http_interactions:
+- request:
+    method: delete
+    uri: https://demo.docusign.net/restapi/v2/accounts/997938/signing_groups
+    body:
+      encoding: UTF-8
+      string: '{"groups":[{"signingGroupId":null}]}'
+    headers:
+      x-docusign-authentication:
+      - '{"Username":"<Username>","Password":"<Password>","IntegratorKey":"<IntegratorKey>"}'
+      accept:
+      - json
+      content-type:
+      - application/json
+      accept-encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      user-agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '173'
+      content-type:
+      - application/json; charset=utf-8
+      x-ratelimit-reset:
+      - '1478599200'
+      x-ratelimit-limit:
+      - '1000'
+      x-ratelimit-remaining:
+      - '870'
+      date:
+      - Tue, 08 Nov 2016 09:34:00 GMT
+      connection:
+      - close
+      set-cookie:
+      - BIGipDocuSign_Demo_Signing=!IA5acyyU+EqYA9gz9XZB9DG0AZECKV9RVziRA9H6qKQ0rkW8FExvhT9INZbx+UPpI7r+J06/TWNNLw==;
+        path=/
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: "{\r\n  \"groups\": [\r\n    {\r\n      \"errorDetails\": {\r\n        \"errorCode\":
+        \"SIGNING_GROUP_INVALID\",\r\n        \"message\": \"Invalid signing group
+        supplied.\"\r\n      }\r\n    }\r\n  ]\r\n}"
+    http_version: '1.1'
+  recorded_at: Tue, 08 Nov 2016 09:34:00 GMT
+recorded_with: VCR 3.0.3

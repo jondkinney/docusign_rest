@@ -1,0 +1,55 @@
+---
+http_interactions:
+- request:
+    method: delete
+    uri: https://demo.docusign.net/restapi/v2/accounts/997938/signing_groups
+    body:
+      encoding: UTF-8
+      string: '{"groups":[{"signingGroupId":"8039"}]}'
+    headers:
+      x-docusign-authentication:
+      - '{"Username":"<Username>","Password":"<Password>","IntegratorKey":"<IntegratorKey>"}'
+      accept:
+      - json
+      content-type:
+      - application/json
+      accept-encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      user-agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '302'
+      content-type:
+      - application/json; charset=utf-8
+      x-ratelimit-reset:
+      - '1478599200'
+      x-ratelimit-limit:
+      - '1000'
+      x-ratelimit-remaining:
+      - '868'
+      date:
+      - Tue, 08 Nov 2016 09:34:04 GMT
+      connection:
+      - close
+      set-cookie:
+      - BIGipDocuSign_Demo_Signing=!HxMJNIM5xknremsz9XZB9DG0AZECKVTrPs6OZlSc1BYPXMtEeKWJrwGYKxuXtW5sJNxCw6Wye1NF8g==;
+        path=/
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: "{\r\n  \"groups\": [\r\n    {\r\n      \"signingGroupId\": \"8039\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:34:02 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:34:02 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    }\r\n  ]\r\n}"
+    http_version: '1.1'
+  recorded_at: Tue, 08 Nov 2016 09:34:05 GMT
+recorded_with: VCR 3.0.3

@@ -1,0 +1,363 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://demo.docusign.net/restapi/v2/accounts/997938/signing_groups
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      x-docusign-authentication:
+      - '{"Username":"<Username>","Password":"<Password>","IntegratorKey":"<IntegratorKey>"}'
+      accept:
+      - json
+      content-type:
+      - application/json
+      accept-encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      user-agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '21796'
+      content-type:
+      - application/json; charset=utf-8
+      x-ratelimit-reset:
+      - '1478602800'
+      x-ratelimit-limit:
+      - '1000'
+      x-ratelimit-remaining:
+      - '978'
+      date:
+      - Tue, 08 Nov 2016 10:57:50 GMT
+      connection:
+      - close
+      set-cookie:
+      - BIGipDocuSign_Demo_Signing=!BSz8Qel35ZXVr28z9XZB9DG0AZECKTNeGMlGy4nhhbBL4x5JfY3NT/6D61pXt470kMfx1SLcbOXbLQ==;
+        path=/
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: "{\r\n  \"groups\": [\r\n    {\r\n      \"signingGroupId\": \"7403\",\r\n
+        \     \"groupName\": \"onesigner\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"10/27/2016 10:49:48 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"10/27/2016 10:49:48 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7414\",\r\n
+        \     \"groupName\": \"John One Signature\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"10/27/2016 11:21:28 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"10/27/2016 11:22:00 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7431\",\r\n
+        \     \"groupName\": \"sample group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"10/27/2016 1:45:11 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/1/2016 2:50:26 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7561\",\r\n
+        \     \"groupName\": \"sample group latest\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"10/28/2016 12:53:07 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"10/28/2016 12:56:14 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7921\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 2:58:39 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 2:58:39 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7922\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 3:02:05 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 3:02:05 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7923\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 3:12:04 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 3:12:04 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7924\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 3:16:07 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 3:16:07 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7925\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 3:50:54 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 3:50:54 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7926\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 3:52:20 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 3:52:20 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7928\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 4:35:42 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 4:35:42 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7929\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 4:38:08 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 4:38:08 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7930\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 4:39:30 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 4:39:30 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7931\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 4:42:29 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 4:42:29 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7934\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 4:45:31 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 4:45:31 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7938\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 4:51:10 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 4:51:10 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7940\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 5:20:56 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 5:20:56 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7941\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 5:28:07 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 5:28:07 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7942\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 5:31:21 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 5:31:21 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7943\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 5:50:50 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 5:50:50 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7977\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 9:14:50 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 9:14:50 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7978\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 9:16:38 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 9:16:38 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7980\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 9:25:17 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 9:25:17 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7981\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 9:25:21 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 9:25:21 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7982\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 9:26:11 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 9:26:11 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7983\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 9:26:15 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 9:26:15 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7984\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 9:31:03 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 9:31:03 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7985\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 9:31:07 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 9:31:07 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7986\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 9:33:41 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 9:33:41 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7987\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 9:33:45 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 9:33:45 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7988\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 9:35:46 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 9:35:46 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7989\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 9:35:50 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 9:35:50 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7990\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 9:45:40 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 9:45:40 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7991\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 9:45:45 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 9:45:45 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7992\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 9:56:57 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 9:56:57 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7993\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 9:56:59 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 9:56:59 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7994\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 10:00:41 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 10:00:41 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7996\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 10:04:50 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 10:04:51 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"7998\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 10:20:28 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 10:20:28 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8000\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 10:22:28 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 10:22:28 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8002\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 10:32:17 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 10:32:18 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8003\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 10:32:22 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 10:32:22 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8004\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 10:33:26 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 10:33:26 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8006\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/7/2016 10:43:29 PM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/7/2016 10:43:29 PM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8008\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 12:23:58 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 12:23:58 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8010\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 12:52:54 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 12:52:54 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8011\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 12:52:59 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 12:52:59 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8012\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 12:57:32 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 12:57:32 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8014\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:11:49 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:11:49 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8016\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:13:41 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:13:41 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8018\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:14:24 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:14:24 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8020\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:17:41 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:17:41 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8021\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:17:43 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:17:43 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8022\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:18:23 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:18:23 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8023\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:18:25 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:18:25 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8024\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:22:00 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:22:00 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8025\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:22:02 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:22:02 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8026\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:23:01 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:23:01 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8027\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:23:03 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:23:03 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8028\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:23:31 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:23:31 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8029\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:23:35 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:23:35 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8030\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:24:31 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:24:31 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8031\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:24:36 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:24:36 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8032\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:25:53 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:25:53 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8033\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:30:26 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:30:26 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8034\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:31:26 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:31:26 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8036\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:33:10 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:33:10 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8038\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 1:33:58 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 1:33:58 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8040\",\r\n
+        \     \"groupName\": \"9RGMVX\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 2:03:30 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 2:03:30 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8041\",\r\n
+        \     \"groupName\": \"9RGMVX\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 2:04:29 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 2:04:29 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8042\",\r\n
+        \     \"groupName\": \"9RGMVX\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 2:06:21 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 2:06:21 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8043\",\r\n
+        \     \"groupName\": \"9RGMVX\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 2:06:42 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 2:06:42 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8044\",\r\n
+        \     \"groupName\": \"9RGMVX\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 2:07:18 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 2:07:18 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8045\",\r\n
+        \     \"groupName\": \"9RGMVX\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 2:07:25 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 2:07:25 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8046\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 2:55:58 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 2:55:58 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8048\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 2:56:06 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 2:56:06 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8049\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 2:57:38 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 2:57:38 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    },\r\n    {\r\n      \"signingGroupId\": \"8051\",\r\n
+        \     \"groupName\": \"sample_group\",\r\n      \"groupType\": \"sharedSigningGroup\",\r\n
+        \     \"created\": \"11/8/2016 2:57:47 AM\",\r\n      \"createdBy\": \"Mark
+        Jewel\",\r\n      \"modified\": \"11/8/2016 2:57:47 AM\",\r\n      \"modifiedBy\":
+        \"Mark Jewel\"\r\n    }\r\n  ]\r\n}"
+    http_version: '1.1'
+  recorded_at: Tue, 08 Nov 2016 10:57:51 GMT
+recorded_with: VCR 3.0.3
