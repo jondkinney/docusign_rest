@@ -308,8 +308,6 @@ module DocusignRest
 
       signers.each_with_index do |signer, index|
         doc_signer = {
-          email:                                 signer[:email],
-          name:                                  signer[:name],
           accessCode:                            '',
           addAccessCodeToEmail:                  false,
           customFields:                          nil,
@@ -328,6 +326,9 @@ module DocusignRest
 
         if signer[:signing_group_id]
           doc_signer[:signingGroupId] = signer[:signing_group_id]
+        else
+          doc_signer[:email] = signer[:email]
+          doc_signer[:name] = signer[:name]
         end
 
         if signer[:email_notification]
