@@ -1759,7 +1759,7 @@ module DocusignRest
       uri = build_uri("/accounts/#{@acct_id}/signing_groups")
 
       groups = options[:groups]
-      groups.each{|h| h[:signingGroupId] = h.delete(:signing_group_id)}
+      groups.each{|h| h[:signingGroupId] = h.delete(:signing_group_id) if h.key?(:signing_group_id)}
       post_body = {
         groups: groups
       }.to_json
