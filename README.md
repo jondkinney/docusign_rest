@@ -38,10 +38,10 @@ outputs:
 
     Please do the following:
     ------------------------
-    1) Login or register for an account at demo.docusign.net
-        ...or their production url if applicable
-    2) Click 'Preferences' in the upper right corner of the page
-    3) Click 'API' in far lower left corner of the menu
+    1) Login or register for an account at https://demo.docusign.net
+         ...or their production url if applicable
+    2) From the Avatar menu in the upper right hand corner of the page, click "Go to Admin"
+    3) From the left sidebar menu, click "API and Keys"
     4) Request a new 'Integrator Key' via the web interface
         * You will use this key in one of the next steps to retrieve your 'accountId'
 
@@ -77,13 +77,13 @@ The above options allow you to change the endpoint (to be able to hit the produc
 
 ## Usage
 
-The docusign\_rest gem makes creating multipart POST (aka file upload) requests to the DocuSign REST API dead simple. It's built on top of Net:HTTP and utilizes the [multipart-post](https://github.com/nicksieger/multipart-post) gem to assist with formatting the multipart requests. The DocuSign REST API requires that all files be embedded as JSON directly in the request body (not the body\_stream like multipart-post does by default) so the docusign\_rest gem takes care of [setting that up for you](https://github.com/j2fly/docusign_rest/blob/master/lib/docusign_rest/client.rb#L397). 
+The docusign\_rest gem makes creating multipart POST (aka file upload) requests to the DocuSign REST API dead simple. It's built on top of Net:HTTP and utilizes the [multipart-post](https://github.com/nicksieger/multipart-post) gem to assist with formatting the multipart requests. The DocuSign REST API requires that all files be embedded as JSON directly in the request body (not the body\_stream like multipart-post does by default) so the docusign\_rest gem takes care of [setting that up for you](https://github.com/j2fly/docusign_rest/blob/master/lib/docusign_rest/client.rb#L397).
 
-This gem also monkey patches one small part of multipart-post to inject some header values and formatting that DocuSign requires. If you would like to see the monkey patched code please take a look at [lib/multipart-post/parts.rb](https://github.com/j2fly/docusign_rest/blob/master/lib/multipart_post/parts.rb). It's only re-opening one method, but feel free to make sure you understand that code if it concerns you. 
+This gem also monkey patches one small part of multipart-post to inject some header values and formatting that DocuSign requires. If you would like to see the monkey patched code please take a look at [lib/multipart-post/parts.rb](https://github.com/j2fly/docusign_rest/blob/master/lib/multipart_post/parts.rb). It's only re-opening one method, but feel free to make sure you understand that code if it concerns you.
 
 ### Examples
 
-* These examples assume you have already run the `docusign_rest:generate_config` rake task and have the configure block properly setup in an initializer with your username, password, integrator\_key, and account\_id. 
+* These examples assume you have already run the `docusign_rest:generate_config` rake task and have the configure block properly setup in an initializer with your username, password, integrator\_key, and account\_id.
 * Unless noted otherwise, these requests return the JSON parsed body of the response so you can index the returned hash directly. For example: `template_response["templateId"]`.
 
 **Getting account_id:**
@@ -106,7 +106,7 @@ document_envelope_response = client.create_envelope_from_document(
     body: "this is the email body and it's large!"
   },
   # If embedded is set to true  in the signers array below, emails
-  # don't go out to the signers and you can embed the signature page in an 
+  # don't go out to the signers and you can embed the signature page in an
   # iFrame by using the client.get_recipient_view method
   signers: [
     {
@@ -240,9 +240,9 @@ client = DocusignRest::Client.new
       email: 'someone@gmail.com',
       role_name: 'Issuer',
       text_tabs: [
-        { 
-          label: 'Seller Full Name', 
-          name: 'Seller Full Name', 
+        {
+          label: 'Seller Full Name',
+          name: 'Seller Full Name',
           value: 'Jon Doe'
         }
       ]
@@ -253,9 +253,9 @@ client = DocusignRest::Client.new
       email: 'someone+else@gmail.com',
       role_name: 'Attorney',
       text_tabs: [
-        { 
-          label: 'Attorney Full Name', 
-          name: 'Attorney Full Name', 
+        {
+          label: 'Attorney Full Name',
+          name: 'Attorney Full Name',
           value: 'Tim Smith'
         }
       ]
@@ -304,7 +304,7 @@ client.get_document_from_envelope(
 
 In order to return to your application after the signing process is complete it's important to have a way to evaluate whether or not the signing was successful and then do something about each case. The way I set this up was to render the embedded signing iframe for a controller action called 'embedded_signing' and specify the return_url of the `client.get_recipient_view` API call to be something like: http://myapp.com/docusign_response. Then in the same controller as the embedded_signing method, define the docusign_response method. This is where the signing process will redirect to after the user is done interacting with the DocuSign iframe. DocuSign passes a query string parameter in the return_url named 'event' and you can check like so: `if params[:event] == "signing_complete"` then you'll want to redirect to another spot in your app, not in the iframe. To do so, we need to use JavaScript to access the iframe's parent and set it's location to the path of our choosing. To do this, instanciate the DocusignRest::Utility class and call the breakout_path method like this:
 
-```ruby    
+```ruby
 class SomeController < ApplicationController
 
   # the view corresponding to this action has the iFrame in it with the

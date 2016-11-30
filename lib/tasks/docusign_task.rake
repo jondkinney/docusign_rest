@@ -11,10 +11,10 @@ namespace :docusign_rest do
     STDOUT.puts %Q{
 Please do the following:
 ------------------------
-1) Login or register for an account at demo.docusign.net
+1) Login or register for an account at https://demo.docusign.net
      ...or their production url if applicable
-2) Click 'Preferences' in the upper right corner of the page
-3) Click 'API' in far lower left corner of the menu
+2) From the Avatar menu in the upper right hand corner of the page, click "Go to Admin"
+3) From the left sidebar menu, click "API and Keys"
 4) Request a new 'Integrator Key' via the web interface
      * You will use this key in one of the next steps to retrieve your 'accountId'\n\n}
 
