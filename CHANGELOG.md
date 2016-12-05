@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.5 ??
+
+* Implement DocusignRest::Client#send_envelope (Derek Harrington)
+
 ## v0.3.4 Nov 20 2017
 
 * Add open (default 5 seconds) and read (default 10 seconds) timeouts (Tom Copeland)
