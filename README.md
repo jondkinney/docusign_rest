@@ -265,16 +265,17 @@ client = DocusignRest::Client.new
 ```
 
 
-**Retrieving the url for embedded signing. (Returns a string, not a hash)**
+**Retrieving the url for embedded signing**
 
 ```ruby
 client = DocusignRest::Client.new
-@url = client.get_recipient_view(
+response = client.get_recipient_view(
   envelope_id: @envelope_response["envelopeId"],
   name: current_user.full_name,
   email: current_user.email,
   return_url: 'http://google.com'
 )
+puts response["url"]
 ```
 
 
