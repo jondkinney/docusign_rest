@@ -23,6 +23,7 @@
 ### Bug fixes:
 * A tab's scaleValue can now be set (Jon Witucki)
 * tab height is no longer improperly set to tab width (mesbahmilad)
+* DocusignRest::Client#get_account_id no longer always returns nil (Mark Wilson)
 
 ### Misc:
 * More Rubyish variable naming (Chris Doyle)

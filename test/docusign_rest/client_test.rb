@@ -82,6 +82,10 @@ describe DocusignRest::Client do
       @client.must_respond_to :acct_id
     end
 
+    it "should return the value of acct_id" do
+      @client.get_account_id.must_equal @client.acct_id
+    end
+
     it "should allow creating an envelope from a document" do
       VCR.use_cassette("create_envelope/from_document") do
         response = @client.create_envelope_from_document(
