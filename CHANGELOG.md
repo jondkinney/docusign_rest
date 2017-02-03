@@ -7,6 +7,7 @@
 * Add envelopeIds option to DocusignRest::Client#get_envelope_statuses (Amit Chakradeo)
 * Support routingOrder option when generating signers (Guillaume Dott)
 * Support arbitrary parameters to DocusignRest::Client#get_combined_document_from_envelope (Coley Brown)
+* Support event notifications in DocusignRest::Client#get_combined_document_from_envelope (Maxime Orefice)
 
 ### Misc:
 * Replace monkeypatch with argument usage (Jean-Philippe Moal)

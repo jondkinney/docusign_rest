@@ -682,6 +682,7 @@ module DocusignRest
           signers: get_signers(options[:signers]),
           carbonCopies: get_carbon_copies(options[:carbon_copies],options[:signers].size)
         },
+        eventNotification: get_event_notification(options[:event_notification]),
         status: "#{options[:status]}",
         customFields: options[:custom_fields]
       }.to_json
