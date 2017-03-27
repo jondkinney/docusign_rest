@@ -1127,8 +1127,7 @@ module DocusignRest
     #                    filename itself
     # headers          - Optional hash of headers to merge into the existing
     #                    required headers for a multipart request.
-    # certificate      - Optional boolean; if true, the resulting PDF contains the
-    #                    certificate.
+    # params           - Optional params; for example, certificate: true
     #
     # Example
     #
@@ -1140,11 +1139,11 @@ module DocusignRest
     #
     # Returns the PDF document as a byte stream.
     def get_combined_document_from_envelope(options={})
-      certificate = options.fetch(:certificate, false)
       content_type = { 'Content-Type' => 'application/json' }
       content_type.merge(options[:headers]) if options[:headers]
 
-      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/documents/combined?certificate=#{certificate}")
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/documents/combined")
+      uri.query = URI.encode_www_form(options[:params]) if options[:params]
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
