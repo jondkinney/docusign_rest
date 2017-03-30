@@ -495,7 +495,8 @@ module DocusignRest
       ios.each_with_index.map do |io, index|
         {
           documentId: "#{index + 1}",
-          name: io.original_filename
+          name: io.original_filename,
+          transformPdfFields: true
         }
       end
     end
