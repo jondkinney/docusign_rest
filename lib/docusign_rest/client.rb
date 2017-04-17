@@ -615,6 +615,8 @@ module DocusignRest
     #                 Each contains an array of corresponding customField hashes.
     #                 For details, please see: http://bit.ly/1FnmRJx
     # headers       - Allows a client to pass in some
+    # web_sign      - (Optional) If true, the signer is allowed to print the
+    #                 document and sign it on paper. False if not defined.
     #
     # Returns a JSON parsed response object containing:
     #   envelopeId     - The envelope's ID
@@ -636,7 +638,9 @@ module DocusignRest
         eventNotification:  get_event_notification(options[:event_notification]),
         status: "#{options[:status]}",
         customFields: options[:custom_fields]
-      }.to_json
+      }
+      post_body[:enableWetSign] = options[:wet_sign] if options.has_key? :web_sign
+      post_body = post_body.to_json
 
       uri = build_uri("/accounts/#{acct_id}/envelopes")
 
