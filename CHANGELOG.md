@@ -22,6 +22,7 @@
 
 ### Bug fixes:
 * A tab's scaleValue can now be set (Jon Witucki)
+* tab height is no longer improperly set to tab width (mesbahmilad)
 
 ### Misc:
 * More Rubyish variable naming (Chris Doyle)
