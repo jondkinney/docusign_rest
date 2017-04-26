@@ -189,7 +189,7 @@ module DocusignRest
         response = get_login_information.body
         hashed_response = JSON.parse(response)
         login_accounts = hashed_response['loginAccounts']
-        acct_id ||= login_accounts.first['accountId']
+        @acct_id ||= login_accounts.first['accountId']
       end
 
       acct_id
