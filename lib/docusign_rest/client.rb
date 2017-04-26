@@ -508,14 +508,20 @@ module DocusignRest
       composite_array = []
       index = 0
       server_template_ids.each  do |template_id|
-        document_hash = Hash[:documentId, index+1, \
-          :name, files[index][:name]]
-        server_template_hash = Hash[:sequence, index+1, \
-          :templateId, template_id]
-        templates_hash = Hash[:serverTemplates, [server_template_hash], \
-          :inlineTemplates,  get_inline_signers(signers, index += 1), \
-          :document, document_hash]
-
+        sequence = (index += 1).to_s
+        document_hash = {
+            documentId: sequence,
+            name: "#{files[index][:name] if files[index]}"
+        }
+        server_template_hash = {
+            sequence: sequence,
+            templateId: template_id
+        }
+        templates_hash = {
+          serverTemplates: [server_template_hash],
+          inlineTemplates: get_inline_signers(signers, sequence),
+          document: document_hash
+        }
         composite_array << templates_hash
       end
       composite_array
@@ -529,12 +535,23 @@ module DocusignRest
     def get_inline_signers(signers, sequence)
       signers_array = []
       signers.each do |signer|
-        signers_hash = Hash[:email, signer[:email], :name, signer[:name], \
-          :recipientId, signer[:recipient_id], :roleName, signer[:role_name], \
-          :clientUserId, signer[:client_id] || signer[:email]]
+        signers_hash = {
+          email: signer[:email],
+          name: signer[:name],
+          recipientId: signer[:recipient_id],
+          roleName: signer[:role_name],
+          clientUserId: signer[:client_id] || signer[:email],
+          tabs: {
+            textTabs:     get_signer_tabs(signer[:text_tabs]),
+            checkboxTabs: get_signer_tabs(signer[:checkbox_tabs]),
+            numberTabs:   get_signer_tabs(signer[:number_tabs]),
+            fullNameTabs: get_signer_tabs(signer[:fullname_tabs]),
+            dateTabs:     get_signer_tabs(signer[:date_tabs])
+          }
+        }
         signers_array << signers_hash
       end
-      template_hash = Hash[:sequence, sequence, :recipients, { signers: signers_array } ]
+      template_hash = {sequence: sequence, recipients: { signers: signers_array }}
       [template_hash]
     end
 
