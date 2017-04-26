@@ -7,6 +7,7 @@ require 'vcr'
 require_relative 'docusign_login_config'
 require 'pry'
 
+
 VCR.configure do |c|
   c.cassette_library_dir = "test/fixtures/vcr"
   c.hook_into :fakeweb
