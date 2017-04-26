@@ -1292,8 +1292,7 @@ module DocusignRest
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Put.new(uri.request_uri, headers(content_type))
       request.body = post_body
-      response = http.request(request)
-      response
+      http.request(request)
     end
 
     # Public deletes a document for a given envelope
@@ -1353,7 +1352,7 @@ module DocusignRest
       request = Net::HTTP::Put.new(uri.request_uri, headers(headers))
       request.body = post_body
 
-      response = http.request(request)
+      http.request(request)
     end
 
     # Public adds recipient tabs to a given envelope
