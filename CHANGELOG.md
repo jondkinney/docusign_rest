@@ -28,3 +28,4 @@
 ### Misc:
 * More Rubyish variable naming (Chris Doyle)
 * Whitespace cleanup and unnecessary local variable removal (Jon Witucki)
+* Updated setup instructions (DerekH)
