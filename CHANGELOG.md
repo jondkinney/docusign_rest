@@ -29,3 +29,4 @@
 * More Rubyish variable naming (Chris Doyle)
 * Whitespace cleanup and unnecessary local variable removal (Jon Witucki)
 * Updated setup instructions (entrision)
+* Fixed header syntax in code example (Paulo Abreu)
