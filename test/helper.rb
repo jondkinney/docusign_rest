@@ -9,6 +9,6 @@ require 'pry'
 
 VCR.configure do |c|
   c.cassette_library_dir = "test/fixtures/vcr"
-  c.hook_into :fakeweb
+  c.hook_into :webmock
   c.default_cassette_options = { record: :all }
 end
