@@ -522,7 +522,7 @@ module DocusignRest
         if files
           document_hash = {
               documentId: idx,
-              name: "#{files[index][:name] if files[index]}"
+              name: "#{files[idx][:name] if files[idx]}"
           }
           templates_hash[:document] = document_hash
         end
