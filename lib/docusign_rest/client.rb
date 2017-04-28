@@ -516,8 +516,7 @@ module DocusignRest
         }
         templates_hash = {
           serverTemplates: [server_template_hash],
-          inlineTemplates: get_inline_signers(signers, idx),
-          document: document_hash
+          inlineTemplates: get_inline_signers(signers, idx)
         }
         if files
           document_hash = {
