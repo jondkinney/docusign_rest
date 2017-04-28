@@ -511,16 +511,17 @@ module DocusignRest
       index = 0
       server_template_ids.each_with_index do |template_id, idx|
         server_template_hash = {
-            sequence: idx,
-            templateId: template_id
+            sequence: (idx+1).to_s,
+            templateId: template_id,
+            templateRoles: get_template_roles(signers),
         }
         templates_hash = {
           serverTemplates: [server_template_hash],
-          inlineTemplates: get_inline_signers(signers, idx)
+          inlineTemplates: get_inline_signers(signers, (idx+1).to_s)
         }
         if files
           document_hash = {
-              documentId: idx,
+              documentId: (idx+1).to_s,
               name: "#{files[idx][:name] if files[idx]}"
           }
           templates_hash[:document] = document_hash
