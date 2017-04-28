@@ -14,6 +14,7 @@ Gem::Specification.new do |gem|
   gem.name          = 'docusign_rest'
   gem.require_paths = ['lib']
   gem.version       = DocusignRest::VERSION
+  gem.licenses      = ['MIT']
 
   gem.required_ruby_version = '>= 1.9.2'
 

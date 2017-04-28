@@ -2,10 +2,6 @@
 
 This 'wrapper gem' hooks a Ruby app (currently only tested with Rails) up to the [DocuSign](http://www.docusign.com/) [REST API](http://www.docusign.com/developer-center) to allow for embedded signing.
 
-## !!USAGE NOTE!!
-
-I haven't taken the time to do a proper RubyGems release in a while. However, several PRs have been merged to master that fix issues and/or add functionality. So please bundle to the master branch here on github for the best experience. Hopefully I can pick up more active maintenance of this in the months to come. Alternatively, if you'd like to be a maintainer please let me know! Thanks.
-
 ## Installation
 
 Add this line to your application's Gemfile:

@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.2.0 April ??? 2017
+## v0.2.0 April 28 2017
 
 ### Features:
 * Implement DocusignRest::Client#get_sender_view (Gonzalo Rodríguez)
