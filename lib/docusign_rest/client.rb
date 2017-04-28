@@ -259,11 +259,13 @@ module DocusignRest
     def get_event_notification(event_notification)
       return {} unless event_notification
       {
-        useSoapInterface:          event_notification[:use_soap_interface] || false,
-        includeCertificatWithSoap: event_notification[:include_certificate_with_soap] || false,
-        url:                       event_notification[:url],
-        loggingEnabled:            event_notification[:logging],
-        'EnvelopeEvents' => Array(event_notification[:envelope_events]).map do |envelope_event|
+        useSoapInterface:               event_notification[:use_soap_interface] || false,
+        includeCertificatWithSoap:      event_notification[:include_certificate_with_soap] || false,
+        url:                            event_notification[:url],
+        loggingEnabled:                 event_notification[:logging],
+        requireAcknowledgment:          event_notification[:require_acknowledgement] || false,
+        includeCertificateOfCompletion: event_notification[:include_certificate_of_completion] || false,
+        :envelopeEvents => Array(event_notification[:envelope_events]).map do |envelope_event|
           {
             includeDocuments:        envelope_event[:include_documents] || false,
             envelopeEventStatusCode: envelope_event[:envelope_event_status_code]
@@ -319,7 +321,7 @@ module DocusignRest
           note:                                  '',
           phoneAuthentication:                   nil,
           recipientAttachment:                   nil,
-          recipientId:                           "#{index + 1}",
+          recipientId:                           signer[:recipient_id] || "#{index + 1}",
           requireIdLookup:                       false,
           roleName:                              signer[:role_name],
           routingOrder:                          index + 1,
@@ -372,6 +374,31 @@ module DocusignRest
       doc_signers
     end
 
+    # Internal: takes an array of hashes of certified deliveries
+    #
+    # email              - The recipient email
+    # name               - The recipient name
+    # recipient_id       - The recipient's id
+    # embedded           - Tells DocuSign if this is an embedded recipient which
+    #                      determines weather or not to deliver emails.
+    def get_certified_deliveries(certified_deliveries)
+      doc_certified_deliveries = []
+
+      certified_deliveries.each do |certified_delivery|
+        doc_certified_delivery = {
+          email:        certified_delivery[:email],
+          name:         certified_delivery[:name],
+          recipientId:  certified_delivery[:recipient_id]
+        }
+
+        if certified_delivery[:embedded]
+          doc_certified_delivery[:clientUserId] = certified_delivery[:client_id] || certified_delivery[:email]
+        end
+
+        doc_certified_deliveries << doc_certified_delivery
+      end
+      doc_certified_deliveries
+    end
 
     # TODO (2014-02-03) jonk => document
     def get_tabs(tabs, options, index)
@@ -757,6 +784,8 @@ module DocusignRest
         templateId:         options[:template_id],
         eventNotification:  get_event_notification(options[:event_notification]),
         templateRoles:      get_template_roles(options[:signers]),
+        enableWetSign:      options[:enable_wet_sign] || false,
+        recipientsLock:     options[:recipients_lock] || false,
         customFields:       options[:custom_fields]
       }.to_json
 
@@ -845,6 +874,35 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+    # Public adds the certified delivery recipients (Need to View) for a given envelope
+    #
+    # envelope_id           - ID of the envelope for which you want to retrieve the
+    #                         signer info
+    # headers               - optional hash of headers to merge into the existing
+    #                         required headers for a multipart request.
+    # certified_deliveries  - A required hash of all the certified delivery recipients
+    #                         that need to be added to the envelope
+    #
+    # # The response returns the success or failure of each recipient being added
+    # to the envelope and the envelope ID
+    def add_envelope_certified_deliveries(options={})
+      content_type = { 'Content-Type' => 'application/json' }
+      content_type.merge(options[:headers]) if options[:headers]
+
+      post_body = {
+        certifiedDeliveries: get_certified_deliveries(options[:certified_deliveries]),
+      }.to_json
+
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/recipients")
+
+      http = initialize_net_http_ssl(uri)
+
+      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+      JSON.parse(response.body)
+    end
 
     # Public returns the URL for embedded signing
     #
@@ -920,6 +978,36 @@ module DocusignRest
       }.to_json
 
       uri = build_uri("/accounts/#{acct_id}/views/console")
+
+      http = initialize_net_http_ssl(uri)
+
+      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+
+      parsed_response = JSON.parse(response.body)
+      parsed_response['url']
+    end
+
+    # Public returns the URL for embedded sending
+    #
+    # envelope_id - the ID of the envelope you wish to use for embedded sending
+    # return_url  - the URL you want the user to be directed to after he or she
+    #               completes the document sending
+    # headers     - optional hash of headers to merge into the existing
+    #               required headers for a multipart request.
+    #
+    # Returns the URL string for embedded sending (can be put in an iFrame)
+    def get_sender_view(options={})
+      content_type = { 'Content-Type' => 'application/json' }
+      content_type.merge(options[:headers]) if options[:headers]
+
+      post_body = {
+        returnUrl: options[:return_url]
+      }.to_json
+
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/views/sender")
 
       http = initialize_net_http_ssl(uri)
 
@@ -1085,7 +1173,8 @@ module DocusignRest
       content_type = { 'Content-Type' => 'application/json' }
       content_type.merge(options[:headers]) if options[:headers]
 
-      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/documents/combined")
+      certificate = options[:certficate] || false
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/documents/combined?certificate=#{certificate}")
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
@@ -1268,11 +1357,19 @@ module DocusignRest
     #    client.get_templates()
     #
     # Returns a list of the available templates.
-    def get_templates
-      uri = build_uri("/accounts/#{acct_id}/templates")
-
-      http = initialize_net_http_ssl(uri)
-      request = Net::HTTP::Get.new(uri.request_uri, headers({ 'Content-Type' => 'application/json' }))
+    def get_templates(options={})
+      params    = {
+                    :search_text => options[:search_text],
+                    :folder => options[:folder],
+                    :count => options[:count],
+                    :start_position => options[:start_position] || 0,
+                    :order_by => options[:order_by] || 'name',
+                    :include => options[:include] || ''
+                  }
+      uri       = build_uri("/accounts/#{acct_id}/templates")
+      uri.query = URI.encode_www_form(params)
+      http      = initialize_net_http_ssl(uri)
+      request   = Net::HTTP::Get.new(uri.request_uri, headers({ 'Content-Type' => 'application/json' }))
       JSON.parse(http.request(request).body)
     end
 
@@ -1348,7 +1445,7 @@ module DocusignRest
           "voidedReason" => options[:voided_reason] || "No reason provided."
       }.to_json
 
-      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:folder_id]}")
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}")
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Put.new(uri.request_uri, headers(content_type))
