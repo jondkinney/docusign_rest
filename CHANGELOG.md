@@ -1,9 +1,10 @@
 # Changelog
 
-## v0.2.1 April ?? 2017
+## v0.2.1 May ?? 2017
 
 ### Features:
 * Add certificate option to DocusignRest::Client#get_combined_document_from_envelope (Shane Stanford)
+* Memoize base_url after successful login attempt.  This prevents problems in production when Docusign returns a different subdomain on login as discussed in [here](https://github.com/jondkinney/docusign_rest/pull/102) (Tom Copeland)
 
 ### Misc:
 * Replace monkeypatch with argument usage (Jean-Philippe Moal)
