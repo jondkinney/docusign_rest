@@ -6,7 +6,7 @@ module DocusignRest
   class Client
     # Define the same set of accessors as the DocusignRest module
     attr_accessor *Configuration::VALID_CONFIG_KEYS
-    attr_accessor :docusign_authentication_headers, :acct_id
+    attr_accessor :docusign_authentication_headers, :acct_id, :base_url
 
     def initialize(options={})
       # Merge the config values from the module and those passed to the client.
@@ -80,7 +80,12 @@ module DocusignRest
     #
     # Returns a parsed URI object
     def build_uri(url)
-      URI.parse("#{endpoint}/#{api_version}#{url}")
+      uri_string = if base_url
+        "#{base_url}#{url}"
+      else
+        "#{endpoint}/#{api_version}#{url}"
+      end
+      URI.parse(uri_string)
     end
 
 
@@ -190,6 +195,7 @@ module DocusignRest
         hashed_response = JSON.parse(response)
         login_accounts = hashed_response['loginAccounts']
         @acct_id ||= login_accounts.first['accountId']
+        @base_url = login_accounts.first['baseUrl']
       end
 
       acct_id
