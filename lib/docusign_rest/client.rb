@@ -992,6 +992,8 @@ module DocusignRest
     # from_to_status - The status of the envelope checked for in the from_date - to_date period.
     #                  Defaults to 'changed'
     #
+    # envelope_ids   - Comma joined list of envelope_ids which you want to query. 
+    #
     # status         - The current status of the envelope. Defaults to any status.
     #
     # Returns an array of hashes containing envelope statuses, ids, and similar information.
@@ -999,7 +1001,7 @@ module DocusignRest
       content_type = { 'Content-Type' => 'application/json' }
       content_type.merge(options[:headers]) if options[:headers]
 
-      query_params = options.slice(:from_date, :to_date, :from_to_status, :status)
+      query_params = options.slice(:from_date, :to_date, :from_to_status, :envelope_ids, :status)
       uri = build_uri("/accounts/#{acct_id}/envelopes?#{query_params.to_query}")
 
       http     = initialize_net_http_ssl(uri)
