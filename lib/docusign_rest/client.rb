@@ -1002,6 +1002,7 @@ module DocusignRest
       content_type.merge(options[:headers]) if options[:headers]
 
       query_params = options.slice(:from_date, :to_date, :from_to_status, :envelope_ids, :status)
+      # Note that Hash#to_query is an ActiveSupport monkeypatch
       uri = build_uri("/accounts/#{acct_id}/envelopes?#{query_params.to_query}")
 
       http     = initialize_net_http_ssl(uri)
