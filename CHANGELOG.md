@@ -8,6 +8,7 @@
 * Add envelopeIds option to DocusignRest::Client#get_envelope_statuses (Amit Chakradeo)
 * Add recipientEvents option to event notification payload (Guillermo Wu)
 * Added logging of each call to support Docusign API certification (Jon Witucki)
+* Enable requireSignOnPaper option for a recipient in a composite template (Tom Copeland)
 * Support routingOrder option when generating signers (Guillaume Dott)
 * Support arbitrary parameters to DocusignRest::Client#get_combined_document_from_envelope (Coley Brown)
 * Support event notifications in DocusignRest::Client#get_combined_document_from_envelope (Maxime Orefice)
@@ -18,6 +19,7 @@
 ### Misc:
 * Replace monkeypatch with argument usage (Jean-Philippe Moal)
 * Bumped minimum Ruby version to 2.1.0. (Tom Copeland)
+* DocusignRest::Client#void_envelope now returns a JSON object rather than a request object (Tom Copeland)
 
 ## v0.2.0 April 28 2017
 

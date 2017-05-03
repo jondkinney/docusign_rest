@@ -640,6 +640,7 @@ module DocusignRest
           recipientId: signer[:recipient_id],
           roleName: signer[:role_name],
           clientUserId: signer[:client_id] || signer[:email],
+          requireSignOnPaper: signer[:require_sign_on_paper] || false,
           tabs: {
             textTabs:     get_signer_tabs(signer[:text_tabs]),
             checkboxTabs: get_signer_tabs(signer[:checkbox_tabs]),
@@ -864,6 +865,7 @@ module DocusignRest
         emailBlurb:         options[:email][:body],
         emailSubject:       options[:email][:subject],
         templateId:         options[:template_id],
+        enableWetSign:      options[:wet_sign],
         brandId:            options[:brand_id],
         eventNotification:  get_event_notification(options[:event_notification]),
         templateRoles:      get_template_roles(options[:signers]),
@@ -894,10 +896,8 @@ module DocusignRest
     # email/body            - Sets the text in the email body
     # email/subject         - Sets the text in the email subject line
     # files                 - Sets documents to be used instead of inline or server templates
-    # template_roles        - See the get_template_roles method definition for a list
-    #                         of options to pass. Note: for consistency sake we call
-    #                         this 'signers' and not 'templateRoles' when we build up
-    #                         the request in client code.
+    # signers               - See get_template_roles/get_inline_signers for a list
+    #                         of options to pass.
     # headers               - Optional hash of headers to merge into the existing
     #                         required headers for a multipart request.
     # server_template_ids   - Array of ids for templates uploaded to DocuSign. Templates
