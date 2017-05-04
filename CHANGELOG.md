@@ -11,6 +11,7 @@
 * Support event notifications in DocusignRest::Client#get_combined_document_from_envelope (Maxime Orefice)
 * Support wet_sign option on DocusignRest::Client#create_envelope_from_document (Sergio Cambra)
 * Support signHereTabs on DocusignRest::Client#get_inline_signers (Chris Sturm)
+* Support additional tab options (Hoang Le)
 
 ### Misc:
 * Replace monkeypatch with argument usage (Jean-Philippe Moal)
