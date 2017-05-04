@@ -15,6 +15,7 @@
 
 ### Misc:
 * Replace monkeypatch with argument usage (Jean-Philippe Moal)
+* Bumped minimum Ruby version to 2.1.0. (Tom Copeland)
 
 ## v0.2.0 April 28 2017
 

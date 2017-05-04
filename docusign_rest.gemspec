@@ -16,7 +16,7 @@ Gem::Specification.new do |gem|
   gem.version       = DocusignRest::VERSION
   gem.licenses      = ['MIT']
 
-  gem.required_ruby_version = '>= 1.9.2'
+  gem.required_ruby_version = '>= 2.1.0'
 
   gem.add_dependency('multipart-post', '>= 1.2')
   gem.add_dependency('json')
