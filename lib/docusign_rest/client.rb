@@ -239,6 +239,17 @@ module DocusignRest
       template_roles
     end
 
+    def get_sign_here_tabs(tabs)
+      Array(tabs).map do |tab|
+        {
+          documentId: tab[:document_id],
+          recipientId: tab[:recipient_id],
+          anchorString: tab[:anchor_string],
+          anchorXOffset: tab[:anchorXOffset],
+          anchorYOffset: tab[:anchorYOffset]
+        }
+      end
+    end
 
     # TODO (2014-02-03) jonk => document
     def get_signer_tabs(tabs)
@@ -599,7 +610,8 @@ module DocusignRest
             checkboxTabs: get_signer_tabs(signer[:checkbox_tabs]),
             numberTabs:   get_signer_tabs(signer[:number_tabs]),
             fullNameTabs: get_signer_tabs(signer[:fullname_tabs]),
-            dateTabs:     get_signer_tabs(signer[:date_tabs])
+            dateTabs:     get_signer_tabs(signer[:date_tabs]),
+            signHereTabs: get_sign_here_tabs(signer[:sign_here_tabs])
           }
         }
         signers_array << signers_hash
