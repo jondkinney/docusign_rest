@@ -7,6 +7,7 @@ module DocusignRest
     # Define the same set of accessors as the DocusignRest module
     attr_accessor *Configuration::VALID_CONFIG_KEYS
     attr_accessor :docusign_authentication_headers, :acct_id
+    attr_accessor :previous_req, :previous_res
 
     def initialize(options={})
       # Merge the config values from the module and those passed to the client.
@@ -38,6 +39,14 @@ module DocusignRest
       # the instance var @account_id because that'll override the attr_accessor
       # that is automatically configured for the configure block
       @acct_id = account_id
+    end
+
+    # Internal: stores the raw request and response on attributes. This is for
+    # those implementations that required to log everything sent and received from
+    # docusign as their process for app certification states
+    def previows_raw_data(request, response)
+      self.previous_res = response
+      self.previous_req = request
     end
 
 
@@ -143,6 +152,8 @@ module DocusignRest
 
       http = initialize_net_http_ssl(uri)
       response = http.request(request)
+
+      previows_raw_data(request, response)
       JSON.parse(response.body)
     end
 
@@ -723,6 +734,8 @@ module DocusignRest
                 )
 
       response = http.request(request)
+
+      previows_raw_data(request, response)
       JSON.parse(response.body)
     end
 
@@ -783,6 +796,8 @@ module DocusignRest
                 )
 
       response = http.request(request)
+
+      previows_raw_data(request, response)
       JSON.parse(response.body)
     end
 
@@ -797,6 +812,8 @@ module DocusignRest
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
       response = http.request(request)
+
+      previows_raw_data(request, response)
       JSON.parse(response.body)
     end
 
@@ -847,6 +864,8 @@ module DocusignRest
       request.body = post_body
 
       response = http.request(request)
+
+      previows_raw_data(request, response)
       JSON.parse(response.body)
     end
 
@@ -901,6 +920,8 @@ module DocusignRest
                 )
 
       response = http.request(request)
+
+      previows_raw_data(request, response)
       JSON.parse(response.body)
     end
 
@@ -923,6 +944,8 @@ module DocusignRest
       request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
 
       response = http.request(request)
+
+      previows_raw_data(request, response)
       JSON.parse(response.body)
     end
 
@@ -958,6 +981,8 @@ module DocusignRest
       request.body = post_body
 
       response = http.request(request)
+
+      previows_raw_data(request, response)
       JSON.parse(response.body)
     end
 
@@ -1009,6 +1034,8 @@ module DocusignRest
 
       response = http.request(request)
 
+
+      previows_raw_data(request, response)
       parsed_response = JSON.parse(response.body)
       parsed_response['url']
     end
@@ -1036,6 +1063,8 @@ module DocusignRest
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
       response = http.request(request)
+
+      previows_raw_data(request, response)
       JSON.parse(response.body)
     end
 
@@ -1052,6 +1081,8 @@ module DocusignRest
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
       response = http.request(request)
+
+      previows_raw_data(request, response)
       JSON.parse(response.body)
     end
 
@@ -1083,6 +1114,8 @@ module DocusignRest
       request  = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
       response = http.request(request)
 
+
+      previows_raw_data(request, response)
       JSON.parse(response.body)
     end
 
@@ -1143,6 +1176,8 @@ module DocusignRest
       request  = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
       response = http.request(request)
 
+
+      previows_raw_data(request, response)
       JSON.parse(response.body)
     end
 
@@ -1243,6 +1278,8 @@ module DocusignRest
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
       response = http.request(request)
 
+
+      previows_raw_data(request, response)
       JSON.parse(response.body)
     end
 
@@ -1297,6 +1334,8 @@ module DocusignRest
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
       response = http.request(request)
+
+      previows_raw_data(request, response)
       JSON.parse(response.body)
     end
 
@@ -1314,6 +1353,8 @@ module DocusignRest
       request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
       request.body = post_body
       response = http.request(request)
+
+      previows_raw_data(request, response)
       JSON.parse(response.body)
     end
 
@@ -1343,6 +1384,8 @@ module DocusignRest
       response = http.request(request)
       json = response.body
       json = '{}' if json.nil? || json == ''
+
+      previows_raw_data(request, response)
       JSON.parse(json)
     end
 
@@ -1359,7 +1402,10 @@ module DocusignRest
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers({ 'Content-Type' => 'application/json' }))
-      JSON.parse(http.request(request).body)
+      response = http.request(request)
+
+      previows_raw_data(request, response)
+      JSON.parse(response.body)
     end
 
 
@@ -1373,7 +1419,10 @@ module DocusignRest
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers({ 'Content-Type' => 'application/json' }))
-      JSON.parse(http.request(request).body)
+      response = http.request(request)
+
+      previows_raw_data(request, response)
+      JSON.parse(response.body)
     end
 
 
@@ -1389,6 +1438,8 @@ module DocusignRest
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
       response = http.request(request)
+
+      previows_raw_data(request, response)
       JSON.parse(response.body)
     end
 
@@ -1415,6 +1466,8 @@ module DocusignRest
       request.body = post_body
 
       response = http.request(request)
+
+      previows_raw_data(request, response)
       JSON.parse(response.body)
     end
 
