@@ -65,7 +65,7 @@ There are several other configuration options available but the two most likely 
 
 ```ruby
 config.endpoint       = 'https://docusign.net/restapi'
-config.api_version    = 'v1'
+config.api_version    = 'v2'
 ```
 
 The above options allow you to change the endpoint (to be able to hit the production DocuSign API, for instance) and to modify the API version you wish to use. If there is a big change in the API it's likely that this gem will need to be updated to leverage changes on the DocuSign side. However, it doesn't hurt to provide the option in case there are several minor updates that do not break functionality but would otherwise require a new gem release.
@@ -215,8 +215,6 @@ client = DocusignRest::Client.new
 ```
 
 **Creating an envelope from a template using custom tabs:**
-
-Note: This feature is not supported in 'v1' of the REST API
 
 ```ruby
 client = DocusignRest::Client.new
