@@ -1,6 +1,6 @@
 # DocusignRest
 
-This 'wrapper gem' hooks a Ruby app (currently only tested with Rails) up to the [DocuSign](http://www.docusign.com/) ([docs](https://docs.docusign.com/esign/), [API explorer](https://apiexplorer.docusign.com/#/esign/restapi)) to allow for embedded signing.
+This 'wrapper gem' hooks a Ruby app (currently only tested with Rails) up to the [DocuSign](http://www.docusign.com/) REST API ([docs](https://docs.docusign.com/esign/), [API explorer](https://apiexplorer.docusign.com/#/esign/restapi)) to allow for embedded signing.
 
 ## Installation
 
