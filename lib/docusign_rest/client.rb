@@ -606,7 +606,6 @@ module DocusignRest
     # Returns an array of server template hashes
     def get_composite_template(server_template_ids, signers, files)
       composite_array = []
-      index = 0
       server_template_ids.each_with_index do |template_id, idx|
         server_template_hash = {
             sequence: (idx+1).to_s,
