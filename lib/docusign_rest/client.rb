@@ -216,8 +216,6 @@ module DocusignRest
     # tabs      - Array of tab pairs grouped by type (Example type: 'textTabs')
     #             { textTabs: [ { tabLabel: "label", name: "name", value: "value" } ] }
     #
-    #             NOTE: The 'tabs' option is NOT supported in 'v1' of the REST API
-    #
     # Returns a hash of users that need to be embedded in the template to
     # create an envelope
     def get_template_roles(signers)

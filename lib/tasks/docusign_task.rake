@@ -47,7 +47,7 @@ DocusignRest.configure do |config|
   config.integrator_key = '#{integrator_key}'
   config.account_id     = '#{acct_id}'
   #config.endpoint       = 'https://www.docusign.net/restapi'
-  #config.api_version    = 'v1'
+  #config.api_version    = 'v2'
 end\n\n}
 
     # write the initializer for the user
