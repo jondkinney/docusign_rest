@@ -72,7 +72,7 @@ The above options allow you to change the endpoint (to be able to hit the produc
 
 ## Usage
 
-The docusign\_rest gem makes creating multipart POST (aka file upload) requests to the DocuSign REST API dead simple. It's built on top of Net:HTTP and utilizes the [multipart-post](https://github.com/nicksieger/multipart-post) gem to assist with formatting the multipart requests. The DocuSign REST API requires that all files be embedded as JSON directly in the request body (not the body\_stream like multipart-post does by default) so the docusign\_rest gem takes care of [setting that up for you](https://github.com/j2fly/docusign_rest/blob/master/lib/docusign_rest/client.rb#L397).
+The docusign\_rest gem makes creating multipart POST (aka file upload) requests to the DocuSign REST API dead simple. It's built on top of `Net::HTTP` and utilizes the [multipart-post](https://github.com/nicksieger/multipart-post) gem to assist with formatting the multipart requests. The DocuSign REST API requires that all files be embedded as JSON directly in the request body (not the body\_stream like multipart-post does by default) so the docusign\_rest gem takes care of [setting that up for you](https://github.com/j2fly/docusign_rest/blob/master/lib/docusign_rest/client.rb#L397).
 
 ### Examples
 
@@ -89,7 +89,7 @@ puts client.get_account_id
 
 **Creating an envelope from a document:**
 
-Note: In the example below there are two sign here tabs for the user with a role of 'Attorney'. There are also two documents attached to the envelope, however, this exact configuration would only allow for signature on the first document. If you need signature for a second document, you'll need to add further options, namely: `document_id: 2` in one of the sign_here_tabs so that DocuSign knows where to embed that signature tab.
+Note: In the example below there are two sign here tabs for the user with a role of 'Attorney'. There are also two documents attached to the envelope, however, this exact configuration would only allow for signature on the first document. If you need signature for a second document, you'll need to add further options, namely: `document_id: 2` in one of the `sign_here_tabs` so that DocuSign knows where to embed that signature tab.
 
 ```ruby
 client = DocusignRest::Client.new
@@ -100,7 +100,7 @@ document_envelope_response = client.create_envelope_from_document(
   },
   # If embedded is set to true  in the signers array below, emails
   # don't go out to the signers and you can embed the signature page in an
-  # iFrame by using the client.get_recipient_view method
+  # iframe by using the client.get_recipient_view method
   signers: [
     {
       embedded: true,
@@ -291,14 +291,14 @@ client.get_document_from_envelope(
 )
 ```
 
-## Breaking out of the iFrame after signing
+## Breaking out of the iframe after signing
 
-In order to return to your application after the signing process is complete it's important to have a way to evaluate whether or not the signing was successful and then do something about each case. The way I set this up was to render the embedded signing iframe for a controller action called 'embedded_signing' and specify the return_url of the `client.get_recipient_view` API call to be something like: http://myapp.com/docusign_response. Then in the same controller as the embedded_signing method, define the docusign_response method. This is where the signing process will redirect to after the user is done interacting with the DocuSign iframe. DocuSign passes a query string parameter in the return_url named 'event' and you can check like so: `if params[:event] == "signing_complete"` then you'll want to redirect to another spot in your app, not in the iframe. To do so, we need to use JavaScript to access the iframe's parent and set it's location to the path of our choosing. To do this, instanciate the DocusignRest::Utility class and call the breakout_path method like this:
+In order to return to your application after the signing process is complete it's important to have a way to evaluate whether or not the signing was successful and then do something about each case. The way I set this up was to render the embedded signing iframe for a controller action called 'embedded_signing' and specify the return_url of the `client.get_recipient_view` API call to be something like: http://myapp.com/docusign_response. Then in the same controller as the embedded_signing method, define the docusign_response method. This is where the signing process will redirect to after the user is done interacting with the DocuSign iframe. DocuSign passes a query string parameter in the return_url named 'event' and you can check like so: `if params[:event] == "signing_complete"` then you'll want to redirect to another spot in your app, not in the iframe. To do so, we need to use JavaScript to access the iframe's parent and set it's location to the path of our choosing. To do this, instantiate the `DocusignRest::Utility` class and call the breakout_path method like this:
 
 ```ruby
 class SomeController < ApplicationController
 
-  # the view corresponding to this action has the iFrame in it with the
+  # the view corresponding to this action has the iframe in it with the
   # @url as it's src. @envelope_response is populated from either:
   # @envelope_response = client.create_envelope_from_document
   # or
