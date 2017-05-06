@@ -437,6 +437,32 @@ module DocusignRest
       str.gsub(/_([a-z])/) { $1.upcase }
     end
 
+    # Internal: takes an array of hashes of certified deliveries
+    #
+    # email              - The recipient email
+    # name               - The recipient name
+    # recipient_id       - The recipient's id
+    # embedded           - Tells DocuSign if this is an embedded recipient which
+    #                      determines weather or not to deliver emails.
+    def get_certified_deliveries(certified_deliveries)
+      doc_certified_deliveries = []
+
+      certified_deliveries.each do |certified_delivery|
+        doc_certified_delivery = {
+          email:        certified_delivery[:email],
+          name:         certified_delivery[:name],
+          recipientId:  certified_delivery[:recipient_id]
+        }
+
+        if certified_delivery[:embedded]
+          doc_certified_delivery[:clientUserId] = certified_delivery[:client_id] || certified_delivery[:email]
+        end
+
+        doc_certified_deliveries << doc_certified_delivery
+      end
+      doc_certified_deliveries
+    end
+
     # TODO (2014-02-03) jonk => document
     def get_tabs(tabs, options, index)
       tab_array = []
@@ -938,6 +964,36 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+    # Public adds the certified delivery recipients (Need to View) for a given envelope
+    #
+    # envelope_id           - ID of the envelope for which you want to retrieve the
+    #                         signer info
+    # headers               - optional hash of headers to merge into the existing
+    #                         required headers for a multipart request.
+    # certified_deliveries  - A required hash of all the certified delivery recipients
+    #                         that need to be added to the envelope
+    #
+    # # The response returns the success or failure of each recipient being added
+    # to the envelope and the envelope ID
+    def add_envelope_certified_deliveries(options={})
+      content_type = { 'Content-Type' => 'application/json' }
+      content_type.merge(options[:headers]) if options[:headers]
+
+      post_body = {
+        certifiedDeliveries: get_certified_deliveries(options[:certified_deliveries]),
+      }.to_json
+
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/recipients")
+
+      http = initialize_net_http_ssl(uri)
+
+      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+      generate(request, response, uri)
+      JSON.parse(response.body)
+    end
 
     # Public returns the URL for embedded signing
     #

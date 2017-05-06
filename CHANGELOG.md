@@ -4,6 +4,7 @@
 
 ### Features:
 * Add brandId and allow_reassign options to DocusignRest::Client#create_envelope_from_template and DocusignRest::Client#create_envelope_from_composite_template (Jayan Jacob)
+* Implement DocusignRest::Client#add_envelope_certified_deliveries (Moses Dwaram)
 * Add envelopeIds option to DocusignRest::Client#get_envelope_statuses (Amit Chakradeo)
 * Add recipientEvents option to event notification payload (Guillermo Wu)
 * Added logging of each call to support Docusign API certification (Jon Witucki)
