@@ -76,8 +76,24 @@ The docusign\_rest gem makes creating multipart POST (aka file upload) requests 
 
 ### Examples
 
-* These examples assume you have already run the `docusign_rest:generate_config` rake task and have the configure block properly setup in an initializer with your username, password, integrator\_key, and account\_id.
 * Unless noted otherwise, these requests return the JSON parsed body of the response so you can index the returned hash directly. For example: `template_response["templateId"]`.
+
+#### Running the examples
+
+*** In the context of a Rails app ***
+
+This is how most people are using this gem - they've got a Rails app that's doing things with the Docusign API.  In that case, these examples assume you have already set up a docusign account, have run the `docusign_rest:generate_config` rake task, and have the configure block properly setup in an initializer with your username, password, integrator\_key, and account\_id.
+
+*** In the context of this gem as a standalone project ***
+
+Ideally this gem will be independent of Rails.  If that's your situation, there won't be a Rails initializer so your code will need to load the API authentication credentials.  You will want to do something like:
+
+```ruby
+load 'test/docusign_login_config.rb'
+client = DocusignRest::Client.new
+client.get_account_id
+document_envelope_response = client.create_envelope_from_document( # etc etc
+```
 
 **Getting account_id:**
 
@@ -86,8 +102,43 @@ client = DocusignRest::Client.new
 puts client.get_account_id
 ```
 
-
 **Creating an envelope from a document:**
+
+Here's how to create an envelope from a local PDF file and open a browser to the URL for the recipient:
+
+```ruby
+client = DocusignRest::Client.new
+document_envelope_response = client.create_envelope_from_document(
+  email: {
+    subject: "test email subject",
+    body: "this is the email body and it's large!"
+  },
+  # If embedded is set to true in the signers array below, emails
+  # don't go out to the signers and you can embed the signature page in an
+  # iframe by using the client.get_recipient_view method
+  signers: [
+    {
+      embedded: true,
+      name: 'Joe Dimaggio',
+      email: 'joe.dimaggio@example.org',
+      role_name: 'Issuer',
+      sign_here_tabs: [
+        {
+          anchor_string: 'sign here',
+          anchor_x_offset: '-30',
+          anchor_y_offset: '35'
+        }
+      ]
+    },
+  ],
+  files: [
+    {path: '/Absolute/path/to/test.pdf', name: 'test.pdf'},
+  ],
+  status: 'sent'
+)
+url = client.get_recipient_view(envelope_id: document_envelope_response['envelopeId'], name: "Joe Dimaggio", email: "joe.dimaggio@example.org", return_url: 'http://google.com')['url']
+`open #{url}`
+```
 
 Note: In the example below there are two sign here tabs for the user with a role of 'Attorney'. There are also two documents attached to the envelope, however, this exact configuration would only allow for signature on the first document. If you need signature for a second document, you'll need to add further options, namely: `document_id: 2` in one of the `sign_here_tabs` so that DocuSign knows where to embed that signature tab.
 
@@ -109,9 +160,9 @@ document_envelope_response = client.create_envelope_from_document(
       role_name: 'Issuer',
       sign_here_tabs: [
         {
-          anchor_string: 'sign_here_1',
-          anchor_x_offset: '140',
-          anchor_y_offset: '8'
+          anchor_string: 'sign here',
+          anchor_x_offset: '-30',
+          anchor_y_offset: '35'
         }
       ]
     },
