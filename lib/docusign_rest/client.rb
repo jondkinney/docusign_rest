@@ -207,7 +207,7 @@ module DocusignRest
     # hashes with commas
     #
     # embedded -  Tells DocuSign if this is an embedded signer which determines
-    #             weather or not to deliver emails. Also lets us authenticate
+    #             whether or not to deliver emails. Also lets us authenticate
     #             them when they go to do embedded signing. Behind the scenes
     #             this is setting the clientUserId value to the signer's email.
     # name      - The name of the signer
@@ -305,7 +305,7 @@ module DocusignRest
     # email              - The signer's email
     # name               - The signer's name
     # embedded           - Tells DocuSign if this is an embedded signer which
-    #                      determines weather or not to deliver emails. Also
+    #                      determines whether or not to deliver emails. Also
     #                      lets us authenticate them when they go to do
     #                      embedded signing. Behind the scenes this is setting
     #                      the clientUserId value to the signer's email.
@@ -441,7 +441,7 @@ module DocusignRest
     # name               - The recipient name
     # recipient_id       - The recipient's id
     # embedded           - Tells DocuSign if this is an embedded recipient which
-    #                      determines weather or not to deliver emails.
+    #                      determines whether or not to deliver emails.
     def get_certified_deliveries(certified_deliveries)
       doc_certified_deliveries = []
 
