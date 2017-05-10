@@ -276,7 +276,7 @@ module DocusignRest
       return {} unless event_notification
       {
         useSoapInterface:          event_notification[:use_soap_interface] || false,
-        includeCertificatWithSoap: event_notification[:include_certificate_with_soap] || false,
+        includeCertificateWithSoap: event_notification[:include_certificate_with_soap] || false,
         url:                       event_notification[:url],
         loggingEnabled:            event_notification[:logging],
         'envelopeEvents' => Array(event_notification[:envelope_events]).map do |envelope_event|
