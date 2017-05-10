@@ -1526,7 +1526,7 @@ module DocusignRest
     end
 
     # Public deletes a document for a given envelope
-    # See https://www.docusign.com/p/RESTAPIGuide/RESTAPIGuide.htm#REST API References/Remove Documents from a Draft Envelope.htm%3FTocPath%3DREST%2520API%2520References%7C_____54
+    # See https://docs.docusign.com/esign/restapi/Envelopes/EnvelopeDocuments/delete/
     #
     # envelope_id  - ID of the envelope from which the doc will be retrieved
     # document_id - ID of the document to delete
@@ -1556,7 +1556,7 @@ module DocusignRest
     end
 
     # Public adds a document to a given envelope
-    # See https://www.docusign.com/p/RESTAPIGuide/RESTAPIGuide.htm#REST API References/Add Document.htm%3FTocPath%3DREST%2520API%2520References%7C_____56
+    # See https://docs.docusign.com/esign/restapi/Envelopes/EnvelopeDocuments/update/
     #
     # envelope_id  - ID of the envelope from which the doc will be added
     # document_id - ID of the document to add
@@ -1588,15 +1588,15 @@ module DocusignRest
     end
 
     # Public adds signers to a given envelope
-    # See https://www.docusign.com/p/RESTAPIGuide/RESTAPIGuide.htm#REST%20API%20References/Add%20Recipients%20to%20an%20Envelope.htm%3FTocPath%3DREST%2520API%2520References|_____77
+    # Seehttps://docs.docusign.com/esign/restapi/Envelopes/EnvelopeRecipients/update/
     #
     # envelope_id - ID of the envelope to which the recipient will be added
     # signers - Array of hashes
-    #           See https://www.docusign.com/p/RESTAPIGuide/RESTAPIGuide.htm#REST%20API%20References/Recipients/Signers%20Recipient.htm%3FTocPath%3DREST%2520API%2520References|Send%2520an%2520Envelope%2520or%2520Create%2520a%2520Draft%2520Envelope|Recipient%2520Parameters|_____7
+    #           See https://docs.docusign.com/esign/restapi/Envelopes/EnvelopeRecipients/update/#definitions
     #
     # TODO: This could be made more general as an add_envelope_recipient method
     # to handle recipient types other than Signer
-    # See: https://www.docusign.com/p/RESTAPIGuide/RESTAPIGuide.htm#REST%20API%20References/Recipient%20Parameter.htm%3FTocPath%3DREST%2520API%2520References|Send%2520an%2520Envelope%2520or%2520Create%2520a%2520Draft%2520Envelope|Recipient%2520Parameters|_____0
+    # See: https://docs.docusign.com/esign/restapi/Envelopes/EnvelopeRecipients/update/#examples
     def add_envelope_signers(options = {})
       content_type = { "Content-Type" => "application/json" }
       content_type.merge(options[:headers]) if options[:headers]
@@ -1614,7 +1614,7 @@ module DocusignRest
     end
 
     # Public adds recipient tabs to a given envelope
-    # See https://www.docusign.com/p/RESTAPIGuide/RESTAPIGuide.htm#REST API References/Add Tabs for a Recipient.htm%3FTocPath%3DREST%2520API%2520References%7C_____86
+    # See https://docs.docusign.com/esign/restapi/Envelopes/EnvelopeRecipients/update/
     #
     # envelope_id  - ID of the envelope from which the doc will be added
     # recipient - ID of the recipient to add tabs to
