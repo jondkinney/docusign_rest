@@ -2,15 +2,13 @@
 require File.expand_path('../lib/docusign_rest/version', __FILE__)
 
 Gem::Specification.new do |gem|
-  gem.authors       = ['Jon Kinney']
-  gem.email         = ['jonkinney@gmail.com']
+  gem.authors       = ['Jon Kinney', 'Tom Copeland']
+  gem.email         = ['jonkinney@gmail.com', 'tom@thomasleecopeland.com']
   gem.description   = %q{Hooks a Rails app up to the DocuSign service through the DocuSign REST API}
   gem.summary       = %q{Use this gem to embed signing of documents in a Rails app through the DocuSign REST API}
   gem.homepage      = "https://github.com/jondkinney/docusign_rest"
 
-  gem.files         = `git ls-files`.split($\)
-  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
-  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
+  gem.files         = `git ls-files -z`.split("\x0").reject {|p| p.match(%r{^(test/|test.*pdf|cacert.pem|.gitignore)}) }
   gem.name          = 'docusign_rest'
   gem.require_paths = ['lib']
   gem.version       = DocusignRest::VERSION
