@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.2.1 May ?? 2017
+## v0.3.0 May 11 2017
 
 ### Features:
 * Add brandId and allow_reassign options to DocusignRest::Client#create_envelope_from_template and DocusignRest::Client#create_envelope_from_composite_template (Jayan Jacob)
