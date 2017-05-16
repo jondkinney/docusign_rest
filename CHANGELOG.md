@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.1 May 16 2017
+
+### Features:
+* Enable webhooks for DocusignRest::Client#create_envelope_from_composite_template (Tom Copeland)
+
 ## v0.3.0 May 11 2017
 
 ### Features:
