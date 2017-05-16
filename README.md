@@ -80,11 +80,11 @@ The docusign\_rest gem makes creating multipart POST (aka file upload) requests 
 
 #### Situations
 
-** In the context of a Rails app **
+**In the context of a Rails app**
 
 This is how most people are using this gem - they've got a Rails app that's doing things with the Docusign API.  In that case, these examples assume you have already set up a docusign account, have run the `docusign_rest:generate_config` rake task, and have the configure block properly setup in an initializer with your username, password, integrator\_key, and account\_id.
 
-** In the context of this gem as a standalone project **
+**In the context of this gem as a standalone project**
 
 Ideally this gem will be independent of Rails.  If that's your situation, there won't be a Rails initializer so your code will need to load the API authentication credentials.  You will want to do something like:
 
