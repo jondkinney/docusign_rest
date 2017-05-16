@@ -916,14 +916,17 @@ module DocusignRest
         file_params = create_file_params(ios)
       end
 
-      post_body = {
+      post_hash = {
         emailBlurb:        "#{options[:email][:body] if options[:email]}",
         emailSubject:      "#{options[:email][:subject] if options[:email]}",
         status:             options[:status],
         brandId:            options[:brand_id],
+        eventNotification:  get_event_notification(options[:event_notification]),
         allowReassign:      options[:allow_reassign],
         compositeTemplates: get_composite_template(options[:server_template_ids], options[:signers], options[:files])
-      }.to_json
+      }
+
+      post_body = post_hash.to_json
 
       uri = build_uri("/accounts/#{acct_id}/envelopes")
 
