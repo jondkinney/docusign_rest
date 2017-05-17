@@ -160,6 +160,7 @@ document_envelope_response = client.create_envelope_from_document(
       name: 'Test Guy',
       email: 'someone@gmail.com',
       role_name: 'Issuer',
+      routing_order: 1,
       sign_here_tabs: [
         {
           anchor_string: 'sign here',
@@ -173,6 +174,7 @@ document_envelope_response = client.create_envelope_from_document(
       name: 'Test Girl',
       email: 'someone+else@gmail.com',
       role_name: 'Attorney',
+      routing_order: 2,
       sign_here_tabs: [
         {
           anchor_string: 'sign_here_2',
@@ -209,6 +211,7 @@ client = DocusignRest::Client.new
       name: 'jon',
       email: 'someone@gmail.com',
       role_name: 'Issuer',
+      routing_order: 1,
       sign_here_tabs: [
         {
           anchor_string: 'issuer_sig',
@@ -222,6 +225,7 @@ client = DocusignRest::Client.new
       name: 'tim',
       email: 'someone+else@gmail.com',
       role_name: 'Attorney',
+      routing_order: 2,
       sign_here_tabs: [
         {
           anchor_string: 'attorney_sig',
@@ -254,13 +258,15 @@ client = DocusignRest::Client.new
       embedded: true,
       name: 'jon',
       email: 'someone@gmail.com',
-      role_name: 'Issuer'
+      role_name: 'Issuer',
+      routing_order: 1
     },
     {
       embedded: true,
       name: 'tim',
       email: 'someone+else@gmail.com',
-      role_name: 'Attorney'
+      role_name: 'Attorney',
+      routing_order: 2
     }
   ]
 )
@@ -283,6 +289,7 @@ client = DocusignRest::Client.new
       name: 'jon',
       email: 'someone@gmail.com',
       role_name: 'Issuer',
+      routing_order: 1,
       text_tabs: [
         {
           label: 'Seller Full Name',
@@ -296,6 +303,7 @@ client = DocusignRest::Client.new
       name: 'tim',
       email: 'someone+else@gmail.com',
       role_name: 'Attorney',
+      routing_order: 2,
       text_tabs: [
         {
           label: 'Attorney Full Name',
