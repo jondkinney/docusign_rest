@@ -2,6 +2,10 @@
 
 ## v0.3.2 ????
 
+* Add support for signer id_check_information_input (Pramod Chavan)
+* Add support for signer phone authentication (Pramod Chavan)
+* Implement DocusignRest::Client#add_envelope_recipients (Pramod Chavan)
+* Implement DocusignRest::Client#update_envelope_recipients (Pramod Chavan)
 * Implement DocusignRest::Client#get_signing_groups (Pramod Chavan)
 * Implement DocusignRest::Client#delete_signing_groups (Pramod Chavan)
 * Implement DocusignRest::Client#create_signing_group (Lakshmi Narayana Chitturi)

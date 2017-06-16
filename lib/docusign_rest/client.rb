@@ -333,18 +333,31 @@ module DocusignRest
           accessCode:                            '',
           addAccessCodeToEmail:                  false,
           customFields:                          signer[:custom_fields],
-          iDCheckConfigurationName:              nil,
-          iDCheckInformationInput:               nil,
+          idCheckConfigurationName:              signer[:id_check_configuration_name],
+          idCheckInformationInput:               nil,
           inheritEmailNotificationConfiguration: false,
-          note:                                  '',
+          note:                                  signer[:note],
           phoneAuthentication:                   nil,
           recipientAttachment:                   nil,
-          recipientId:                           "#{index + 1}",
-          requireIdLookup:                       false,
+          requireIdLookup:                       signer[:require_id_lookup],
           roleName:                              signer[:role_name],
           routingOrder:                          signer[:routing_order] || index + 1,
           socialAuthentications:                 nil
         }
+
+        recipient_id = signer[:recipient_id] || index + 1
+        doc_signer[:recipientId] = recipient_id
+        doc_signer[:clientUserId] = recipient_id if signer[:embedded_signing]
+
+        if signer[:id_check_information_input]
+          doc_signer[:idCheckInformationInput] =
+            get_id_check_information_input(signer[:id_check_information_input])
+        end
+
+        if signer[:phone_authentication]
+          doc_signer[:phoneAuthentication] =
+            get_phone_authentication(signer[:phone_authentication])
+        end
 
         if signer[:signing_group_id]
           doc_signer[:signingGroupId] = signer[:signing_group_id]
@@ -734,6 +747,12 @@ module DocusignRest
     def create_envelope_from_document(options={})
       ios = create_file_ios(options[:files])
       file_params = create_file_params(ios)
+      recipients = if options[:certified_deliveries].nil? || options[:certified_deliveries].empty?
+                     { signers: get_signers(options[:signers]) }
+                   else
+                     { certifiedDeliveries: get_signers(options[:certified_deliveries]) }
+                   end
+
 
       post_hash = {
         emailBlurb:   "#{options[:email][:body] if options[:email]}",
@@ -1682,7 +1701,31 @@ module DocusignRest
       content_type.merge(options[:headers]) if options[:headers]
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients/#{options[:recipient_id]}/tabs")
-      post_body = options[:tabs].to_json
+      tabs = options[:tabs]
+      index = options[:recipient_id] -  1
+
+      post_body = {
+        approveTabs:          nil,
+        checkboxTabs:         nil,
+        companyTabs:          nil,
+        dateSignedTabs:       get_tabs(tabs[:date_signed_tabs], options, index),
+        dateTabs:             nil,
+        declineTabs:          nil,
+        emailTabs:            nil,
+        envelopeIdTabs:       nil,
+        fullNameTabs:         nil,
+        listTabs:             nil,
+        noteTabs:             nil,
+        numberTabs:           nil,
+        radioGroupTabs:       nil,
+        initialHereTabs:      get_tabs(tabs[:initial_here_tabs], options.merge!(initial_here_tab: true), index),
+        signHereTabs:         get_tabs(tabs[:sign_here_tabs], options.merge!(sign_here_tab: true), index),
+        signerAttachmentTabs: nil,
+        ssnTabs:              nil,
+        textTabs:             nil,
+        titleTabs:            nil,
+        zipTabs:              nil
+      }.to_json
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
@@ -1782,6 +1825,49 @@ module DocusignRest
       JSON.parse(http.request(request).body)
     end
 
+    # Public: Update envelope recipients
+    def update_envelope_recipients(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients?resend_envelope=false")
+
+      signers = options[:signers]
+      signers.each do |signer|
+       signer[:recipientId] = signer.delete(:recipient_id) if signer.key?(:recipient_id)
+       signer[:clientUserId] = signer.delete(:client_user_id) if signer.key?(:client_user_id)
+      end
+      post_body = {
+        signers: signers
+      }.to_json
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Put.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+      JSON.parse(response.body)
+    end
+
+    # Public: Add recipients to envelope
+    def add_envelope_recipients(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients?resend_envelope=true")
+
+      post_body = {
+        signers: get_signers(options[:signers])
+      }.to_json
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+      JSON.parse(response.body)
+    end
+
     private
 
     # Private: Generates a standardized log of the request and response pair
@@ -1804,6 +1890,58 @@ module DocusignRest
       response.each_capitalized{ |k,v| log << "#{k}: #{v}" }
       log << "Body: #{response.body}"
       @previous_call_log = log
+    end
+
+    def get_id_check_information_input(input)
+      {
+        addressInformationInput: get_address_information_input(
+          input.dig(:address_information_input, :address_information)),
+        ssn4InformationInput: get_ssn4_information_input(input[:ssn4_information_input]),
+        dobInformationInput: get_dob_information_input(input[:dob_information_input])
+      }
+    end
+
+    def get_address_information_input(input)
+      return {} unless input
+      {
+        addressInformation:{
+          street1: input[:street1],
+          city: input[:city],
+          state: input[:state],
+          zip: input[:zip],
+          zipPlus4: input[:zip_plus4],
+        },
+        displayLevelCode: 'DoNotDisplay',
+        receiveInResponse: true,
+      }
+    end
+
+    def get_phone_authentication(input)
+      return {} unless input
+      {
+        recipMayProvideNumber: true,
+        validateRecipProvidedNumber: true,
+        recordVoicePrint: true,
+        senderProvidedNumbers: input[:sender_provided_numbers],
+      }
+    end
+
+    def get_ssn4_information_input(input)
+      return {} unless input
+      {
+        ssn4: input[:ssn4],
+        displayLevelCode: 'DoNotDisplay',
+        receiveInResponse: true,
+      }
+    end
+
+    def get_dob_information_input(input)
+      return {} unless input
+      {
+        dateOfBirth: input[:date_of_birth],
+        displayLevelCode: 'DoNotDisplay',
+        receiveInResponse: true,
+      }
     end
   end
 end
