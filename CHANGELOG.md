@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.2 ????
+
+* Implement DocusignRest::Client#get_page_image (Tom Copeland)
+
 ## v0.3.1 May 16 2017
 
 ### Features:

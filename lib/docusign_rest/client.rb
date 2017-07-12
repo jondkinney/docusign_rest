@@ -1159,6 +1159,27 @@ module DocusignRest
     end
 
 
+    # Public retrieves a png of a page of a document in an envelope
+    #
+    # envelope_id      - ID of the envelope from which the doc will be retrieved
+    # document_id      - ID of the document to retrieve
+    # page_number      - page number to retrieve
+    #
+    # Returns the png as a bytestream
+    def get_page_image(options={})
+      envelope_id = options[:envelope_id]
+      document_id = options[:document_id]
+      page_number = options[:page_number]
+
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{envelope_id}/documents/#{document_id}/pages/#{page_number}/page_image")
+
+      http     = initialize_net_http_ssl(uri)
+      request  = Net::HTTP::Get.new(uri.request_uri, headers)
+      response = http.request(request)
+      generate_log(request, response, uri)
+      response.body
+    end
+
     # Public retrieves the attached file from a given envelope
     #
     # envelope_id      - ID of the envelope from which the doc will be retrieved
