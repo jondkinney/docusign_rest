@@ -1816,6 +1816,36 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+    # Public method - updates signing group users
+    # See https://docs.docusign.com/esign/restapi/SigningGroups/SigningGroupUsers/update/
+    #
+    # signingGroupId - ID of the signing group to update
+    #
+    # Returns the success or failure of each user being updated. Failed operations on array elements will add the "errorDetails"
+    # structure containing an error code and message. If "errorDetails" is null, then
+    # the operation was successful for that item.
+    def update_signing_group_users(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge!(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{@acct_id}/signing_groups/#{options[:signing_group_id]}/users")
+
+      users = options[:users]
+      users.each do |user|
+       user[:userName] = user.delete(:user_name) if user.key?(:user_name)
+      end
+      post_body = {
+        users: users
+      }.to_json
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Put.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+      JSON.parse(response.body)
+    end
+
     # Public: Retrieves a list of available signing groups
     def get_signing_groups
       uri = build_uri("/accounts/#{@acct_id}/signing_groups")
