@@ -1744,6 +1744,43 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+    # Public method - deletes a signing group
+    # See https://docs.docusign.com/esign/restapi/SigningGroups/SigningGroups/delete/
+    #
+    # signingGroupId - ID of the signing group to delete
+    #
+    # Returns the success or failure of each group being deleted. Failed operations on array elements will add the "errorDetails"
+    # structure containing an error code and message. If "errorDetails" is null, then
+    # the operation was successful for that item.
+    def delete_signing_groups(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge!(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{@acct_id}/signing_groups")
+
+      groups = options[:groups]
+      groups.each{|h| h[:signingGroupId] = h.delete(:signing_group_id)}
+      post_body = {
+        groups: groups
+      }.to_json
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Delete.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+      JSON.parse(response.body)
+    end
+
+    # Public: Retrieves a list of available signing groups
+    def get_signing_groups
+      uri = build_uri("/accounts/#{@acct_id}/signing_groups")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Get.new(uri.request_uri, headers({ 'Content-Type' => 'application/json' }))
+      JSON.parse(http.request(request).body)
+    end
+
     private
 
     # Private: Generates a standardized log of the request and response pair
