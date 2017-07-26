@@ -344,6 +344,16 @@ client.get_document_from_envelope(
 )
 ```
 
+**Void an envelope**
+
+```ruby
+client = DocusignRest::Client.new
+client.void_envelope(
+  envelope_id: @envelope_response["envelopeId"],
+  voided_reason: 'Reason provided by the user'
+)
+```
+
 ## Breaking out of the iframe after signing
 
 In order to return to your application after the signing process is complete it's important to have a way to evaluate whether or not the signing was successful and then do something about each case. The way I set this up was to render the embedded signing iframe for a controller action called 'embedded_signing' and specify the return_url of the `client.get_recipient_view` API call to be something like: http://myapp.com/docusign_response. Then in the same controller as the embedded_signing method, define the docusign_response method. This is where the signing process will redirect to after the user is done interacting with the DocuSign iframe. DocuSign passes a query string parameter in the return_url named 'event' and you can check like so: `if params[:event] == "signing_complete"` then you'll want to redirect to another spot in your app, not in the iframe. To do so, we need to use JavaScript to access the iframe's parent and set it's location to the path of our choosing. To do this, instantiate the `DocusignRest::Utility` class and call the breakout_path method like this:
