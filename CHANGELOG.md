@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.3.2 ????
+## v0.3.2 July 27 2017
 
 * Implement DocusignRest::Client#update_signing_group_users (Pramod Chavan)
 * Add support for signer id_check_information_input (Pramod Chavan)
