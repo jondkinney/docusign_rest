@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.3 Sep 1 2017
+
+* Support fetching templates by folder name (Tom Copeland)
+
 ## v0.3.2 July 27 2017
 
 * Implement DocusignRest::Client#update_signing_group_users (Pramod Chavan)
