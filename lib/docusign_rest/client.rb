@@ -1472,13 +1472,20 @@ module DocusignRest
 
     # Public: Retrieves a list of available templates
     #
+    # params:   Can contain a folder
+    #
     # Example
     #
     #    client.get_templates()
     #
+    # or
+    #
+    #    client.get_templates(params: {folder: "somefolder"})
+    #
     # Returns a list of the available templates.
-    def get_templates
+    def get_templates(options={})
       uri = build_uri("/accounts/#{acct_id}/templates")
+      uri.query = URI.encode_www_form(options[:params]) if options[:params]
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers({ 'Content-Type' => 'application/json' }))
