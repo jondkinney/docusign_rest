@@ -120,6 +120,9 @@ module DocusignRest
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
 
+      http.open_timeout = open_timeout
+      http.read_timeout = read_timeout
+
       http
     end
 

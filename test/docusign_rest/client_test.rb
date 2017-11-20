@@ -39,6 +39,8 @@ describe DocusignRest::Client do
           :user_agent     => 'ua',
           :method         => 'md',
           :ca_file        => 'ca',
+          :open_timeout   => 6,
+          :read_timeout   => 12,
           :access_token   => 'at'
         }
       end

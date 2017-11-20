@@ -66,6 +66,8 @@ There are several other configuration options available but the two most likely 
 ```ruby
 config.endpoint       = 'https://docusign.net/restapi'
 config.api_version    = 'v2'
+config.open_timeout   = 2 # default value is 5
+config.read_timeout   = 5 # default value is 10
 ```
 
 The above options allow you to change the endpoint (to be able to hit the production DocuSign API, for instance) and to modify the API version you wish to use.
