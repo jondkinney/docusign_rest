@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.4 ?
+
+* Add open (default 5 seconds) and read (default 10 seconds) timeouts (Tom Copeland)
+
 ## v0.3.3 Sep 1 2017
 
 * Support fetching templates by folder name (Tom Copeland)
