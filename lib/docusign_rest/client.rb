@@ -209,12 +209,13 @@ module DocusignRest
     # Internal: takes in an array of hashes of signers and concatenates all the
     # hashes with commas
     #
-    # embedded -  Tells DocuSign if this is an embedded signer which determines
-    #             whether or not to deliver emails. Also lets us authenticate
-    #             them when they go to do embedded signing. Behind the scenes
-    #             this is setting the clientUserId value to the signer's email.
-    # name      - The name of the signer
-    # email     - The email of the signer
+    # embedded   - Tells DocuSign if this is an embedded signer which determines
+    #              whether or not to deliver emails. Also lets us authenticate
+    #              them when they go to do embedded signing. Behind the scenes
+    #              this is setting the clientUserId value to the signer's email.
+    # name       - The name of the signer
+    # email      - The email of the signer
+    # return_url - Tells DocuSign where to send the user after they sign the email
     # role_name - The role name of the signer ('Attorney', 'Client', etc.).
     # tabs      - Array of tab pairs grouped by type (Example type: 'textTabs')
     #             { textTabs: [ { tabLabel: "label", name: "name", value: "value" } ] }
@@ -228,6 +229,8 @@ module DocusignRest
           name:     signer[:name],
           email:    signer[:email],
           roleName: signer[:role_name],
+          emailRecipientPostSigningURL: signer[:return_url]
+
           tabs: {
             textTabs:     get_signer_tabs(signer[:text_tabs]),
             checkboxTabs: get_signer_tabs(signer[:checkbox_tabs]),
