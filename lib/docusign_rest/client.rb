@@ -216,6 +216,7 @@ module DocusignRest
     # name       - The name of the signer
     # email      - The email of the signer
     # return_url - Tells DocuSign where to send the user after they sign the email
+    #              only used if embedded is false
     # role_name - The role name of the signer ('Attorney', 'Client', etc.).
     # tabs      - Array of tab pairs grouped by type (Example type: 'textTabs')
     #             { textTabs: [ { tabLabel: "label", name: "name", value: "value" } ] }
@@ -230,7 +231,6 @@ module DocusignRest
           email:    signer[:email],
           roleName: signer[:role_name],
           emailRecipientPostSigningURL: signer[:return_url],
-
           tabs: {
             textTabs:     get_signer_tabs(signer[:text_tabs]),
             checkboxTabs: get_signer_tabs(signer[:checkbox_tabs]),
