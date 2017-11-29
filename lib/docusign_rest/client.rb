@@ -336,6 +336,7 @@ module DocusignRest
 
       signers.each_with_index do |signer, index|
         doc_signer = {
+          emailRecipientPostSigningURL:          'http://www.google.com',
           accessCode:                            '',
           addAccessCodeToEmail:                  false,
           customFields:                          signer[:custom_fields],
