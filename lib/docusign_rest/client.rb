@@ -209,12 +209,14 @@ module DocusignRest
     # Internal: takes in an array of hashes of signers and concatenates all the
     # hashes with commas
     #
-    # embedded -  Tells DocuSign if this is an embedded signer which determines
-    #             whether or not to deliver emails. Also lets us authenticate
-    #             them when they go to do embedded signing. Behind the scenes
-    #             this is setting the clientUserId value to the signer's email.
-    # name      - The name of the signer
-    # email     - The email of the signer
+    # embedded   - Tells DocuSign if this is an embedded signer which determines
+    #              whether or not to deliver emails. Also lets us authenticate
+    #              them when they go to do embedded signing. Behind the scenes
+    #              this is setting the clientUserId value to the signer's email.
+    # name       - The name of the signer
+    # email      - The email of the signer
+    # return_url - Tells DocuSign where to send the user after they sign the email
+    #              only used if embedded is false
     # role_name - The role name of the signer ('Attorney', 'Client', etc.).
     # tabs      - Array of tab pairs grouped by type (Example type: 'textTabs')
     #             { textTabs: [ { tabLabel: "label", name: "name", value: "value" } ] }
@@ -225,6 +227,7 @@ module DocusignRest
       template_roles = []
       signers.each_with_index do |signer, index|
         template_role = {
+          emailRecipientPostSigningURL: signer[:return_url],
           name:     signer[:name],
           email:    signer[:email],
           roleName: signer[:role_name],
@@ -329,10 +332,12 @@ module DocusignRest
     # sign_here_tab_text - Instead of 'sign here'. Note: doesn't work
     # tab_label          - TODO: figure out what this is
     def get_signers(signers, options={})
+      binding.pry
       doc_signers = []
 
       signers.each_with_index do |signer, index|
         doc_signer = {
+          emailRecipientPostSigningURL:          'http://www.google.com',
           accessCode:                            '',
           addAccessCodeToEmail:                  false,
           customFields:                          signer[:custom_fields],
@@ -411,6 +416,7 @@ module DocusignRest
 
         # append the fully build string to the array
         doc_signers << doc_signer
+        binding.pry
       end
       doc_signers
     end
@@ -695,9 +701,9 @@ module DocusignRest
       # headers={} - The fully merged, final request headers
       # boundary   - Optional: you can give the request a custom boundary
       #
-
+      binding.pry
       headers = headers.dup.merge(parts: {post_body: {'Content-Type' => 'application/json'}})
-
+      binding.pry
       request = Net::HTTP::Post::Multipart.new(
         uri.request_uri,
         { post_body: post_body }.merge(file_params),
@@ -748,6 +754,7 @@ module DocusignRest
     #   statusDateTime - The date/time the envelope was created
     #   uri            - The relative envelope uri
     def create_envelope_from_document(options={})
+      binding.pry
       ios = create_file_ios(options[:files])
       file_params = create_file_params(ios)
       recipients = if options[:certified_deliveries].nil? || options[:certified_deliveries].empty?
@@ -771,7 +778,7 @@ module DocusignRest
       }
       post_hash[:enableWetSign] = options[:wet_sign] if options.has_key? :web_sign
       post_body = post_hash.to_json
-
+      binding.pry
       uri = build_uri("/accounts/#{acct_id}/envelopes")
 
       http = initialize_net_http_ssl(uri)
@@ -779,7 +786,7 @@ module DocusignRest
       request = initialize_net_http_multipart_post_request(
                   uri, post_body, file_params, headers(options[:headers])
                 )
-
+      binding.pry
       response = http.request(request)
       generate_log(request, response, uri)
       JSON.parse(response.body)
