@@ -227,6 +227,7 @@ module DocusignRest
       template_roles = []
       signers.each_with_index do |signer, index|
         template_role = {
+          emailRecipientPostSigningURL: signer[:return_url],
           name:     signer[:name],
           email:    signer[:email],
           roleName: signer[:role_name],
