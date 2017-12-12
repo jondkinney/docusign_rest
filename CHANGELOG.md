@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.3.5 ??
+## v0.3.5 Dec 12 2017
 
 * Implement DocusignRest::Client#send_envelope (Derek Harrington)
 
