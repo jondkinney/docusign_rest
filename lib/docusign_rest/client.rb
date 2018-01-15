@@ -968,6 +968,23 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+    # Public fetches custom fields for a document
+    #
+    # options[:envelope_id]           - ID of the envelope which you want to send
+    # options[:document_id]           - ID of the envelope which you want to send
+    #
+    # Returns the custom fields Hash.
+    def get_document_tabs(options)
+      content_type = { 'Content-Type' => 'application/json' }
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/documents/#{options[:document_id]}/tabs")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+      generate_log(request, response, uri)
+      JSON.parse(response.body)
+    end
+
     # Public marks an envelope as sent
     #
     # envelope_id           - ID of the envelope which you want to send
