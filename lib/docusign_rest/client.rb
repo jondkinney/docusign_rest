@@ -273,6 +273,15 @@ module DocusignRest
       end
     end
 
+    def get_radio_signer_tabs(tabs)
+      Array(tabs).map do |tab|
+        {
+          'documentId' => tab[:document_id],
+          'groupName' => tab[:group_name],
+          'radios' => tab[:radios],
+        }
+      end
+    end
 
     # TODO (2014-02-03) jonk => document
     def get_event_notification(event_notification)
@@ -663,12 +672,13 @@ module DocusignRest
           clientUserId: signer[:client_id] || signer[:email],
           requireSignOnPaper: signer[:require_sign_on_paper] || false,
           tabs: {
-            textTabs:     get_signer_tabs(signer[:text_tabs]),
-            checkboxTabs: get_signer_tabs(signer[:checkbox_tabs]),
-            numberTabs:   get_signer_tabs(signer[:number_tabs]),
-            fullNameTabs: get_signer_tabs(signer[:fullname_tabs]),
-            dateTabs:     get_signer_tabs(signer[:date_tabs]),
-            signHereTabs: get_sign_here_tabs(signer[:sign_here_tabs])
+            textTabs:       get_signer_tabs(signer[:text_tabs]),
+            radioGroupTabs: get_radio_signer_tabs(signer[:radio_group_tabs]),
+            checkboxTabs:   get_signer_tabs(signer[:checkbox_tabs]),
+            numberTabs:     get_signer_tabs(signer[:number_tabs]),
+            fullNameTabs:   get_signer_tabs(signer[:fullname_tabs]),
+            dateTabs:       get_signer_tabs(signer[:date_tabs]),
+            signHereTabs:   get_sign_here_tabs(signer[:sign_here_tabs])
           }
         }
         signers_array << signers_hash
