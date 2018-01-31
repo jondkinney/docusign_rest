@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.3.6 ?
+## v0.3.6 Jan 31 2018
 
 * Add support for radio button groups in DocusignRest::Client#create_envelope_from_composite_template (Tom Copeland)
 * Implement DocusignRest::Client#get_document_tabs (Tom Copeland)
