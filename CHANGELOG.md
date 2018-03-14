@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.3.7 Mar 13 2018
+* Fix mispeling in parameter to create_envelope_from_document (Micah Iriye)
+
 ## v0.3.6 Jan 31 2018
 
 * Add support for radio button groups in DocusignRest::Client#create_envelope_from_composite_template (Tom Copeland)
