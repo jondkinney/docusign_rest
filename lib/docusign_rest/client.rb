@@ -749,7 +749,7 @@ module DocusignRest
     #                 Each contains an array of corresponding customField hashes.
     #                 For details, please see: http://bit.ly/1FnmRJx
     # headers       - Allows a client to pass in some headers
-    # web_sign      - (Optional) If true, the signer is allowed to print the
+    # wet_sign      - (Optional) If true, the signer is allowed to print the
     #                 document and sign it on paper. False if not defined.
     #
     # Returns a JSON parsed response object containing:
@@ -779,7 +779,7 @@ module DocusignRest
         status: "#{options[:status]}",
         customFields: options[:custom_fields]
       }
-      post_hash[:enableWetSign] = options[:wet_sign] if options.has_key? :web_sign
+      post_hash[:enableWetSign] = options[:wet_sign] if options.has_key? :wet_sign
       post_body = post_hash.to_json
 
       uri = build_uri("/accounts/#{acct_id}/envelopes")
