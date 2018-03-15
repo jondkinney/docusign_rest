@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.3.8 Mar 15 2018
+* Allow require_sign_on_paper option in create_envelope_from_document (Micah Iriye)
+
 ## v0.3.7 Mar 13 2018
 * Fix mispeling in parameter to create_envelope_from_document (Micah Iriye)
 
