@@ -352,6 +352,7 @@ module DocusignRest
           phoneAuthentication:                   nil,
           recipientAttachment:                   nil,
           requireIdLookup:                       signer[:require_id_lookup],
+          requireSignOnPaper:                    signer[:require_sign_on_paper] || false,
           roleName:                              signer[:role_name],
           routingOrder:                          signer[:routing_order] || index + 1,
           socialAuthentications:                 nil
