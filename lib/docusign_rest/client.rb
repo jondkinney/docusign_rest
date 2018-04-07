@@ -1972,7 +1972,15 @@ module DocusignRest
       request.each_capitalized{ |k,v| log << "#{k}: #{v.gsub(/(?<="Password":")(.+?)(?=")/, '[FILTERED]')}" }
       # Trims out the actual binary file to reduce log size
       if request.body
-        request_body = request.body.gsub(/(?<=Content-Transfer-Encoding: binary).+?(?=-------------RubyMultipartPost)/m, "\n[BINARY BLOB]\n")
+        request_body = begin
+          request.body.gsub(/(?<=Content-Transfer-Encoding: binary).+?(?=-------------RubyMultipartPost)/m, "\n[BINARY BLOB]\n")
+        rescue ArgumentError => ae
+          if ae.message == "invalid byte sequence in UTF-8"
+            request.body.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '').gsub(/^%PDF.*%%EOF/m, "\n[PDF BLOB]\n")
+          else
+            raise
+          end
+        end
         log << "Body: #{request_body}"
       end
       log << '--DocuSign RESPONSE--'
