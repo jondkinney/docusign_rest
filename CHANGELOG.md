@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.3.9 Apr 12 2018
+* Handle another error condition when logging (Tom Copeland)
+
 ## v0.3.8 Mar 15 2018
 * Allow require_sign_on_paper option in create_envelope_from_document (Micah Iriye)
 
