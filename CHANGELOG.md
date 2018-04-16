@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.4.0 Apr 16 2018
+* Allow text tabs to be passed to DocusignRest::Client#add_recipient_tabs
+
 ## v0.3.9 Apr 12 2018
 * Handle another error condition when logging (Tom Copeland)
 
