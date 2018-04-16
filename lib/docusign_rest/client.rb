@@ -1781,7 +1781,7 @@ module DocusignRest
         signHereTabs:         get_tabs(tabs[:sign_here_tabs], options.merge!(sign_here_tab: true), index),
         signerAttachmentTabs: nil,
         ssnTabs:              nil,
-        textTabs:             nil,
+        textTabs:             get_tabs(tabs[:text_tabs], options, index),
         titleTabs:            nil,
         zipTabs:              nil
       }.to_json
