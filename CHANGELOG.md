@@ -1,7 +1,10 @@
 # Changelog
 
+## v0.4.1 Apr 21 2018
+* Allow DocusignRest::Client#add_envelope_document to accept an I/O object vs reading a file
+
 ## v0.4.0 Apr 16 2018
-* Allow text tabs to be passed to DocusignRest::Client#add_recipient_tabs
+* Allow text tabs to be passed to DocusignRest::Client#add_recipient_tabs (Tom Copeland)
 
 ## v0.3.9 Apr 12 2018
 * Handle another error condition when logging (Tom Copeland)
