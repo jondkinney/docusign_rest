@@ -1671,6 +1671,8 @@ module DocusignRest
     # content_type - optional content type for file.  Defaults to application/pdf.
     # file_name - optional name for file.  Defaults to basename of file_path.
     # file_extension - optional extension for file.  Defaults to extname of file_name.
+    # file_io       - Optional: an opened I/O stream of data (if you don't
+    #                 want to read from a file)
     #
     # The response only returns a success or failure.
     def add_envelope_document(options={})
@@ -1684,7 +1686,11 @@ module DocusignRest
       }
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/documents/#{options[:document_id]}")
-      post_body = open(options[:file_path]).read
+      post_body = if options[:file_io].present?
+        options[:file_io].read
+      else
+        open(options[:file_path]).read
+      end
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Put.new(uri.request_uri, headers(headers))
