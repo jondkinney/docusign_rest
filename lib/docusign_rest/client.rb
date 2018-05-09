@@ -633,7 +633,7 @@ module DocusignRest
     # Takes an optional array of files, which consist of documents to be used instead of templates
     #
     # Returns an array of server template hashes
-    def get_composite_template(server_template_ids, signers, files)
+    def get_composite_template(server_template_ids, signers, files, carbon_copies)
       composite_array = []
       server_template_ids.each_with_index do |template_id, idx|
         server_template_hash = {
@@ -643,7 +643,7 @@ module DocusignRest
         }
         templates_hash = {
           serverTemplates: [server_template_hash],
-          inlineTemplates: get_inline_signers(signers, (idx+1).to_s)
+          inlineTemplates: get_inline_signers(signers, (idx+1).to_s, carbon_copies)
         }
         if files
           document_hash = {
@@ -662,10 +662,9 @@ module DocusignRest
     # and sets up the inline template
     #
     # Returns an array of signers
-    def get_inline_signers(signers, sequence)
-      signers_array = []
-      signers.each do |signer|
-        signers_hash = {
+    def get_inline_signers(signers, sequence, carbon_copies)
+      signers_array = signers.map do |signer|
+        {
           email: signer[:email],
           name: signer[:name],
           recipientId: signer[:recipient_id],
@@ -682,9 +681,14 @@ module DocusignRest
             signHereTabs:   get_sign_here_tabs(signer[:sign_here_tabs])
           }
         }
-        signers_array << signers_hash
       end
-      template_hash = {sequence: sequence, recipients: { signers: signers_array }}
+      template_hash = {
+        sequence: sequence,
+        recipients: {
+          signers: signers_array,
+          carbonCopies: get_carbon_copies(carbon_copies, signers.size)
+        }
+      }
       [template_hash]
     end
 
@@ -961,7 +965,7 @@ module DocusignRest
         brandId:            options[:brand_id],
         eventNotification:  get_event_notification(options[:event_notification]),
         allowReassign:      options[:allow_reassign],
-        compositeTemplates: get_composite_template(options[:server_template_ids], options[:signers], options[:files])
+        compositeTemplates: get_composite_template(options[:server_template_ids], options[:signers], options[:files], options[:carbon_copies])
       }
 
       post_body = post_hash.to_json
