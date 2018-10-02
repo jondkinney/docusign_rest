@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.4.2 Oct 2 2018
+* Allow radio buttons tabs to be passed in as part of signer-specific tabs (Iago Pimenta)
+
 ## v0.4.1 Apr 21 2018
 * Allow DocusignRest::Client#add_envelope_document to accept an I/O object vs reading a file
 
