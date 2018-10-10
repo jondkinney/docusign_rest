@@ -154,9 +154,15 @@ describe DocusignRest::Client do
             {path: 'test.pdf', name: 'test.pdf'},
             {path: 'test2.pdf', name: 'test2.pdf'}
           ],
-          status: 'sent'
-        )
-
+          status: 'sent',
+          email_settings: {
+            bcc_emails: [
+              "test@example.com"
+            ],
+            reply_to_email: "test@example.com",
+            reply_to_name: "Tester"
+          }
+        )        
         response["status"].must_equal "sent"
       end
     end
