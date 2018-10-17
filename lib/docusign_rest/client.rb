@@ -1088,13 +1088,20 @@ module DocusignRest
       content_type = { 'Content-Type' => 'application/json' }
       content_type.merge(options[:headers]) if options[:headers]
 
-      post_body = {
+      params = {
         authenticationMethod: 'email',
         clientUserId:         options[:client_id] || options[:email],
-        email:                options[:email],
         returnUrl:            options[:return_url],
-        userName:             options[:name]
-      }.to_json
+      }
+
+      if options[:user_id].present?
+        params[:userId] = options[:user_id]
+      else
+        params[:email] = options[:email]
+        params[:userName] = options[:name]
+      end
+
+      post_body = params.to_json
 
       uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/views/recipient")
 
