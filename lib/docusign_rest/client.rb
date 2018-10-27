@@ -1965,6 +1965,25 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+    # Public method - get list of users
+    # See https://developers.docusign.com/esign-rest-api/reference/Users
+    #
+    # Returns a list of users
+    def get_users_list(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge!(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{@acct_id}/users?additional_info=true")
+
+      request = Net::HTTP::Get.new(uri.request_uri, headers(options[:headers]))
+      http = initialize_net_http_ssl(uri)
+      response = http.request(request)
+      generate_log(request, response, uri)
+
+      parsed_response = JSON.parse(response.body)
+      (parsed_response || {}).fetch("users", [])
+    end
+
     private
 
     # Private: Generates a standardized log of the request and response pair
