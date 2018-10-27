@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.4.3 Oct 27 2018
+* Implement Docusign::Client#get_users_list (Hendrik Kleinwaechter)
+
 ## v0.4.2 Oct 2 2018
 * Allow radio buttons tabs to be passed in as part of signer-specific tabs (Iago Pimenta)
 
