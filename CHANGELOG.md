@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.4.4 Nov 8 2018
+* Allow email_settings in create_envelope_from_document (Kevin Coleman)
+
 ## v0.4.3 Oct 27 2018
 * Implement Docusign::Client#get_users_list (Hendrik Kleinwaechter)
 
