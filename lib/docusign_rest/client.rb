@@ -740,7 +740,7 @@ module DocusignRest
     # email[body]    - (Optional) custom text that will be injected into the
     #                 DocuSign generated email
     # email_settings[bcc_emails] - (Optional) array of emails to BCC.
-    # email_settings[reply_to_email] - (Optional) override the default reply to email for the account.   
+    # email_settings[reply_to_email] - (Optional) override the default reply to email for the account.
     # email_settings[reply_to_name] - (Optional) override the default reply to name for the account.
     # signers       - A hash of users who should receive the document and need
     #                 to sign it. More info about the options available for
@@ -2071,7 +2071,7 @@ module DocusignRest
         receiveInResponse: true,
       }
     end
-    
+
     def get_email_settings(input)
       return {} unless input
       {

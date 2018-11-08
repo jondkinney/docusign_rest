@@ -162,7 +162,7 @@ describe DocusignRest::Client do
             reply_to_email: "test@example.com",
             reply_to_name: "Tester"
           }
-        )        
+        )
         response["status"].must_equal "sent"
       end
     end
