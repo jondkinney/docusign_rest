@@ -739,6 +739,9 @@ module DocusignRest
     # email[subject] - (Optional) short subject line for the email
     # email[body]    - (Optional) custom text that will be injected into the
     #                 DocuSign generated email
+    # email_settings[bcc_emails] - (Optional) array of emails to BCC.
+    # email_settings[reply_to_email] - (Optional) override the default reply to email for the account.   
+    # email_settings[reply_to_name] - (Optional) override the default reply to name for the account.
     # signers       - A hash of users who should receive the document and need
     #                 to sign it. More info about the options available for
     #                 this method are documented above it's method definition.
@@ -772,6 +775,7 @@ module DocusignRest
       post_hash = {
         emailBlurb:   "#{options[:email][:body] if options[:email]}",
         emailSubject: "#{options[:email][:subject] if options[:email]}",
+        emailSettings: get_email_settings(options[:email_settings]),
         documents: get_documents(ios),
         recipients: {
           signers: get_signers(options[:signers]),
@@ -2065,6 +2069,15 @@ module DocusignRest
         dateOfBirth: input[:date_of_birth],
         displayLevelCode: 'DoNotDisplay',
         receiveInResponse: true,
+      }
+    end
+    
+    def get_email_settings(input)
+      return {} unless input
+      {
+        bccEmailAddresses: input[:bcc_email_addresses],
+        replyEmailAddressOverride: input[:reply_to_email],
+        replyEmailNameOverride: input[:reply_to_name]
       }
     end
   end
