@@ -288,10 +288,19 @@ module DocusignRest
     def get_event_notification(event_notification)
       return {} unless event_notification
       {
-        useSoapInterface:          event_notification[:use_soap_interface] || false,
-        includeCertificateWithSoap: event_notification[:include_certificate_with_soap] || false,
-        url:                       event_notification[:url],
-        loggingEnabled:            event_notification[:logging],
+        includeCertificateOfCompletion:    event_notification[:include_certificate_of_completion] || false,
+        includeCertificateWithSoap:        event_notification[:include_certificate_with_soap] || false,
+        includeDocumentFields:             event_notification[:include_document_fields] || false,
+        includeDocuments:                  event_notification[:include_documents] || false,
+        includeEnvelopeVoidReason:         event_notification[:include_envelope_void_reason] || false,
+        includeSenderAccountAsCustomField: event_notification[:include_sender_account_as_custom_field] || false,
+        includeTimeZone:                   event_notification[:include_time_zone] || false,
+        loggingEnabled:                    event_notification[:logging],
+        requireAcknowledgment:             event_notification[:require_acknowledgment] || false,
+        signMessageWithX509Cert:           event_notification[:sign_message_with_x509_cert] || false,
+        soapNameSpace:                     event_notification[:soap_name_space],
+        url:                               event_notification[:url],
+        useSoapInterface:                  event_notification[:use_soap_interface] || false,
         'envelopeEvents' => Array(event_notification[:envelope_events]).map do |envelope_event|
           {
             includeDocuments:        envelope_event[:include_documents] || false,
