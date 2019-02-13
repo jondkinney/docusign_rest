@@ -1364,6 +1364,23 @@ module DocusignRest
       end
     end
 
+    # Public retrieves the list of attachments from a given envelope
+    #
+    # envelope_id - ID of the envelope from which document infos are to be retrieved
+    #
+    # Returns a hash containing the envelopeId, the attachmentId and the attachment meta
+    def get_attachment_list_from_envelope(options={})
+      content_type = { 'Content-Type' => 'application/json' }
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/attachments")
+
+      http     = initialize_net_http_ssl(uri)
+      request  = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+      generate_log(request, response, uri)
+      JSON.parse(response.body)
+    end
 
     # Public moves the specified envelopes to the given folder
     #
