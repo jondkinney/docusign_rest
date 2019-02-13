@@ -1318,7 +1318,7 @@ module DocusignRest
       request  = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
       response = http.request(request)
       generate_log(request, response, uri)
-      JSON.parse(response.body)
+      response.body
     end
 
 
@@ -1364,19 +1364,18 @@ module DocusignRest
       end
     end
 
-    # Public retrieves the list of attachments from a given envelope
+    # Public retrieves the list of all documents, including attachments from a given envelope
     #
     # envelope_id - ID of the envelope from which document infos are to be retrieved
     #
-    # Returns a hash containing the envelopeId, the attachmentId and the attachment meta
-    def get_attachment_list_from_envelope(options={})
-      content_type = { 'Content-Type' => 'application/json' }
-      content_type.merge(options[:headers]) if options[:headers]
+    # Returns a hash containing the envelopeId, the documentId and the attachmentTabId, the document name (or filename) and other document meta
+    def get_document_list_from_envelope(options={})
+      envelope_id = options[:envelope_id]
 
-      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/attachments")
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{envelope_id}/documents")
 
       http     = initialize_net_http_ssl(uri)
-      request  = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
+      request  = Net::HTTP::Get.new(uri.request_uri, headers)
       response = http.request(request)
       generate_log(request, response, uri)
       JSON.parse(response.body)
