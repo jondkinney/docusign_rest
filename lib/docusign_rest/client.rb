@@ -984,6 +984,24 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+
+    # Public gets the template_ids in an agreement
+    #
+    # envelope_id]           - ID of the envelope which you want to send
+    #
+    # Returns the template list in a hash
+    def get_templates_from_envelope(options)
+      content_type = { 'Content-Type' => 'application/json' }
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/templates/")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+      generate_log(request, response, uri)
+      JSON.parse(response.body)
+    end
+
+
     # Public fetches custom fields for a document
     #
     # options[:envelope_id]           - ID of the envelope which you want to send
@@ -1318,7 +1336,7 @@ module DocusignRest
       request  = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
       response = http.request(request)
       generate_log(request, response, uri)
-      JSON.parse(response.body)
+      response.body
     end
 
 
@@ -1364,6 +1382,22 @@ module DocusignRest
       end
     end
 
+    # Public retrieves the list of all documents, including attachments from a given envelope
+    #
+    # envelope_id - ID of the envelope from which document infos are to be retrieved
+    #
+    # Returns a hash containing the envelopeId, the documentId and the attachmentTabId, the document name (or filename) and other document meta
+    def get_document_list_from_envelope(options={})
+      envelope_id = options[:envelope_id]
+
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{envelope_id}/documents")
+
+      http     = initialize_net_http_ssl(uri)
+      request  = Net::HTTP::Get.new(uri.request_uri, headers)
+      response = http.request(request)
+      generate_log(request, response, uri)
+      JSON.parse(response.body)
+    end
 
     # Public moves the specified envelopes to the given folder
     #
