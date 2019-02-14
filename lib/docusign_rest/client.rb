@@ -984,6 +984,24 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+
+    # Public gets the template_ids in an agreement
+    #
+    # envelope_id]           - ID of the envelope which you want to send
+    #
+    # Returns the template list in a hash
+    def get_templates_from_envelope(options)
+      content_type = { 'Content-Type' => 'application/json' }
+      uri = build_uri("/accounts/#{acct_id}/envelopes/#{options[:envelope_id]}/templates/")
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Get.new(uri.request_uri, headers(content_type))
+      response = http.request(request)
+      generate_log(request, response, uri)
+      JSON.parse(response.body)
+    end
+
+
     # Public fetches custom fields for a document
     #
     # options[:envelope_id]           - ID of the envelope which you want to send
