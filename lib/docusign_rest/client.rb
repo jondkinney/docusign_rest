@@ -1935,11 +1935,21 @@ module DocusignRest
 
       signers = options[:signers]
       signers.each do |signer|
-       signer[:recipientId] = signer.delete(:recipient_id) if signer.key?(:recipient_id)
-       signer[:clientUserId] = signer.delete(:client_user_id) if signer.key?(:client_user_id)
+        signer[:recipientId] = signer.delete(:recipient_id) if signer.key?(:recipient_id)
+        signer[:roleName] = signer.delete(:role_name) if signer.key?(:role_name)
+        signer[:clientUserId] = signer.delete(:client_user_id) if signer.key?(:client_user_id)
       end
+
+      carbon_copies = options[:carbon_copies]
+      carbon_copies.each do |carbon_copier|
+        carbon_copier[:recipientId] = carbon_copier.delete(:recipient_id) if carbon_copier.key?(:recipient_id)
+        carbon_copier[:roleName] = carbon_copier.delete(:role_name) if carbon_copier.key?(:role_name)
+        carbon_copier[:clientUserId] = carbon_copier.delete(:client_user_id) if carbon_copier.key?(:client_user_id)
+      end
+
       post_body = {
-        signers: signers
+        signers: signers,
+        carbonCopies: carbon_copies
       }.to_json
 
       http = initialize_net_http_ssl(uri)
