@@ -402,7 +402,7 @@ module DocusignRest
           checkboxTabs:         get_tabs(signer[:checkbox_tabs], options, index),
           companyTabs:          nil,
           dateSignedTabs:       get_tabs(signer[:date_signed_tabs], options, index),
-          dateTabs:             nil,
+          dateTabs:             get_tabs(signer[:date_tabs], options, index),
           declineTabs:          nil,
           emailTabs:            get_tabs(signer[:email_tabs], options, index),
           envelopeIdTabs:       nil,
@@ -640,7 +640,7 @@ module DocusignRest
         server_template_hash = {
             sequence: (idx+1).to_s,
             templateId: template_id,
-            templateRoles: get_template_roles(signers),
+            templateRoles: get_signers(signers),
         }
         templates_hash = {
           serverTemplates: [server_template_hash],
@@ -911,7 +911,7 @@ module DocusignRest
         enableWetSign:      options[:wet_sign],
         brandId:            options[:brand_id],
         eventNotification:  get_event_notification(options[:event_notification]),
-        templateRoles:      get_template_roles(options[:signers]),
+        templateRoles:      get_signers(options[:signers]),
         customFields:       options[:custom_fields],
         allowReassign:      options[:allow_reassign]
       }.to_json
