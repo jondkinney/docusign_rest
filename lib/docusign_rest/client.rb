@@ -343,7 +343,7 @@ module DocusignRest
 
       signers.each_with_index do |signer, index|
         doc_signer = {
-          accessCode:                            '',
+          accessCode:                            signer[:access_code],
           addAccessCodeToEmail:                  false,
           customFields:                          signer[:custom_fields],
           idCheckConfigurationName:              signer[:id_check_configuration_name],
