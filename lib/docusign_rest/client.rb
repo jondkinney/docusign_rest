@@ -228,6 +228,7 @@ module DocusignRest
           name:     signer[:name],
           email:    signer[:email],
           roleName: signer[:role_name],
+          accessCode: signer[:access_code],
           tabs: {
             textTabs:     get_signer_tabs(signer[:text_tabs]),
             checkboxTabs: get_signer_tabs(signer[:checkbox_tabs]),
