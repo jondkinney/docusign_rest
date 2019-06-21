@@ -6,6 +6,61 @@ describe DocusignRest::Client do
     @keys = DocusignRest::Configuration::VALID_CONFIG_KEYS
   end
 
+  let(:embedded_signers) {
+    [
+      {
+        embedded: true,
+        name: 'Test Guy',
+        email: 'testguy@example.com',
+        role_name: 'Issuer',
+        sign_here_tabs: [
+          {
+            anchor_string: 'sign here',
+            anchor_x_offset: '125',
+            anchor_y_offset: '-12'
+          }
+        ],
+        list_tabs: [
+          {
+            anchor_string: 'another test',
+            width: '180',
+            height: '14',
+            anchor_x_offset: '10',
+            anchor_y_offset: '-5',
+            label: 'another test',
+            selected: true,
+            list_items: [
+              {
+                selected: false,
+                text: 'Option 1',
+                value: 'option_1'
+              },
+              {
+                selected: true,
+                text: 'Option 2',
+                value: 'option_2'
+              }
+            ]
+          }
+        ],
+      },
+      {
+        embedded: true,
+        name: 'Test Girl',
+        email: 'testgirl@example.com',
+        role_name: 'Attorney',
+        access_code: '12345',
+        sign_here_tabs: [
+          {
+            anchor_string: 'sign here',
+            anchor_x_offset: '140',
+            anchor_y_offset: '-12'
+          }
+        ]
+      }
+    ]
+  }
+
   describe 'with module configuration' do
     before do
       DocusignRest.configure do |config|
@@ -88,82 +143,54 @@ describe DocusignRest::Client do
       @client.get_account_id.must_equal @client.acct_id
     end
 
-    it "should allow creating an envelope from a document" do
-      VCR.use_cassette("create_envelope/from_document") do
-        response = @client.create_envelope_from_document(
-          email: {
-            subject: "test email subject",
-            body: "this is the email body and it's large!"
-          },
-          # If embedded is set to true  in the signers array below, emails
-          # don't go out and you can embed the signature page in an iFrame
-          # by using the get_recipient_view method. You can choose 'false' or
-          # simply omit the option as I show in the second signer hash.
-          signers: [
-            {
-              embedded: true,
-              name: 'Test Guy',
-              email: 'testguy@example.com',
-              role_name: 'Issuer',
-              sign_here_tabs: [
-                {
-                  anchor_string: 'sign here',
-                  anchor_x_offset: '125',
-                  anchor_y_offset: '-12'
-                }
-              ],
-              list_tabs: [
-                {
-                  anchor_string: 'another test',
-                  width: '180',
-                  height: '14',
-                  anchor_x_offset: '10',
-                  anchor_y_offset: '-5',
-                  label: 'another test',
-                  selected: true,
-                  list_items: [
-                    {
-                      selected: false,
-                      text: 'Option 1',
-                      value: 'option_1'
-                    },
-                    {
-                      selected: true,
-                      text: 'Option 2',
-                      value: 'option_2'
-                    }
-                  ]
-                }
-              ],
+    describe "#get_signers" do
+      before do
+        @doc_signers = @client.get_signers(embedded_signers)
+      end
+
+      it "returns an array of signers" do
+        @doc_signers.length.must_equal embedded_signers.length
+      end
+
+      it "assigns accessCode" do
+        embedded_signers.each do |signer|
+          doc_signer = @doc_signers.select{ |s| s[:email] == signer[:email]}.first
+          doc_signer[:accessCode].must_equal signer[:access_code]
+        end
+      end
+    end
+
+    describe "#create_envelope_from_document" do
+      before do
+        VCR.use_cassette("create_envelope/from_document") do
+          @response = @client.create_envelope_from_document(
+            email: {
+              subject: "test email subject",
+              body: "this is the email body and it's large!"
             },
-            {
-              embedded: true,
-              name: 'Test Girl',
-              email: 'testgirl@example.com',
-              role_name: 'Attorney',
-              sign_here_tabs: [
-                {
-                  anchor_string: 'sign here',
-                  anchor_x_offset: '140',
-                  anchor_y_offset: '-12'
-                }
-              ]
-            }
-          ],
-          files: [
-            {path: 'test.pdf', name: 'test.pdf'},
-            {path: 'test2.pdf', name: 'test2.pdf'}
-          ],
-          status: 'sent',
-          email_settings: {
-            bcc_emails: [
-              "test@example.com"
+            # If embedded is set to true  in the signers array below, emails
+            # don't go out and you can embed the signature page in an iFrame
+            # by using the get_recipient_view method. You can choose 'false' or
+            # simply omit the option as I show in the second signer hash.
+            signers: embedded_signers,
+            files: [
+              {path: 'test.pdf', name: 'test.pdf'},
+              {path: 'test2.pdf', name: 'test2.pdf'}
             ],
-            reply_to_email: "test@example.com",
-            reply_to_name: "Tester"
-          }
-        )
-        response["status"].must_equal "sent"
+            status: 'sent',
+            email_settings: {
+              bcc_emails: [
+                "test@example.com"
+              ],
+              reply_to_email: "test@example.com",
+              reply_to_name: "Tester"
+            }
+          )
+        end
+      end
+
+      it "should allow creating an envelope from a document" do
+        @response["status"].must_equal "sent"
       end
     end
 
@@ -331,14 +358,7 @@ describe DocusignRest::Client do
               body: "Envelope body content here"
             },
             template_id: @template_response["templateId"],
-            signers: [
-              {
-                embedded: true,
-                name: 'jon',
-                email: 'someone@example.com',
-                role_name: 'Issuer'
-              }
-            ]
+            signers: embedded_signers
           )
           if ! @envelope_response["errorCode"].nil?
             puts "[API ERROR] (create_envelope/from_template) errorCode: '#{@envelope_response["errorCode"]}', message: '#{@envelope_response["message"]}'"

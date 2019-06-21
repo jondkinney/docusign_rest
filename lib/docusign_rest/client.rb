@@ -228,6 +228,7 @@ module DocusignRest
           name:     signer[:name],
           email:    signer[:email],
           roleName: signer[:role_name],
+          accessCode: signer[:access_code],
           tabs: {
             textTabs:     get_signer_tabs(signer[:text_tabs]),
             checkboxTabs: get_signer_tabs(signer[:checkbox_tabs]),
@@ -343,7 +344,7 @@ module DocusignRest
 
       signers.each_with_index do |signer, index|
         doc_signer = {
-          accessCode:                            '',
+          accessCode:                            signer[:access_code],
           addAccessCodeToEmail:                  false,
           customFields:                          signer[:custom_fields],
           idCheckConfigurationName:              signer[:id_check_configuration_name],
