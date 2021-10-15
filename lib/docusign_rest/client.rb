@@ -232,6 +232,7 @@ module DocusignRest
             textTabs:     get_signer_tabs(signer[:text_tabs]),
             checkboxTabs: get_signer_tabs(signer[:checkbox_tabs]),
             numberTabs:   get_signer_tabs(signer[:number_tabs]),
+            radioGroupTabs: get_radio_signer_tabs(signer[:radio_group_tabs]),
             fullNameTabs: get_signer_tabs(signer[:fullname_tabs]),
             dateTabs:     get_signer_tabs(signer[:date_tabs])
           }
@@ -740,6 +741,9 @@ module DocusignRest
     # email[subject] - (Optional) short subject line for the email
     # email[body]    - (Optional) custom text that will be injected into the
     #                 DocuSign generated email
+    # email_settings[bcc_emails] - (Optional) array of emails to BCC.
+    # email_settings[reply_to_email] - (Optional) override the default reply to email for the account.
+    # email_settings[reply_to_name] - (Optional) override the default reply to name for the account.
     # signers       - A hash of users who should receive the document and need
     #                 to sign it. More info about the options available for
     #                 this method are documented above it's method definition.
@@ -773,6 +777,7 @@ module DocusignRest
       post_hash = {
         emailBlurb:   "#{options[:email][:body] if options[:email]}",
         emailSubject: "#{options[:email][:subject] if options[:email]}",
+        emailSettings: get_email_settings(options[:email_settings]),
         documents: get_documents(ios),
         recipients: {
           signers: get_signers(options[:signers]),
@@ -1966,6 +1971,25 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+    # Public method - get list of users
+    # See https://developers.docusign.com/esign-rest-api/reference/Users
+    #
+    # Returns a list of users
+    def get_users_list(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge!(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{@acct_id}/users?additional_info=true")
+
+      request = Net::HTTP::Get.new(uri.request_uri, headers(options[:headers]))
+      http = initialize_net_http_ssl(uri)
+      response = http.request(request)
+      generate_log(request, response, uri)
+
+      parsed_response = JSON.parse(response.body)
+      (parsed_response || {}).fetch("users", [])
+    end
+
     private
 
     # Private: Generates a standardized log of the request and response pair
@@ -2047,6 +2071,15 @@ module DocusignRest
         dateOfBirth: input[:date_of_birth],
         displayLevelCode: 'DoNotDisplay',
         receiveInResponse: true,
+      }
+    end
+
+    def get_email_settings(input)
+      return {} unless input
+      {
+        bccEmailAddresses: input[:bcc_email_addresses],
+        replyEmailAddressOverride: input[:reply_to_email],
+        replyEmailNameOverride: input[:reply_to_name]
       }
     end
   end
