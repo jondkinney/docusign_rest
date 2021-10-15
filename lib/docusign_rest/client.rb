@@ -671,7 +671,6 @@ module DocusignRest
           name: signer[:name],
           recipientId: signer[:recipient_id],
           roleName: signer[:role_name],
-          clientUserId: signer[:client_id] || signer[:email],
           requireSignOnPaper: signer[:require_sign_on_paper] || false,
           tabs: {
             textTabs:       get_signer_tabs(signer[:text_tabs]),
@@ -683,6 +682,9 @@ module DocusignRest
             signHereTabs:   get_sign_here_tabs(signer[:sign_here_tabs])
           }
         }
+        if signer[:embedded]
+          signers_hash[:clientUserId] = signer[:client_id] || signer[:email]
+        end
         signers_array << signers_hash
       end
       template_hash = {sequence: sequence, recipients: { signers: signers_array }}
