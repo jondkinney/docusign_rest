@@ -441,7 +441,7 @@ module DocusignRest
         (options || []).each do |cc|
           signer_count += 1
           raise "Missing required data [:email, :name]" unless (cc[:email] && cc[:name])
-          cc.merge!(recipient_id: signer_count, routing_order: signer_count)
+          cc.reverse_merge!(recipient_id: signer_count, routing_order: signer_count)
           copies << camelize_keys(cc)
         end
       copies
